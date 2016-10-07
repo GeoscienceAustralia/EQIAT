@@ -55,7 +55,7 @@ def simulate_gm_realisations(incremental_hazard_curve,
         sample_list.append(samples)
     sample_array = numpy.array(sample_list)
     sample_array = sample_array.T
-    print 'sample_array', sample_array
+    #print 'sample_array', sample_array
     return sample_array
 
 def gm_site_amplification(gm, period, site_class):
@@ -109,8 +109,9 @@ def build_mmi_samples(gm, realisations, period):
     from numpy.random import normal
     # Convert gm to MMI
     gm_mmi = rsa2mmi(gm, period=period, include_uncertainty=False)
-    print 'gm_mmi', gm_mmi
+   # print 'gm_mmi', gm_mmi
     mmi_sample_list = []
+    mmi_sample_cumulative_list = []
     for sample in realisations:
         #print sample
         mmi_list = []
@@ -124,17 +125,18 @@ def build_mmi_samples(gm, realisations, period):
         mmi_array_round = numpy.round(mmi_array, decimals=0)
         mmi_array_round = mmi_array_round.astype(int)
         mmi_occurrences = numpy.bincount(mmi_array_round, minlength = 14)
-#        mmi_occurrences = numpy.unique(mmi_array_round, return_counts=True)
-       # mmi_occurrence_dict = zip(mmi_values, num_occurrences)
-#        mmi_sample_list.append(mmi_array_round)
+        # Now calculate exceedence rates
+        mmi_occurrences_reversed = mmi_occurrences[::-1]
+        mmi_cumsum = numpy.cumsum(mmi_occurrences_reversed)
+        mmi_cumsum = mmi_cumsum[::-1]
         mmi_sample_list.append(mmi_occurrences)
-#    mmi_samples = numpy.array(mmi_sample_list)
-    print 'sample_array'
-    print mmi_sample_list
+        mmi_sample_cumulative_list.append(mmi_cumsum)
+   # print 'sample_array'
+    #print mmi_sample_list
 #    print mmi_samples
-    return mmi_sample_list
+    return mmi_sample_list, mmi_sample_cumulative_list
 
-def plot_mmi_samples(mmi_sample_list):
+def plot_mmi_samples(mmi_sample_list, mmi_cumulative_list):
     """Plot mmi exceedence curves for each MMI sample
     :param mmi_sample_list:
         list of tuples containing 2D arrays of
@@ -147,6 +149,11 @@ def plot_mmi_samples(mmi_sample_list):
     for i in range(len(mmi_sample_list)):
         pyplot.plot(x_values, mmi_sample_list[i])
     pyplot.savefig('mmi_incremental_occurrences.png')
+    # plot cumulative
+    pyplot.clf()
+    for i in range(len(mmi_cumulative_list)):
+        pyplot.semilogy(x_values, mmi_cumulative_list[i])
+    pyplot.savefig('mmi_cumulative_occurrences.png')
                        
 def plot_hazard_curve(hazard_curve):
     """Plot the hazard curve
@@ -161,8 +168,8 @@ def plot_hazard_curve(hazard_curve):
     hazard_rates_reversed = hazard_curve[1][::-1]
     cumulative_rates = numpy.cumsum(hazard_rates_reversed)
     cumulative_rates = cumulative_rates[::-1]
-    print hazard_curve[0]
-    print cumulative_rates
+    #print hazard_curve[0]
+    #print cumulative_rates
     pyplot.loglog(hazard_curve[0], cumulative_rates, marker='o')
     pyplot.savefig('cumulative_rates.png')
 
@@ -177,7 +184,7 @@ def calculate_incremental_rates(hazard_curve):
         second column containing incremental rate.
     """
     rates = hazard_curve[1]
-    print rates
+    #print rates
     inc_rates = numpy.zeros(len(rates)) 
     for i in range(len(rates)):
         if i==len(rates)-1:
@@ -208,24 +215,31 @@ if __name__ == "__main__":
     # Just test for Jakarta for now
     hazard_curve = numpy.array([gm, data[:,1]])
     # interpolate hazard curve
-    interpolate = True
+    interpolate = False
     if interpolate:
         x_values = numpy.power(10, numpy.arange(-4, 1.7, 0.1))
         hazard_curve_interp = numpy.interp(x_values, gm, data[:,1])
     #    print 'hazard_curve_interp', hazard_curve_interp
         hazard_curve = numpy.array([x_values, hazard_curve_interp])
     plot_hazard_curve(hazard_curve)
-    print hazard_curve
+   # print hazard_curve
     incremental_hazard_curve = calculate_incremental_rates(hazard_curve)
-    print incremental_hazard_curve
+   # print incremental_hazard_curve
     realisations = \
         simulate_gm_realisations(incremental_hazard_curve,
-                                 time_jkt, 10)
+                                 time_jkt, 1000)
 #    print realisations
     #Convert to MMI including uncertainty
     #Remove site effects first
     # i.e. for each realisation we want to consider 
     # how we might observe it
     gm_site_effects = gm_site_amplification(hazard_curve[0], period, site_class)
-    mmi_sample_database = build_mmi_samples(gm_site_effects, realisations, period)
-    plot_mmi_samples(mmi_sample_database)
+    mmi_sample_database, mmi_sample_cumulative_database = build_mmi_samples(gm_site_effects, realisations, period)
+ #   print mmi_sample_cumulative_database
+    percentile_97_5 = numpy.percentile(mmi_sample_cumulative_database, 97.5, axis=0)
+    percentile_2_5 = numpy.percentile(mmi_sample_cumulative_database, 2.5, axis=0)
+    median = numpy.median(mmi_sample_cumulative_database, axis=0)
+    print percentile_97_5
+    print percentile_2_5
+    print median
+    plot_mmi_samples(mmi_sample_database, mmi_sample_cumulative_database)
