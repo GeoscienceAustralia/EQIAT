@@ -55,7 +55,7 @@ def simulate_gm_realisations(incremental_hazard_curve,
         sample_list.append(samples)
     sample_array = numpy.array(sample_list)
     sample_array = sample_array.T
-    print sample_array
+    print 'sample_array', sample_array
     return sample_array
 
 def gm_site_amplification(gm, period, site_class):
@@ -109,7 +109,7 @@ def build_mmi_samples(gm, realisations, period):
     from numpy.random import normal
     # Convert gm to MMI
     gm_mmi = rsa2mmi(gm, period=period, include_uncertainty=False)
-    print gm_mmi
+    print 'gm_mmi', gm_mmi
     mmi_sample_list = []
     for sample in realisations:
         #print sample
@@ -119,10 +119,12 @@ def build_mmi_samples(gm, realisations, period):
             mmi_list.append(mmi_samples)
         mmi_array = numpy.array(mmi_list)
         mmi_array = numpy.hstack(mmi_array)
-        print mmi_array
+        #print mmi_array
+        mmi_array[mmi_array<0]=0
         mmi_array_round = numpy.round(mmi_array, decimals=0)
         mmi_array_round = mmi_array_round.astype(int)
-        mmi_occurrences = numpy.unique(mmi_array_round, return_counts=True)
+        mmi_occurrences = numpy.bincount(mmi_array_round, minlength = 14)
+#        mmi_occurrences = numpy.unique(mmi_array_round, return_counts=True)
        # mmi_occurrence_dict = zip(mmi_values, num_occurrences)
 #        mmi_sample_list.append(mmi_array_round)
         mmi_sample_list.append(mmi_occurrences)
@@ -139,10 +141,30 @@ def plot_mmi_samples(mmi_sample_list):
         mmi values and number of occurrences
     """
     from matplotlib import pyplot
+    pyplot.clf()
+    x_values = numpy.arange(0,14)
+    print x_values
     for i in range(len(mmi_sample_list)):
-        pyplot.plot(mmi_sample_list[i][0], mmi_sample_list[i][1])
+        pyplot.plot(x_values, mmi_sample_list[i])
     pyplot.savefig('mmi_incremental_occurrences.png')
                        
+def plot_hazard_curve(hazard_curve):
+    """Plot the hazard curve
+    :param hazard_ucrve:
+        2D array of hazrad values, incremental_rate
+    """
+    from matplotlib import pyplot
+    pyplot.loglog(hazard_curve[0], hazard_curve[1], marker='o')
+    pyplot.savefig('incremental_hazard_rates.png')
+    pyplot.clf()
+    cumulative_rates = []
+    hazard_rates_reversed = hazard_curve[1][::-1]
+    cumulative_rates = numpy.cumsum(hazard_rates_reversed)
+    cumulative_rates = cumulative_rates[::-1]
+    print hazard_curve[0]
+    print cumulative_rates
+    pyplot.loglog(hazard_curve[0], cumulative_rates, marker='o')
+    pyplot.savefig('cumulative_rates.png')
 
 def calculate_incremental_rates(hazard_curve):
     """Calculate incremental rates from a cumulative
@@ -166,7 +188,7 @@ def calculate_incremental_rates(hazard_curve):
     return incremental_hazard_curve
 
 if __name__ == "__main__":
-    filename = 'hazard_curves_1.0s.csv'
+    filename = '../hazard_curves_1.0s.csv'
     period = 1.0
     site_class = 'D'
     time = 69 # number of years in time interval - annual rates
@@ -185,16 +207,25 @@ if __name__ == "__main__":
     #    print i
     # Just test for Jakarta for now
     hazard_curve = numpy.array([gm, data[:,1]])
+    # interpolate hazard curve
+    interpolate = True
+    if interpolate:
+        x_values = numpy.power(10, numpy.arange(-4, 1.7, 0.1))
+        hazard_curve_interp = numpy.interp(x_values, gm, data[:,1])
+    #    print 'hazard_curve_interp', hazard_curve_interp
+        hazard_curve = numpy.array([x_values, hazard_curve_interp])
+    plot_hazard_curve(hazard_curve)
+    print hazard_curve
     incremental_hazard_curve = calculate_incremental_rates(hazard_curve)
     print incremental_hazard_curve
     realisations = \
         simulate_gm_realisations(incremental_hazard_curve,
-                                 time_jkt, 9)
-    print realisations
+                                 time_jkt, 10)
+#    print realisations
     #Convert to MMI including uncertainty
     #Remove site effects first
     # i.e. for each realisation we want to consider 
     # how we might observe it
-    gm_site_effects = gm_site_amplification(gm, period, site_class)
+    gm_site_effects = gm_site_amplification(hazard_curve[0], period, site_class)
     mmi_sample_database = build_mmi_samples(gm_site_effects, realisations, period)
     plot_mmi_samples(mmi_sample_database)
