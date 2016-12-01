@@ -110,8 +110,8 @@ def rsa2mmi(data,period = 1.0,include_uncertainty='n'):
             MMI = C1 + C2*(np.log10((data_point)))
         elif np.log10(data_point)>logy15:
             MMI = C3 + C4*(np.log10((data_point)))
-        if MMI > 10:
-            MMI = 10
+#        if MMI > 10:
+#            MMI = 10
         MMI_list.append(MMI)
  
     # Include random sampling of uncertainty in conversion

@@ -10,6 +10,7 @@ July 2016
 
 import sys
 import numpy
+from matplotlib import pyplot
 
 def poisson_samples(lam, time, size=1):
     """Generate random poisson samples
@@ -87,7 +88,7 @@ def gm_site_amplification(gm, period, site_class):
     return amplified_gm
 
 def build_mmi_samples(gm, realisations, period):
-    """For each gronud motion realisation, convert to 
+    """For each ground motion realisation, convert to 
     MMI allowing while sampling uncertainty in the conversion
     :param gm:
         1D Array of ground motion values assuming already
@@ -142,7 +143,6 @@ def plot_mmi_samples(mmi_sample_list, mmi_cumulative_list):
         list of tuples containing 2D arrays of
         mmi values and number of occurrences
     """
-    from matplotlib import pyplot
     pyplot.clf()
     x_values = numpy.arange(0,14)
     print x_values
@@ -160,7 +160,6 @@ def plot_hazard_curve(hazard_curve):
     :param hazard_ucrve:
         2D array of hazrad values, incremental_rate
     """
-    from matplotlib import pyplot
     pyplot.loglog(hazard_curve[0], hazard_curve[1], marker='o')
     pyplot.savefig('incremental_hazard_rates.png')
     pyplot.clf()
@@ -194,52 +193,99 @@ def calculate_incremental_rates(hazard_curve):
     incremental_hazard_curve = numpy.array([hazard_curve[0], inc_rates])
     return incremental_hazard_curve
 
+def read_mmi_obs(filename):
+    """Read the MMI data into a dictionary
+    """
+    f_in = open(filename, 'r')
+    header = f_in.readline()
+    mmi_obs_dict = {}
+    for line in f_in.readlines():
+        row = line.split(',')
+        city = row[0]
+        try:
+            mmi_obs_dict[city][0].append(int(row[1]))
+            mmi_obs_dict[city][1].append(int(row[3]))
+        except KeyError:
+            mmi_obs_dict[city] = [[int(row[1])], [int(row[3])]]
+    return mmi_obs_dict
+
+def plot_mmi_hazmap_and_obs(median, percentile1, percentile2, mmi_obs, city):
+    """Plot the hazard map MMI occurrence percentiles against the 
+    number of historical observations
+    """
+    x_values = numpy.arange(0,14)
+    pyplot.clf()
+    pyplot.semilogy(x_values, median)
+    pyplot.semilogy(x_values, percentile1)
+    pyplot.semilogy(x_values, percentile2)
+    pyplot.scatter(mmi_obs[city][0], mmi_obs[city][1])
+    pyplot.xlim(2.9,10)
+    pyplot.ylim(0.8, 1000)
+    pyplot.savefig('mmi_hazmap_and_observations_%s.png' % city)
+
 if __name__ == "__main__":
     filename = '../hazard_curves_1.0s.csv'
+    obs_filename = '../City_MMI_all_mentions.csv'
     period = 1.0
-    site_class = 'D'
+    site_class = 'C'
+    cities = ['Jakarta', 'Bandung', 'Semarang', 'Yogyakarta', 'Surabaya']
     time = 69 # number of years in time interval - annual rates
     time_jkt = 196 # complmeteness for Jakarta
-    #    f_out = open('results_poisson_simulation_test.csv', 'w')
+    mmi_obs_dict = read_mmi_obs(obs_filename)
+    #    print mmi_obs_dict                                                                                      
     data = numpy.genfromtxt(filename, delimiter= ',', skip_header=1)
-    f_in = open(filename, 'rU')
-    header = f_in.readline()
-    f_in.close()
-
     gm = data[:,0]
-#    print gm
-    # Calculate incremental rate
-    # Interpolation
-    #for i in range(1,6):
-    #    print i
-    # Just test for Jakarta for now
-    hazard_curve = numpy.array([gm, data[:,1]])
-    # interpolate hazard curve
-    interpolate = False
-    if interpolate:
-        x_values = numpy.power(10, numpy.arange(-4, 1.7, 0.1))
-        hazard_curve_interp = numpy.interp(x_values, gm, data[:,1])
-    #    print 'hazard_curve_interp', hazard_curve_interp
-        hazard_curve = numpy.array([x_values, hazard_curve_interp])
-    plot_hazard_curve(hazard_curve)
-   # print hazard_curve
-    incremental_hazard_curve = calculate_incremental_rates(hazard_curve)
-   # print incremental_hazard_curve
-    realisations = \
-        simulate_gm_realisations(incremental_hazard_curve,
-                                 time_jkt, 1000)
-#    print realisations
-    #Convert to MMI including uncertainty
-    #Remove site effects first
-    # i.e. for each realisation we want to consider 
-    # how we might observe it
-    gm_site_effects = gm_site_amplification(hazard_curve[0], period, site_class)
-    mmi_sample_database, mmi_sample_cumulative_database = build_mmi_samples(gm_site_effects, realisations, period)
- #   print mmi_sample_cumulative_database
-    percentile_97_5 = numpy.percentile(mmi_sample_cumulative_database, 97.5, axis=0)
-    percentile_2_5 = numpy.percentile(mmi_sample_cumulative_database, 2.5, axis=0)
-    median = numpy.median(mmi_sample_cumulative_database, axis=0)
-    print percentile_97_5
-    print percentile_2_5
-    print median
-    plot_mmi_samples(mmi_sample_database, mmi_sample_cumulative_database)
+#    city = 'Jakarta'
+    for city in cities:
+        print 'Doing city %s' % city
+        if city == 'Jakarta':
+            time = time_jkt
+            site_class = 'D'
+            data_index = 1
+        elif city == 'Bandung':
+            site_class = 'C'
+            data_index = 2
+        elif city == 'Semarang':
+            site_class = 'D'
+            data_index = 3
+        elif city == 'Yogyakarta':
+            site_class = 'C'
+            data_index = 4
+        elif city == 'Surabaya':
+            site_class = 'D'
+            data_index = 5
+        # Calculate incremental rate
+        hazard_curve = numpy.array([gm, data[:,data_index]])
+        # interpolate hazard curve
+        interpolate = False
+        if interpolate:
+            x_values = numpy.power(10, numpy.arange(-4, 1.7, 0.1))
+            hazard_curve_interp = numpy.interp(x_values, gm, data[:,1])
+            hazard_curve = numpy.array([x_values, hazard_curve_interp])
+        plot_hazard_curve(hazard_curve)
+        incremental_hazard_curve = calculate_incremental_rates(hazard_curve)
+        realisations = \
+            simulate_gm_realisations(incremental_hazard_curve,
+                                     time, 100000)
+        #Convert to MMI including uncertainty
+        #Remove site effects first
+        # i.e. for each realisation we want to consider 
+        # how we might observe it
+        gm_site_effects = gm_site_amplification(hazard_curve[0], period, site_class)
+        mmi_sample_database, mmi_sample_cumulative_database = build_mmi_samples(gm_site_effects, realisations, period)
+        percentile_97_5 = numpy.percentile(mmi_sample_cumulative_database, 97.5, axis=0,
+                                           interpolation='linear') # nearest/linear
+        percentile_2_5 = numpy.percentile(mmi_sample_cumulative_database, 2.5, axis=0,
+                                          interpolation='linear')
+        median = numpy.median(mmi_sample_cumulative_database, axis=0)
+        #median[median == 0] = 0.1
+        #percentile_2_5[percentile_2_5 == 0] = 0.1
+        #percentile_97_5[percentile_97_5 == 0] = 0.1
+        print percentile_97_5
+        print percentile_2_5
+        print 'median', median
+        # Don't always need to do this, it takes a long time
+        #    plot_mmi_samples(mmi_sample_database, mmi_sample_cumulative_database)
+        
+        plot_mmi_hazmap_and_obs(median, percentile_97_5, percentile_2_5,
+                                mmi_obs_dict, city)
