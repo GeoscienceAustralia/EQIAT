@@ -75,5 +75,8 @@ for key,item in pt_sources.iteritems():
     rupture_gmfs.calc_sum_squares_mmi(sites_data[:,2]) 
     #    print rupture_gmfs.sum_squares_list
     rupture_gmfs.find_best_fit()
-    print rupture_gmfs.best_rupture.mag
+    print 'Best magnitude', rupture_gmfs.best_rupture.mag
     print rupture_gmfs.best_rupture.hypocenter
+#    print rupture_gmfs.best_rupture.surface
+    print 'Best dip', rupture_gmfs.best_rupture.surface.get_dip()
+    print 'Best strike', rupture_gmfs.best_rupture.surface.get_strike()
