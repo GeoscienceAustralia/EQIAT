@@ -13,6 +13,7 @@ from openquake.hazardlib.calc.gmf import GmfComputer
 from openquake.commonlib.source import SourceModelParser
 from openquake.commonlib.sourceconverter import SourceConverter, \
     area_to_point_sources, SourceGroup
+from RSA2MMI import rsa2mmi9
 
 def get_pt_sources(area_source_file, discretisation=50.):
     """Calls OpenQuake parsers to read area source model
@@ -56,7 +57,7 @@ class RuptureGmf(object):
     ground motion fields for later analysis
     """
 
-    def __init__(self, pt_sources, gsim, sitecol, imts = ['PGA', 'SA(1.0)']):
+    def __init__(self, pt_sources, gsim, sitecol, imts = ['SA(1.0)']):
         """
         :params pt_sources:
             Point source objects derived from original area source model
@@ -69,7 +70,8 @@ class RuptureGmf(object):
         self.sitecol = sitecol
         self.rupture_list = [] # list for storing ruptures
         self.gmf_list = [] # list for storing associated gmfs
- 
+        self.mmi_list = []
+    
     def calculate(self):
         """Generates ruptures for each pt source and calculates ground motion
         field.
@@ -86,5 +88,28 @@ class RuptureGmf(object):
                                        self.imts, [self.gsim],
                                        truncation_level=0)
                 gmf = computer.compute(self.gsim, 1)
+                gmf = gmf.flatten()
                 self.rupture_list.append(rupture)
                 self.gmf_list.append(gmf)
+
+    def rsa2mmi(self):
+        """Convert ground motion fields to MMI intensity
+        """
+        for gmf in self.gmf_list:
+            mmi = rsa2mmi9(gmf, period = 1.0)
+            self.mmi_list.append(mmi)
+
+    def calc_sum_squares_mmi(self, mmi_obs):
+        """Calculates sum of squares for each rupture gmf compared 
+        with historical observations
+        """
+        self.sum_squares_list = []
+        for mmi in self.mmi_list:
+            sum_squares = np.sum((mmi - mmi_obs)**2)
+            self.sum_squares_list.append(sum_squares)
+
+    def find_best_fit(self):
+        """Find rupture with minimm sum of squares
+        """
+        index = np.argmin(self.sum_squares_list)
+        self.best_rupture = self.rupture_list[index]
