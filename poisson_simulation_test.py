@@ -209,19 +209,25 @@ def read_mmi_obs(filename):
             mmi_obs_dict[city] = [[int(row[1])], [int(row[3])]]
     return mmi_obs_dict
 
-def plot_mmi_hazmap_and_obs(median, percentile1, percentile2, mmi_obs, city):
+def plot_mmi_hazmap_and_obs(median, percentile1, percentile2, mmi_obs, city,
+                            years = 69, ax=None):
     """Plot the hazard map MMI occurrence percentiles against the 
     number of historical observations
     """
     x_values = numpy.arange(0,14)
-    pyplot.clf()
-    pyplot.semilogy(x_values, median)
-    pyplot.semilogy(x_values, percentile1)
-    pyplot.semilogy(x_values, percentile2)
-    pyplot.scatter(mmi_obs[city][0], mmi_obs[city][1])
+    if ax is None:
+        pyplot.clf()
+    a, = pyplot.semilogy(x_values, median, color='k')
+    b, = pyplot.semilogy(x_values, percentile1, color='b', linestyle='--')
+    pyplot.semilogy(x_values, percentile2, color='b', linestyle='--')
+    c = pyplot.scatter(mmi_obs[city][0], mmi_obs[city][1])
     pyplot.xlim(2.9,10)
     pyplot.ylim(0.8, 1000)
-    pyplot.savefig('mmi_hazmap_and_observations_%s.png' % city)
+    ax.set_title(city)
+    ax.set_xlabel('MMI')
+    ax.set_ylabel('Number of occurences in %i years' % years)
+    return a,b,c
+#    pyplot.savefig('mmi_hazmap_and_observations_%s.png' % city)
 
 if __name__ == "__main__":
     filename = '../hazard_curves_1.0s.csv'
@@ -230,11 +236,13 @@ if __name__ == "__main__":
     site_class = 'C'
     cities = ['Jakarta', 'Bandung', 'Semarang', 'Yogyakarta', 'Surabaya']
     time = 69 # number of years in time interval - annual rates
+    time_others = 69
     time_jkt = 196 # complmeteness for Jakarta
     mmi_obs_dict = read_mmi_obs(obs_filename)
     #    print mmi_obs_dict                                                                                      
     data = numpy.genfromtxt(filename, delimiter= ',', skip_header=1)
     gm = data[:,0]
+    haz_mmi_dict = {}
 #    city = 'Jakarta'
     for city in cities:
         print 'Doing city %s' % city
@@ -243,15 +251,19 @@ if __name__ == "__main__":
             site_class = 'D'
             data_index = 1
         elif city == 'Bandung':
+            time = time_others
             site_class = 'C'
             data_index = 2
         elif city == 'Semarang':
+            time = time_others
             site_class = 'D'
             data_index = 3
         elif city == 'Yogyakarta':
+            time = time_others
             site_class = 'C'
             data_index = 4
         elif city == 'Surabaya':
+            time = time_others
             site_class = 'D'
             data_index = 5
         # Calculate incremental rate
@@ -286,6 +298,27 @@ if __name__ == "__main__":
         print 'median', median
         # Don't always need to do this, it takes a long time
         #    plot_mmi_samples(mmi_sample_database, mmi_sample_cumulative_database)
+        haz_mmi_dict[city]=[median, percentile_97_5, percentile_2_5]
+
+    # Now plot all onto one figure
+    pyplot.clf()
+    fig = pyplot.figure(figsize=(15,20))
+    pyplot.subplots_adjust(hspace=0.4, wspace = 0.2)
+    i = 1
+    for city in cities:
+        if city=='Jakarta':
+            time = time_jkt
+        else: 
+            time = time_others
+        ax = pyplot.subplot(3,2,i)
+        a,b,c = plot_mmi_hazmap_and_obs(haz_mmi_dict[city][0], haz_mmi_dict[city][1],
+                                haz_mmi_dict[city][2], mmi_obs_dict, city, years=time,
+                                ax=ax)
+        i+=1
+    fig.legend((a,b,c), ('Median number of exceedances \n from the hazard curve',
+                         '2.5 and 97.5 percentiles of \n number of exceedances \n from the hazard curve',
+                         'Number of observed exceedances'), 'lower right',
+               bbox_to_anchor=(0.85, 0.19))
+    pyplot.savefig('mmi_hazmap_and_observations_%.1f.png' % period)
         
-        plot_mmi_hazmap_and_obs(median, percentile_97_5, percentile_2_5,
-                                mmi_obs_dict, city)
+
