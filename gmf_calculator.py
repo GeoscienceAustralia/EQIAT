@@ -14,9 +14,7 @@ from openquake.commonlib.source import SourceModelParser
 from openquake.commonlib.sourceconverter import SourceConverter, \
     area_to_point_sources, SourceGroup
 
-paramfile = 'params.txt'
-
-def get_pt_sources(area_source_file, discretisation=200.):
+def get_pt_sources(area_source_file, discretisation=50.):
     """Calls OpenQuake parsers to read area source model
     from source_mode.xml type file, convert to point sources
     and return to calculate ruptures.
@@ -32,7 +30,6 @@ def get_pt_sources(area_source_file, discretisation=200.):
     converter = SourceConverter(50, 10, width_of_mfd_bin=0.1,
                                 area_source_discretization=discretisation)
     parser = SourceModelParser(converter)
-    print [method for method in dir(parser)]# if callable(getattr(parser, method))]
     try:
         sources = parser.parse_sources(area_source_file)
     except AttributeError: # Handle version 2.1 and above
@@ -54,35 +51,40 @@ def get_pt_sources(area_source_file, discretisation=200.):
                 new_pt_sources[pt.tectonic_region_type] = [pt]
     return new_pt_sources
 
-class rupture_gmf(object):
+class RuptureGmf(object):
     """Class for storing ruptures and associated
     ground motion fields for later analysis
-
-def gmf_calculate(pt_sources, gsim):
-    """Generates ruptures for each pt source and calculates ground motion
-    field.
-    :params pt_sources:
-        Point source objects derived from original area source model
-    :params gsim:
-        GSIM instance (i.e. subclass of openquake.hazardlib.gsim.base.GMPE)
-    :returns gmfs:
-        Set of ruptures and associated parameters for ground motion
-        calculations
     """
-    
-    for pt in pt_sources:
-#        rupture_mags = []
-#        rupture_hypocenter = []
-        ruptures = pt.iter_ruptures()
-        for rupture in ruptures:
-#            rupture_mags.append(rupture.mag)
-#            rupture_hypocenter.append(rupture.hypocenter)
-            computer = GmfComputer(
-                rupture, self.sitecol, ['0.0', '1.0'], [gsim])
-            gmf = computer.compute(gsim, 1)
-            
- #       rupture_mags = np.array(rupture_mags).flatten()
-                # make the same length as the corners
-#        rupture_mags = np.repeat(rupture_mags, 4)
-#        rupture_lons = np.array(rupture_lons).flatten()
 
+    def __init__(self, pt_sources, gsim, sitecol, imts = ['PGA', 'SA(1.0)']):
+        """
+        :params pt_sources:
+            Point source objects derived from original area source model
+        :params gsim:
+            GSIM instance (i.e. subclass of openquake.hazardlib.gsim.base.GMPE)
+        """
+        self.pt_sources = pt_sources
+        self.gsim  = gsim
+        self.imts = imts
+        self.sitecol = sitecol
+        self.rupture_list = [] # list for storing ruptures
+        self.gmf_list = [] # list for storing associated gmfs
+ 
+    def calculate(self):
+        """Generates ruptures for each pt source and calculates ground motion
+        field.
+        :returns gmfs:
+            Set of ruptures and associated parameters for ground motion
+            calculations  
+        """
+        for pt in self.pt_sources:
+            #        rupture_mags = []
+            #        rupture_hypocenter = []
+            ruptures = pt.iter_ruptures()
+            for rupture in ruptures:
+                computer = GmfComputer(rupture, self.sitecol,
+                                       self.imts, [self.gsim],
+                                       truncation_level=0)
+                gmf = computer.compute(self.gsim, 1)
+                self.rupture_list.append(rupture)
+                self.gmf_list.append(gmf)
