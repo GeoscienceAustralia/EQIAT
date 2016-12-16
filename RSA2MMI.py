@@ -67,7 +67,7 @@ def rsa2mmi(data,period = 1.0,include_uncertainty='n'):
     MMI_list = []
     MMI_list = []
     if period == 1.0:
-        print 'doing period ',period
+        #print 'doing period ',period
         C1 = 3.23
         C2 = 1.18
         C3 = 0.57
@@ -75,7 +75,7 @@ def rsa2mmi(data,period = 1.0,include_uncertainty='n'):
         logy15 = 1.50
         sigma1 = 0.84
     elif period == 0.0:
-        print 'doing period ',period
+        #print 'doing period ',period
         C1 = 2.65
         C2 = 1.39
         C3 = -1.91
@@ -132,7 +132,7 @@ def rsa2mmi9(data,period = 1.0,include_uncertainty='n'):
 
     MMI_list = []
     if period == 1.0:
-        print 'doing period ',period
+        #print 'doing period ',period
         C1 = 3.23
         C2 = 1.18
         C3 = 0.57
