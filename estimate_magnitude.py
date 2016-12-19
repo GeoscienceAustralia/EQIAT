@@ -59,7 +59,7 @@ sitecol = SiteCollection.from_points(sites_data[:,0], sites_data[:,1], sitemodel
 """
 
 #Generate pt sources
-pt_sources = get_pt_sources(area_source_file, discretisation = 20)
+pt_sources = get_pt_sources(area_source_file, discretisation = 5)
 #Loop through source types
 for key,item in pt_sources.iteritems():
 #    print key
@@ -72,8 +72,9 @@ for key,item in pt_sources.iteritems():
     # Convert to MMI
     rupture_gmfs.rsa2mmi()
     print rupture_gmfs.mmi_list[-1]
-    rupture_gmfs.calc_sum_squares_mmi(sites_data[:,2]) 
-    #    print rupture_gmfs.sum_squares_list
+    #rupture_gmfs.calc_sum_squares_mmi_weighted(sites_data[:,2]) 
+    rupture_gmfs.calc_sum_squares_mmi(sites_data[:,2])
+#    print rupture_gmfs.sum_squares_list
     rupture_gmfs.find_best_fit()
     print 'Best magnitude', rupture_gmfs.best_rupture.mag
     print rupture_gmfs.best_rupture.hypocenter

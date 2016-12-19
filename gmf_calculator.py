@@ -108,6 +108,16 @@ class RuptureGmf(object):
             sum_squares = np.sum((mmi - mmi_obs)**2)
             self.sum_squares_list.append(sum_squares)
 
+    def calc_sum_squares_mmi_weighted(self, mmi_obs):
+        """Calculates sum of squares for each rupture gmf compared 
+        with historical observations
+        """
+        self.sum_squares_list = []
+        weights = np.where(mmi_obs < 5, 2, 1) # Increase weight for low MMI events
+        for mmi in self.mmi_list:
+            sum_squares = np.sum(np.dot(weights,(mmi - mmi_obs))**2)/(np.sum(weights**2))
+            self.sum_squares_list.append(sum_squares)
+
     def find_best_fit(self):
         """Find rupture with minimm sum of squares
         """
