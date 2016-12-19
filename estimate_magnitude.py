@@ -16,11 +16,11 @@ from openquake.hazardlib.gsim.chiou_youngs_2008 import ChiouYoungs2008
 from openquake.hazardlib.geo.point import Point
 # Area source model is used to define the parameter space to be searched
 # Note this should be made more generic to use faults as well
-area_source_file = 'source_model_1840.xml'
+area_source_file = 'data/source_model_1840.xml'
 #paramfile = 'params.txt'
 gsim = ChiouYoungs2008()
 trt = 'Active'
-site_file = '1840HMMI.txt'
+site_file = 'data/1840HMMI.txt'
 sites_data = np.genfromtxt(site_file)
 site_points = []
 for i in range(len(sites_data[:,0])):
@@ -33,7 +33,7 @@ for i in range(len(sites_data[:,0])):
 ##reference_depth_to_1pt0km_per_sec = 300.0
 
 #Using inferred vs30, z1.0 and z2.5 values
-site_model_file = 'jawa_site_model.xml'
+site_model_file = 'data/jawa_site_model.xml'
 
 sitecol = get_site_collection(site_model_file, site_points) 
 print sitecol
