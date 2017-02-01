@@ -10,8 +10,8 @@ import os, sys
 import numpy as np
 
 from openquake.hazardlib.calc.gmf import GmfComputer
-from openquake.commonlib.source import SourceModelParser
-from openquake.commonlib.sourceconverter import SourceConverter, \
+from openquake.hazardlib.nrml import SourceModelParser
+from openquake.hazardlib.sourceconverter import SourceConverter, \
     area_to_point_sources, SourceGroup
 from RSA2MMI import rsa2mmi9
 
@@ -175,7 +175,7 @@ class RuptureGmf(object):
             self.sum_squares_list
         except AttributeError:
             self.calc_sum_squares_mmi(mmi_obs)
-        self.rmse = np.sqrt(self.sum_squares_list/len(mmi_obs))
+        self.rmse = np.sqrt(np.array(self.sum_squares_list)/float(len(mmi_obs)))
 
     def calc_sum_squares_mmi_weighted(self, mmi_obs):
         """Calculates sum of squares for each rupture gmf compared 
