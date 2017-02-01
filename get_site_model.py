@@ -5,7 +5,7 @@ Geoscienec Australia
 December 2016
 """
 
-from openquake.commonlib import nrml
+from openquake.hazardlib import nrml
 from openquake.hazardlib import geo, site, imt
 from openquake.risklib import valid
 MAX_SITE_MODEL_DISTANCE = 5  # km, given by Graeme Weatherill
