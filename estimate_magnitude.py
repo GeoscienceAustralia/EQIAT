@@ -11,7 +11,7 @@ import numpy as np
 from gmf_calculator import get_pt_sources, RuptureGmf
 from get_site_model import get_site_collection
 from openquake.hazardlib.site import SiteCollection
-from openquake.commonlib import nrml
+from openquake.hazardlib import nrml
 from openquake.hazardlib.gsim.chiou_youngs_2008 import ChiouYoungs2008
 from openquake.hazardlib.geo.point import Point
 # Area source model is used to define the parameter space to be searched
