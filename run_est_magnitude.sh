@@ -1,5 +1,5 @@
 #PBS -P n74
-#PBS -q express
+#PBS -q normal
 #PBS -l walltime=01:00:00
 #PBS -l ncpus=1
 #PBS -l mem=16GB
@@ -22,5 +22,5 @@ export PYTHONPATH=.:/home/547/jdg547/.local/lib/python2.7/site-packages:${PYTHON
 export PYTHONPATH=.:/short/w84/NSHA18/sandpit/jdg547/oq-hazardlib:${PYTHONPATH}
 export PYTHONPATH=.:/short/w84/NSHA18/sandpit/jdg547/oq-engine:${PYTHONPATH}
 
-python estimate_magnitude.py >& parjob.log
+python estimate_magnitude.py >& parjob_1847.log
 

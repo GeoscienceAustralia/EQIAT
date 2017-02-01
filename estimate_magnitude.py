@@ -16,11 +16,11 @@ from openquake.hazardlib.gsim.chiou_youngs_2008 import ChiouYoungs2008
 from openquake.hazardlib.geo.point import Point
 # Area source model is used to define the parameter space to be searched
 # Note this should be made more generic to use faults as well
-area_source_file = 'data/source_model_1840.xml'
+area_source_file = 'data/source_model_1847.xml'
 #paramfile = 'params.txt'
 gsim = ChiouYoungs2008()
 trt = 'Active'
-site_file = 'data/1840HMMI.txt'
+site_file = 'data/1847HMMI.txt'
 sites_data = np.genfromtxt(site_file)
 site_points = []
 for i in range(len(sites_data[:,0])):
@@ -59,7 +59,7 @@ sitecol = SiteCollection.from_points(sites_data[:,0], sites_data[:,1], sitemodel
 """
 
 #Generate pt sources
-pt_sources = get_pt_sources(area_source_file, discretisation = 5)
+pt_sources = get_pt_sources(area_source_file, discretisation = 10)
 #Loop through source types
 for key,item in pt_sources.iteritems():
 #    print key
@@ -73,7 +73,8 @@ for key,item in pt_sources.iteritems():
     rupture_gmfs.rsa2mmi()
     print rupture_gmfs.mmi_list[-1]
     #rupture_gmfs.calc_sum_squares_mmi_weighted(sites_data[:,2]) 
-    rupture_gmfs.calc_sum_squares_mmi(sites_data[:,2])
+#    rupture_gmfs.calc_sum_squares_mmi(sites_data[:,2])
+    rupture_gmfs.rmse(sites_data[:,2])
 #    print rupture_gmfs.sum_squares_list
     rupture_gmfs.find_best_fit()
     print 'Best magnitude', rupture_gmfs.best_rupture.mag
@@ -81,3 +82,4 @@ for key,item in pt_sources.iteritems():
 #    print rupture_gmfs.best_rupture.surface
     print 'Best dip', rupture_gmfs.best_rupture.surface.get_dip()
     print 'Best strike', rupture_gmfs.best_rupture.surface.get_strike()
+    print 'RMSE', rupture_gmfs.min_rmse

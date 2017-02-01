@@ -46,8 +46,10 @@ def get_site_collection(site_model_file, sites, site_model_params=None):
         param, dist = site_model_params.\
                       get_closest(float(pt.longitude), float(pt.latitude))
         if dist >= MAX_SITE_MODEL_DISTANCE:
-            logging.warn('The site parameter associated to %s came from a '
-                         'distance of %d km!' % (pt, dist))
+            #logging.warn('The site parameter associated to %s came from a '
+            #             'distance of %d km!' % (pt, dist))
+            print 'WARNING:The site parameter associated to %s came from a ' \
+                'distance of %d km!' % (pt, dist)
         sitecol.append(
             site.Site(pt, param.vs30, param.measured,
                       param.z1pt0, param.z2pt5, param.backarc))
