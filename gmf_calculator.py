@@ -167,22 +167,26 @@ class RuptureGmf(object):
             sum_squares = np.sum((mmi - mmi_obs)**2)
             self.sum_squares_list.append(sum_squares)
 
-    def rmse(self, mmi_obs):
-        """Calculates root-mean-square error of each rupture gmt
+    def calc_rmse(self, mmi_obs, weights = None):
+        """Calculates root-mean-square error of each rupture gmf
         compared with historical observations
         """
         try:
             self.sum_squares_list
         except AttributeError:
-            self.calc_sum_squares_mmi(mmi_obs)
-        self.rmse = np.sqrt(np.array(self.sum_squares_list)/float(len(mmi_obs)))
+            if weights is not None:
+                self.calc_sum_squares_mmi_weighted(mmi_obs, weights)
+                self.rmse = np.sqrt(np.array(self.sum_squares_list))
+            else:
+                self.calc_sum_squares_mmi(mmi_obs)
+                self.rmse = np.sqrt(np.array(self.sum_squares_list)/float(len(mmi_obs)))
 
-    def calc_sum_squares_mmi_weighted(self, mmi_obs):
+    def calc_sum_squares_mmi_weighted(self, mmi_obs, weights):
         """Calculates sum of squares for each rupture gmf compared 
         with historical observations
         """
         self.sum_squares_list = []
-        weights = np.where(mmi_obs < 5, 2, 1) # Increase weight for low MMI events
+#        weights = np.where(mmi_obs < 5, 2, 1) # Increase weight for low MMI events
         for mmi in self.mmi_list:
             sum_squares = np.sum(np.dot(weights,(mmi - mmi_obs))**2)/(np.sum(weights**2))
             self.sum_squares_list.append(sum_squares)
