@@ -290,9 +290,9 @@ if __name__ == "__main__":
         percentile_2_5 = numpy.percentile(mmi_sample_cumulative_database, 2.5, axis=0,
                                           interpolation='linear')
         median = numpy.median(mmi_sample_cumulative_database, axis=0)
-        #median[median == 0] = 0.1
-        #percentile_2_5[percentile_2_5 == 0] = 0.1
-        #percentile_97_5[percentile_97_5 == 0] = 0.1
+        median[median == 0] = 0.0000001
+        percentile_2_5[percentile_2_5 == 0] = 0.0000001
+        percentile_97_5[percentile_97_5 == 0] = 0.0000001
         print percentile_97_5
         print percentile_2_5
         print 'median', median
