@@ -13,7 +13,7 @@ from openquake.hazardlib.calc.gmf import GmfComputer
 from openquake.hazardlib.nrml import SourceModelParser
 from openquake.hazardlib.sourceconverter import SourceConverter, \
     area_to_point_sources, SourceGroup
-from RSA2MMI import rsa2mmi9
+from RSA2MMI import rsa2mmi8p5
 
 def get_pt_sources(area_source_file, discretisation=50.):
     """Calls OpenQuake parsers to read area source model
@@ -151,11 +151,28 @@ class RuptureGmf(object):
                 self.rupture_list.append(rupture)
                 self.gmf_list.append(gmf)
 
+    def calculate_from_rupture(self, rupture, rup_sitecol=None):
+        """Method to generate scenario ground motion
+        for a specific rupture
+        """
+        if rup_sitecol is None:
+            rup_sitecol = self.sitecol
+        computer = GmfComputer(rupture, rup_sitecol,
+                               self.imts, [self.gsim],
+                               truncation_level=0)
+        gmf = computer.compute(self.gsim, 1)
+        gmf = gmf.flatten()
+        print 'gmf', gmf
+        self.rupture_scenario = rupture
+        self.rupture_gmf = gmf
+        self.rupture_gmf_mmi = rsa2mmi8p5(gmf, period = 1.0)
+        
+
     def rsa2mmi(self):
         """Convert ground motion fields to MMI intensity
         """
         for gmf in self.gmf_list:
-            mmi = rsa2mmi9(gmf, period = 1.0)
+            mmi = rsa2mmi8p5(gmf, period = 1.0)
             self.mmi_list.append(mmi)
 
     def calc_sum_squares_mmi(self, mmi_obs):
@@ -188,7 +205,12 @@ class RuptureGmf(object):
         self.sum_squares_list = []
 #        weights = np.where(mmi_obs < 5, 2, 1) # Increase weight for low MMI events
         for mmi in self.mmi_list:
-            sum_squares = np.sum(np.dot(weights,(mmi - mmi_obs))**2)/(np.sum(weights**2))
+            #sum_squares = np.sum(np.dot(weights,(mmi - mmi_obs))**2)/(np.sum(weights**2))
+#            print weights
+            weights = weights*(1/sum(weights)) # Normalise weights to sum to 1
+#            print weights
+#            print sum(weights)
+            sum_squares = np.sum(np.dot(weights,(mmi - mmi_obs))**2)
             self.sum_squares_list.append(sum_squares)
 
     def find_best_fit(self):
