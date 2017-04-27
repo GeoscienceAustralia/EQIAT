@@ -191,6 +191,26 @@ def rsa2mmi9(data,period = 1.0,include_uncertainty='n'):
             
     return MMI_list
 
+# Convert RSA to MMI but limit maximum intensity value to VIII.5                                                               
+def rsa2mmi8p5(data,period = 1.0,include_uncertainty='n'):
+    """Limit MMI to maximum of 8.5
+    """
+    MMI_list = rsa2mmi9(data, period, include_uncertainty)
+    for i, MMI in enumerate(MMI_list):
+        if MMI > 8.5:
+            MMI_list[i] = 8.5
+    return MMI_list
+
+# Convert RSA to MMI but limit maximum intensity value to VIII                                                                 
+def rsa2mmi8(data,period = 1.0,include_uncertainty='n'):
+    """Limit MMI to maximum of 8.0
+    """
+    MMI_list = rsa2mmi9(data, period, include_uncertainty)
+    for i, MMI in enumerate(MMI_list):
+        if MMI > 8.0:
+            MMI_list[i] = 8.0
+    return MMI_list
+
 # Write out coordinates and intensity values
 def write_data(outfile,coords,MMI):
     f_out = open(outfile,'w')
