@@ -207,10 +207,12 @@ class RuptureGmf(object):
         for mmi in self.mmi_list:
             #sum_squares = np.sum(np.dot(weights,(mmi - mmi_obs))**2)/(np.sum(weights**2))
 #            print weights
-            weights = weights*(1/sum(weights)) # Normalise weights to sum to 1
+            weights = np.array(weights)
+            weights = weights*(1./sum(weights)) # Normalise weights to sum to 1
 #            print weights
 #            print sum(weights)
-            sum_squares = np.sum(np.dot(weights,(mmi - mmi_obs))**2)
+            sum_squares = np.dot(weights,(mmi - mmi_obs)**2)
+#            sum_squares = np.sum(np.dot(weights,(mmi - mmi_obs))**2)
             self.sum_squares_list.append(sum_squares)
 
     def find_best_fit(self):
