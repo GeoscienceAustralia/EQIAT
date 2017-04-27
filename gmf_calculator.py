@@ -13,7 +13,7 @@ from openquake.hazardlib.calc.gmf import GmfComputer
 from openquake.hazardlib.nrml import SourceModelParser
 from openquake.hazardlib.sourceconverter import SourceConverter, \
     area_to_point_sources, SourceGroup
-from RSA2MMI import rsa2mmi8p5
+from RSA2MMI import rsa2mmi8
 
 def get_pt_sources(area_source_file, discretisation=50.):
     """Calls OpenQuake parsers to read area source model
@@ -165,14 +165,14 @@ class RuptureGmf(object):
         print 'gmf', gmf
         self.rupture_scenario = rupture
         self.rupture_gmf = gmf
-        self.rupture_gmf_mmi = rsa2mmi8p5(gmf, period = 1.0)
+        self.rupture_gmf_mmi = rsa2mmi8(gmf, period = 1.0)
         
 
     def rsa2mmi(self):
         """Convert ground motion fields to MMI intensity
         """
         for gmf in self.gmf_list:
-            mmi = rsa2mmi8p5(gmf, period = 1.0)
+            mmi = rsa2mmi8(gmf, period = 1.0)
             self.mmi_list.append(mmi)
 
     def calc_sum_squares_mmi(self, mmi_obs):
