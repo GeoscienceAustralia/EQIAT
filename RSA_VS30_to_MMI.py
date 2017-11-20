@@ -47,15 +47,19 @@ class Amp_fns(object):
             self.mid_period_dict[classes[i]] = mid_period_fn
 
 
-def hazmap2amp(RSA1, NEHRP_class):
+def hazmap2amp(RSA1, NEHRP_class, period=1.0):
     """Function to amplify RSA amplifcation based on BS30 values and the NEHRP
         amplification factors
     """
     function = Amp_fns()
     RSA_amp_list = []
     for i in range(len(RSA1)):
-        RSA_amp = function.mid_period_dict[NEHRP_class[i]](RSA1[i])*RSA1[i]
-        RSA_amp_list.append(RSA_amp)
+        if period <= 0.3: # Assumed value, not clear from paper
+            RSA_amp = function.short_period_dict[NEHRP_class[i]](RSA1[i])*RSA1[i]
+            RSA_amp_list.append(RSA_amp)
+        else:
+            RSA_amp = function.mid_period_dict[NEHRP_class[i]](RSA1[i])*RSA1[i]
+            RSA_amp_list.append(RSA_amp)
     return RSA_amp_list
 
 
