@@ -1,10 +1,12 @@
 import sys
+import re
 from mpl_toolkits.basemap import Basemap, maskoceans
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import colors, colorbar
 from osgeo import gdal
+import shapefile
 import numpy as np
 from numpy import linspace
 from numpy import meshgrid
@@ -17,6 +19,10 @@ mmi_obs_file = sys.argv[1]# 'data/1847HMMI.txt'
 #infile = 'outputs/scenario_gmf_loc_mmi_1847_ChiouYoungs2008_gridded_clip.tif'
 infile = sys.argv[2] #r'outputs/scenario_gmf_loc_mmi_1847_ChiouYoungs2008().csv'
 bbox = sys.argv[3] #'104/116/-10/-5'
+try:
+    shpfile = sys.argv[4]
+except:
+    shpfile = None
 
 # function fro roman numerals
 def write_roman(num):
@@ -133,12 +139,18 @@ csm = m.contour(xx, yy, maskdata, clevs, latlon=True, colors='k')
 #plt.clabel(csm, inline=1, fontsize=10, fmt='%0.2f')
 #m.pcolormesh(xy[0], xy[1], data, latlon=True)
 
+# Now plot fault shapefile, if it exists
+# Note that we need to remove . from shapefile names for them to work with this
+if shpfile is not None:
+    print shpfile[:-4]
+    m.readshapefile(shpfile[:-4],'rupture', drawbounds=True)
+
 # Now add historical points on top                                                                            
 mmi_labels = []
 for obs in mmi_obs[:,2]:
     mmi_labels.append(write_roman(int(obs)))
 m.scatter(mmi_obs[:,0], mmi_obs[:,1], c=mmi_obs[:,2], cmap=cmap, 
-          vmin=0.5, vmax=8.5, latlon=True)
+          vmin=0.5, vmax=8.5, s=40, latlon=True)
 texts = []
 for label, x, y in zip(mmi_labels, mmi_obs[:,0], mmi_obs[:,1]):
     x,y =  m(x,y)
@@ -148,17 +160,50 @@ for label, x, y in zip(mmi_labels, mmi_obs[:,0], mmi_obs[:,1]):
 adjust_text(texts, only_move='xy',
             arrowprops=dict(arrowstyle="->",
                             color='k', lw=0.5))
+filename_parts = infile.rstrip('().csv').split('_')
+year = filename_parts[4][:4]
+print 'year', year
+# Some string splitting to get the GMM name
+gmm = filename_parts[5]
+a=re.sub('([a-z])([1-9])', r'\1 \2', gmm)
+b = re.sub('([a-z])([A-Z])', r'\1 \2', a) 
+c = re.sub('([1-9])([A-Z])', r'\1 \2', b)
+d = re.sub('([A-Z])([A-Z])', r'\1 \2', c).split()
+d = [s.replace('Et', 'et') for s in d]
+d = [s.replace('Al','al') for s in d]
+d = [s.replace('S','Subduction') for s in d]
+d = [s.replace('Subductionlab','Slab') for s in d]
+d = [s.replace('Inter','Interface') for s in d]
+if 'et' not in d:
+    d.insert(1, '&')
+gmm_name = ' '.join(d)
+title = year + '\n' + gmm_name
+plt.title(title)
 ax = plt.gca()
+"""
 for child in ax.get_children():
-#    print type(child)
+    print type(child)
+    if isinstance(child, matplotlib.patches.FancyArrowPatch):
+        print 'here'
+        sys.exit()
     if isinstance(child, matplotlib.text.Annotation):
         print child.arrowprops
+        print child._arrow_relpos
+        print child.arrow_patch.get_arrowstyle()
+        print child.arrow_patch.get_patch_transform().get_matrix()
+        print child.arrow_patch.patchA
+        print child.arrow_patch.patchB
+#        print child.arrow_patch.get_xy()
 #print dir(child)
 #        print child.arrow
         print dir(child.arrow_patch)
         print child.arrow_patch._posA_posB
         print child.arrow_patch.get_path()
         print child.arrow_patch.get_path_in_displaycoord()
+        #print child.arrow_patch._arrow_relpos
+        print child.arrow_patch.shrinkA
+        print child.arrow_patch.shrinkB
+"""
 #    plt.annotate(
 #        label,
 #        xy=(x, y), xytext=(-2, 2), xycoords='data', fontsize=11,
@@ -172,6 +217,7 @@ norm = colors.BoundaryNorm(clevs, cmap.N)
 #norm = colors.Normalize(vmin=0, vmax=9)
 cb = colorbar.ColorbarBase(cax, cmap=cmap, norm=norm, orientation='horizontal')
 cb.ax.get_xaxis().set_ticks([])
+cb.set_label('MMI', fontsize=16)
 #for j, lab in enumerate(['$0$','$1$','$2$','$>3$']):
 clevs = clevs[1:]
 labs = []
@@ -184,5 +230,5 @@ for j, lab in enumerate(clevs):
 #print labs
 #cb.ax.set_xticklabels(labs)
 
-figfilename = infile.rstrip('.tif') + '_fig.png'
+figfilename = infile.rstrip('().csv') + '_fig.png'
 plt.savefig(figfilename)
