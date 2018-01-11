@@ -5,6 +5,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import colors, colorbar
+from matplotlib.patches import Polygon
+from matplotlib.collections import PatchCollection
 from osgeo import gdal
 import shapefile
 import numpy as np
@@ -144,6 +146,10 @@ csm = m.contour(xx, yy, maskdata, clevs, latlon=True, colors='k')
 if shpfile is not None:
     print shpfile[:-4]
     m.readshapefile(shpfile[:-4],'rupture', drawbounds=True)
+    patches   = []
+    for info, shape in zip(m.rupture_info, m.rupture):
+        patches.append( Polygon(np.array(shape), True) )  
+    ax.add_collection(PatchCollection(patches, facecolor= 'm', edgecolor='k', linewidths=2., zorder=2))
 
 # Now add historical points on top                                                                            
 mmi_labels = []
