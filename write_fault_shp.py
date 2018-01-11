@@ -14,7 +14,6 @@ def fault2shp(corner_lons, corner_lats, output_shp, corner_depths=None, vertice_
     #for i in range(len(corner_lons)):
     # need to get in right order
     if vertice_array:
-        print 'do something'
         # Assume corner_lons, corner_lats are 2 1D array
         # giving the corrdinates of the polygon boundary
         for i in range(len(corner_lons)):
