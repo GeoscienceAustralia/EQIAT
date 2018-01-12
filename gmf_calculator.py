@@ -97,8 +97,8 @@ class RuptureGmf(object):
 
     def __init__(self, sources, gsim, sitecol, imts = ['SA(1.0)']):
         """
-        :params pt_sources:
-            Point source objects derived from original area source model
+        :params sources:
+            Source objects derived from original area source model
         :params gsim:
             GSIM instance (i.e. subclass of openquake.hazardlib.gsim.base.GMPE)
         """
@@ -142,7 +142,8 @@ class RuptureGmf(object):
             #        rupture_hypocenter = []
             ruptures = source.iter_ruptures()
             for rupture in ruptures:
-               # print 'Calculating rupture', rupture.hypocenter
+                #print type(rupture)
+                #print 'Calculating rupture', rupture.hypocenter
                 computer = GmfComputer(rupture, self.sitecol,
                                        self.imts, [self.gsim],
                                        truncation_level=0)

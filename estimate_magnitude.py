@@ -10,7 +10,8 @@ import numpy as np
 import argparse
 
 from gmf_calculator import get_pt_sources, get_sources, RuptureGmf
-from get_site_model import get_site_collection
+from get_site_model import get_site_collection, read_site_col
+from write_fault_shp import fault2shp
 from openquake.hazardlib.site import SiteCollection
 from openquake.hazardlib import nrml
 from openquake.hazardlib.gsim.campbell_bozorgnia_2008 import CampbellBozorgnia2008
@@ -21,6 +22,8 @@ from openquake.hazardlib.gsim.atkinson_boore_2003 import AtkinsonBoore2003SSlab,
     AtkinsonBoore2003SSlabCascadia, AtkinsonBoore2003SInter
 from openquake.hazardlib.gsim.zhao_2006 import ZhaoEtAl2006SSlab, ZhaoEtAl2006SInter
 from openquake.hazardlib.geo.point import Point
+from openquake.hazardlib.geo.surface.simple_fault import SimpleFaultSurface
+from openquake.hazardlib.geo.surface.complex_fault import ComplexFaultSurface
 
 parser = argparse.ArgumentParser(
         description='Estimate magnitude and location based on historical intensity data')
@@ -50,7 +53,7 @@ if trt == 'Active':
 if trt == 'Subduction Interface':
     gsim_list = [YoungsEtAl1997SInter(), AtkinsonBoore2003SInter(), ZhaoEtAl2006SInter()]
 
-def build_site_col(sites_data, site_model_file):
+def build_site_col(sites_data, site_model_file, filename=None):
     """Interpolate vs30 values to sites of interest
     """
 #    sites_data = np.genfromtxt(site_file)
@@ -58,8 +61,9 @@ def build_site_col(sites_data, site_model_file):
     for i in range(len(sites_data[:,0])):
         site_pt = Point(sites_data[i,0], sites_data[i,1])
         site_points.append(site_pt)
-    sitecol = get_site_collection(site_model_file, site_points)
+    sitecol = get_site_collection(site_model_file, site_points, None,filename)
     return sitecol
+    
 
 # Background site class model
 #Using inferred vs30, z1.0 and z2.5 values                                                               
@@ -69,10 +73,17 @@ def build_site_col(sites_data, site_model_file):
 #site_file = 'data/1699HMMI_weighted_mod.txt'
 sites_data = np.genfromtxt(site_file)
 sitecol = build_site_col(sites_data, site_model_file)
-# Build sites for scenarios
+# Build sites for scenarios (or use pre-calculated site file
 #site_file_pts = 'data/jawa_sites_thin.csv'
-sites_data_pts = np.genfromtxt(site_file_pts, delimiter=',')
-site_col_scenario = build_site_col(sites_data_pts, site_model_file)
+if site_file_pts.endswith('.csv'):
+    sites_data_pts = np.genfromtxt(site_file_pts, delimiter=',')
+    site_col_scenario = build_site_col(sites_data_pts, site_model_file)
+elif site_file_pts.endswith('.xml'):
+    site_col_scenario = read_site_col(site_file_pts)
+    sites_data_pts = np.vstack([site_col_scenario.lons, site_col_scenario.lats]).transpose()
+else:
+    msg = 'Invalid site model file %s ' % site_file_pts
+    raise ValueError(msg)
 
 
 """
@@ -99,7 +110,7 @@ output_dir = 'outputs'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 #Generate pt sources
-pt_sources = get_sources(area_source_file, discretisation = 10)
+pt_sources = get_sources(area_source_file, discretisation = 5)
 #Loop through source types
 for key,item in pt_sources.iteritems():
 #    print key
@@ -124,6 +135,62 @@ for key,item in pt_sources.iteritems():
     #    print rupture_gmfs.best_rupture.surface
         print 'Best dip', rupture_gmfs.best_rupture.surface.get_dip()
         print 'Best strike', rupture_gmfs.best_rupture.surface.get_strike()
+# write best-fit rupture to shapefile                                                                                      
+        output_shp_filename = 'rupture_scenario_%s_%s_Mw%.2f_%.3f_%.3f_%.2fkm.shp' % (event_name, gsim,
+                                                                                      rupture_gmfs.best_rupture.mag,
+                                                                                      rupture_gmfs.best_rupture.hypocenter.longitude,
+                                                                                      rupture_gmfs.best_rupture.hypocenter.latitude,
+                                                                                      rupture_gmfs.best_rupture.hypocenter.depth)
+        output_shp = os.path.join(output_dir, output_shp_filename)
+        print type(rupture_gmfs.best_rupture.surface)
+        if isinstance(rupture_gmfs.best_rupture.surface, SimpleFaultSurface) or \
+                isinstance(rupture_gmfs.best_rupture.surface, ComplexFaultSurface):
+            # Dealing with simple faults
+            #print rupture_gmfs.best_rupture.surface.mesh.__dict__
+            #print rupture_gmfs.best_rupture.surface.__dict__
+            #print rupture_gmfs.best_rupture.__dict__
+            #print type(rupture_gmfs.best_rupture.surface.mesh)
+            #print type(rupture_gmfs.best_rupture.surface)
+            #print type(rupture_gmfs.best_rupture)
+            alllons = rupture_gmfs.best_rupture.surface.mesh.lons
+            #print alllons
+            #print type(alllons)
+            lons = alllons #np.concatenate(alllons[0], alllons[-1][::-1])
+            alllats = rupture_gmfs.best_rupture.surface.mesh.lats
+            #print alllats
+            lats = alllats #np.concatenate(alllats[0], alllats[-1][::-1])
+            alldepths = rupture_gmfs.best_rupture.surface.mesh.depths
+            depths = alldepths #np.concatenate(alldepths[0], alldepths[-1][::-1])
+            #print lons, lats, depths
+            #lons,lats = rupture_gmfs.best_rupture.surface.surface_projection_from_fault_data(rupture_gmfs.best_rupture.surface.fault_trace,
+            #                                                                                 rupture_gmfs.best_rupture.surface.upper_seismogenic_depth,
+            #                                                                                 rupture_gmfs.best_rupture.surface.lower_seismogenic_depth,
+            #                                                                                 rupture_gmfs.best_rupture.surface.dip)
+            #print lons,lats
+            try:
+                fault2shp(lons,
+                          lats,
+                          output_shp,
+                          depths)
+            except:
+                print 'Could not make shapefile, writing to text'
+                fault_mesh = np.vstack([lons,lats,depths])
+                mesh_filename = 'rupture_mesh_%s_%s_Mw%.2f_%.3f_%.3f_%.2fkm.txt' % (
+                    event_name, gsim,
+                    rupture_gmfs.best_rupture.mag,
+                    rupture_gmfs.best_rupture.hypocenter.longitude,
+                    rupture_gmfs.best_rupture.hypocenter.latitude,
+                    rupture_gmfs.best_rupture.hypocenter.depth)
+                mesh_filename = os.path.join(output_dir, mesh_filename)
+                np.savetxt(mesh_filename, fault_mesh, delimiter=',')
+        else:
+            print 'Corner lons', rupture_gmfs.best_rupture.surface.corner_lons
+            print 'Corner lats', rupture_gmfs.best_rupture.surface.corner_lats
+            print 'Corner depths', rupture_gmfs.best_rupture.surface.corner_depths
+            fault2shp(rupture_gmfs.best_rupture.surface.corner_lons, 
+                      rupture_gmfs.best_rupture.surface.corner_lats,
+                      output_shp,
+                      rupture_gmfs.best_rupture.surface.corner_depths)
         print 'RMSE', rupture_gmfs.min_rmse
     # Calculate scenario for best rupture
         rupture_gmfs.calculate_from_rupture(rupture_gmfs.best_rupture, site_col_scenario)

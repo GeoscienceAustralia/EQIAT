@@ -15,6 +15,7 @@ def mesh2shp(infile):
     """
     """
     output_shp = infile[:-3] + 'shp'
+    output_shp = output_shp.replace('mesh', 'scenario')
 
     file_length = file_len(infile)
     print file_length
