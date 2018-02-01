@@ -1,6 +1,6 @@
 event_name,1699slab
 area_source_file,data/java_slab_source_model.xml
 trt,Subduction Intraslab
-site_model_file,data/jawa_site_model.xml
+site_model_file,data/jawa_sumatra_site_model.xml
 site_file,data/1699HMMI_weighted_mod.txt
-site_file_pts,data/jawa_sites_thin.csv
+site_file_pts,data/jawa_sumatra_site_model.xml

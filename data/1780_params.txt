@@ -1,0 +1,6 @@
+event_name,1780
+area_source_file,data/source_model_1780.xml
+trt,Active
+site_model_file,data/jawa_sumatra_site_model.xml
+site_file,data/1780HMMI.txt
+site_file_pts,data/jawa_sumatra_site_model.xml

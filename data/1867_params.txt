@@ -3,4 +3,4 @@ area_source_file,data/source_model_1867.xml
 trt,Active
 site_model_file,data/jawa_site_model.xml
 site_file,data/1867HMMI.txt
-site_file_pts,data/jawa_sites_thin.csv
+site_file_pts,data/jawa_sumatra_site_model.xml

@@ -1,0 +1,6 @@
+event_name,1815
+area_source_file,data/Flores_thrust.xml
+trt,Subduction Interface
+site_model_file,data/jawa_bali_nt_sulawesi_site_model.xml
+site_file,data/1815HMMI.txt
+site_file_pts,data/jawa_bali_nt_sulawesi_site_model.xml
