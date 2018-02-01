@@ -10,10 +10,10 @@
                     <gml:exterior>
                         <gml:LinearRing>
                             <gml:posList>
-			      107.5  -6.0
-			      107.5  -7.0
-			      108.5  -7.0
-			      108.5  -6.0
+			      107.7  -6.25
+			      107.7  -7.0
+			      108.4  -7.0
+			      108.4  -6.25
                             </gml:posList>
                         </gml:LinearRing>
                     </gml:exterior>
@@ -21,7 +21,7 @@
                 <upperSeismoDepth>0.0</upperSeismoDepth>
                 <lowerSeismoDepth>20.0</lowerSeismoDepth>
             </areaGeometry>
-            <magScaleRel>WC1994</magScaleRel>
+            <magScaleRel>Leonard2014_Interplate</magScaleRel>
             <ruptAspectRatio>1.0</ruptAspectRatio>
             <truncGutenbergRichterMFD aValue="2.276" bValue="0.940" minMag="5.5" maxMag="7.2" />
             <nodalPlaneDist>

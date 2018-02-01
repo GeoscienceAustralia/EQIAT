@@ -2,18 +2,18 @@
 <nrml xmlns:gml="http://www.opengis.net/gml"
       xmlns="http://openquake.org/xmlns/nrml/0.4">
 
-    <sourceModel name="Parameter search for 1840 event">
+    <sourceModel name="Parameter search for 1780 event">
 
-        <areaSource id="1" name="1840" tectonicRegion="Active">
+        <areaSource id="1" name="1780" tectonicRegion="Active">
             <areaGeometry>
                 <gml:Polygon>
                     <gml:exterior>
                         <gml:LinearRing>
                             <gml:posList>
-			      109.5  -7.8
-			      109.5  -6.9
-			      110.5  -6.9
-			      110.5  -7.8
+			      105.5  -5.8
+			      105.5  -7.5
+			      108.5  -7.5
+			      108.5  -5.8
                             </gml:posList>
                         </gml:LinearRing>
                     </gml:exterior>
@@ -23,7 +23,7 @@
             </areaGeometry>
             <magScaleRel>Leonard2014_Interplate</magScaleRel>
             <ruptAspectRatio>1.0</ruptAspectRatio>
-            <truncGutenbergRichterMFD aValue="2.276" bValue="0.940" minMag="5.5" maxMag="7.6" />
+            <truncGutenbergRichterMFD aValue="2.276" bValue="0.940" minMag="5.5" maxMag="7.2" />
             <nodalPlaneDist>
 	        <nodalPlane probability="0.01" strike="0.0" dip="90.0" rake="0.0" />
                 <nodalPlane probability="0.01" strike="15.0" dip="90.0" rake="0.0" />
