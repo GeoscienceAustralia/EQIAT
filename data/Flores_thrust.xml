@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<nrml xmlns:gml="http://www.opengis.net/gml" xmlns="http://openquake.org/xmlns/nrml/0.4">
+  <sourceModel name="Flores_thrust">
+
+  <simpleFaultSource id="0" name="Flores Thrust" tectonicRegion="SubductionInterface">
+      <simpleFaultGeometry>
+          <gml:LineString>
+            <gml:posList>
+               112.20182671 -7.32806380277
+               113.227527131 -7.55104215512
+               114.684319033 -7.61050304907
+               116.468145852 -7.8632118484
+               117.612768061 -7.93753796584
+               118.84658161 -7.8632118484
+               119.827686361 -7.83348140142
+               120.71959977 -7.84834662491
+               121.40340005 -8.10105542423
+               122.131796001 -8.13078587121
+               123.053439858 -8.02672930678
+               124.019679385 -7.90780751887
+               124.837266677 -7.72942483699
+               125.654853968 -7.47671603767
+               126.219732461 -7.41725514371
+               127.052184976 -7.19427679137
+               127.958963609 -6.94156799205
+               128.910337913 -6.52534173434
+               129.713059981 -6.04965458267
+            </gml:posList>
+          </gml:LineString>
+          <dip>27.0</dip>
+          <upperSeismoDepth>0.001</upperSeismoDepth>
+          <lowerSeismoDepth>20</lowerSeismoDepth>
+      </simpleFaultGeometry>
+      <magScaleRel>StrasserInterface</magScaleRel>
+      <ruptAspectRatio>1.5</ruptAspectRatio>
+      <truncGutenbergRichterMFD aValue="1.0" bValue="1.0" minMag="6.5" maxMag="9.0" />
+      <rake>90</rake>
+    </simpleFaultSource>
+  </sourceModel>
+</nrml>
