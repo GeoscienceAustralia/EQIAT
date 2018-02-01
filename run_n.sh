@@ -1,8 +1,9 @@
+#!/bin/bash
 #PBS -P n74
-#PBS -q express
-#PBS -l walltime=8:00:00
-#PBS -l ncpus=1
-#PBS -l mem=16GB
+#PBS -q normal
+#PBS -l walltime=48:00:00
+#PBS -lmem=80GB
+#PBS -lncpus=10
 #PBS -l wd
 
 module load intel-cc/12.1.9.293
@@ -23,10 +24,25 @@ export PYTHONPATH=.:/home/547/jdg547/.local/lib/python2.7/site-packages:${PYTHON
 export PYTHONPATH=.:/short/w84/NSHA18/sandpit/jdg547/oq-hazardlib:${PYTHONPATH}
 export PYTHONPATH=.:/short/w84/NSHA18/sandpit/jdg547/oq-engine:${PYTHONPATH}
 
-#python estimate_magnitude.py -param_file data/1699_params.txt >& parjob_1699_weighted_mod.log
-#python estimate_magnitude.py -param_file data/1699megathrust_params.txt >& parjob_1699_weighted_megathrust.log
-python estimate_magnitude.py -param_file data/1867_params.txt >& parjob_1867_weighted.log
-#python estimate_magnitude.py -param_file data/1847_params.txt >& parjob_1847_weighted.log
-#python estimate_magnitude.py -param_file data/1780_params.txt >& parjob_1780_weighted.log
-#python estimate_magnitude.py -param_file data/1699megathrust_params.txt >& data/1699megathrust_params.txt.log
-#python estimate_magnitude.py -param_file data/1820_M8.4_params.txt >& data/1820_M8.4_params.txt.log
+
+# Script to submit several single cpu jobs at once
+counter=0
+one=1
+# List all subdirectories at the level of individual tsunami runs
+all_param_files=$(ls data/*params*.txt)
+
+#mybasedir=$(pwd)
+
+# Loop over all subdirectories
+for i in $all_param_files; do
+    log_file=$i'.log'
+    python estimate_magnitude.py -param_file $i > $log_file &
+    counter=$(($counter+$one));
+    # Once we have submitted n jobs, break from this loop.
+    if [ $counter = 10 ];
+    then
+        break
+    fi
+done      
+
+wait
