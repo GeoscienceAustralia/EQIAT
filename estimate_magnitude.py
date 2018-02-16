@@ -110,7 +110,7 @@ output_dir = 'outputs'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 #Generate pt sources
-pt_sources = get_sources(area_source_file, discretisation = 50)
+pt_sources = get_sources(area_source_file, discretisation = 10)
 #Loop through source types
 for key,item in pt_sources.iteritems():
 #    print key
