@@ -44,7 +44,7 @@ site_file_pts = f_in.readline().rstrip().split(',')[1]
 #paramfile = 'params.txt'
 #gsim_list = [ChiouYoungs2008(), BooreAtkinson2008()]
 #gsim = AtkinsonBoore2003SSlab()
-gsim_list = [ZhaoEtAl2006SSlab(), AtkinsonBoore2003SSlab()]
+#gsim_list = [ZhaoEtAl2006SSlab(), AtkinsonBoore2003SSlab()]
 #trt = 'Active'
 if trt == 'Subduction Intraslab':
     gsim_list = [ZhaoEtAl2006SSlab(), AtkinsonBoore2003SSlab(), AtkinsonBoore2003SSlabCascadia()]
@@ -110,7 +110,7 @@ output_dir = 'outputs'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 #Generate pt sources
-pt_sources = get_sources(area_source_file, discretisation = 5)
+pt_sources = get_sources(area_source_file, discretisation = 50)
 #Loop through source types
 for key,item in pt_sources.iteritems():
 #    print key
@@ -192,6 +192,26 @@ for key,item in pt_sources.iteritems():
                       output_shp,
                       rupture_gmfs.best_rupture.surface.corner_depths)
         print 'RMSE', rupture_gmfs.min_rmse
+        # Calculate uncertainty model
+        rupture_gmfs.uncertainty_model()
+        try:
+            print 'Magnitude range is %.2f - %.2f' % (rupture_gmfs.min_mag, rupture_gmfs.max_mag)
+            print 'Longitude range is %.2f - %.2f' % (rupture_gmfs.min_lon,rupture_gmfs.max_lon)
+            print 'Latitude range is %.2f - %.2f' % (rupture_gmfs.min_lat,rupture_gmfs.max_lat)
+            print 'Depth range is %.2f - %.2f' % (rupture_gmfs.min_depth,rupture_gmfs.max_depth)
+            print 'Strike range is %.2f - %.2f' % (rupture_gmfs.min_strike,rupture_gmfs.max_strike)
+            print 'Dip range is %.2f - %.2f' % (rupture_gmfs.min_dip,rupture_gmfs.max_dip)
+        except:
+            # Not enough data to calcualte uncertainties
+            pass
+        # Get slices
+        fig_comment = event_name
+        lons,lats,rmse = rupture_gmfs.uncertainty_slice('longitude', 'latitude', 'mag', 
+                                                        rupture_gmfs.best_rupture.mag,
+                                                        fig_comment=fig_comment)
+        print lons, lats, rmse
+        unc_array = np.vstack([lons,lats,rmse])
+        np.savetxt('rmse_%s_%s.csv' % (event_name, gsim), unc_array.T, delimiter=',')
     # Calculate scenario for best rupture
         rupture_gmfs.calculate_from_rupture(rupture_gmfs.best_rupture, site_col_scenario)
 #        print rupture_gmfs.rupture_gmf
