@@ -230,8 +230,8 @@ def plot_mmi_hazmap_and_obs(median, percentile1, percentile2, mmi_obs, city,
 #    pyplot.savefig('mmi_hazmap_and_observations_%s.png' % city)
 
 if __name__ == "__main__":
-    filename = '../hazard_curves_1.0s.csv'
-    obs_filename = '../City_MMI_all_mentions.csv'
+    filename = 'data/hazard_curves_1.0s.csv'
+    obs_filename = 'data/City_MMI_all_mentions.csv'
     period = 1.0
     site_class = 'C'
     cities = ['Jakarta', 'Bandung', 'Semarang', 'Yogyakarta', 'Surabaya']
