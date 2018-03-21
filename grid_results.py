@@ -79,7 +79,7 @@ def grid_results(infile, resolution = 0.01, clip_shp = None,
    # outfile = infile.rstrip('.csv') + '_gridded.csv'
    # np.savetxt(outfile, gridded_results)
 
-filelist = glob('outputs/*.csv')
+filelist = glob('outputs/*mmi*1780*sq*Chiou*.csv')
 #infile = 'outputs/scenario_gmf_loc_mmi_1699megathrust_AtkinsonBoore2003SInter().csv'
 clipping_shapefile = '/short/n74/jdg547/eq_hazmap_tests/data/IDN_Admin/IDN_adm0.shp'
 for infile in filelist:

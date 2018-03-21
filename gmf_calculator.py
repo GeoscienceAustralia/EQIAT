@@ -229,22 +229,30 @@ class RuptureGmf(object):
         self.best_rupture = self.rupture_list[index]
         self.min_rmse = self.rmse[index]
 
-    def uncertainty_model(self):
+    def uncertainty_model(self, min_rmse=None):
         """Estimate parameter uncertainties by 
-        assuming the rmse is maximum likelihood.
+        assuming the minimum rmse is maximum likelihood.
         We use the residuals of the best-fit parameters 
-        to estimate the standard deviation of the model fit
+        to estimate the standard deviation of the model fit. 
+        Can optionally pass min rmse,
+        e.g. if you wish to apply uncertainties from another model 
+        (i.e. using a different GMPE).
         """
         if len(self.mmi_obs) <= 6:
             print 'Not enough data points to calculate uncertainties'
             indices = np.where(self.rmse < 1e24)[0]
         else:
-            self.sigma=(1./(len(self.mmi_obs)-6))*np.power(min(self.rmse),2)
-            print self.sigma
-            self.uncert_fun = norm(min(self.rmse),self.sigma)
+            if min_rmse is not None:
+                self.sigma=(1./(len(self.mmi_obs)-6))*np.power(min_rmse,2)
+                print 'sigma', self.sigma
+                self.uncert_fun = norm(min_rmse,self.sigma)
+            else:
+                self.sigma=(1./(len(self.mmi_obs)-6))*np.power(min(self.rmse),2)
+                print 'sigma', self.sigma
+                self.uncert_fun = norm(min(self.rmse),self.sigma)
             print self.uncert_fun.ppf(0.975)
             indices = np.where(self.rmse < self.uncert_fun.ppf(0.975))[0]
-        print 'max rmse', max(self.rmse)
+        #print 'max rmse', max(self.rmse)
         # all ruptures within 95% uncertainty bounds 
         self.fitted_ruptures = []
 #        print indices
@@ -280,7 +288,52 @@ class RuptureGmf(object):
         print 'strikes',  np.unique(np.array(self.fitted_strikes))
         print 'dips', np.unique(np.array(self.fitted_dips))
 
-    def uncertainty_slice(self, x, y, z, zvalue, fig_comment=None):
+    def rupture_params_2_array(self):
+        """Create an array of all rupture parameters for later slicing
+        """
+        # Create an array of the full rupture parameter space
+        mags = np.array([rup.mag for rup in self.rupture_list])
+        lons = np.array([rup.hypocenter.longitude for rup in self.rupture_list])   
+        lats = np.array([rup.hypocenter.latitude for rup in self.rupture_list])
+        depths = np.array([rup.hypocenter.depth for rup in self.rupture_list]) 
+        strikes = np.array([rup.surface.get_strike() for rup in self.rupture_list]) 
+        dips = np.array([rup.surface.get_dip() for rup in self.rupture_list]) 
+        self.parameter_space = np.vstack([mags,lons,lats,depths,strikes,dips])
+        self.parameter_dict = {'mag': 0, 'longitude': 1,
+                          'latitude': 2, 'depth': 3,
+                          'strike': 4, 'dip':5}      
+
+    def uncertainty_slice1D(self, z, x, y, xvalue, yvalue):
+        """ Get 1D slices of uncertainty model, e.g. to get range of 
+        magnitudes at best-fit location
+        :params z:
+            Quantity we want uncertainty range on
+        :params x:
+            Quantity to be used for x-axis
+        :params y:
+            Quantity to be used for y-axis
+        :params xvalue:
+            Value of x at which the other dimension will be sliced
+        :params yvalue:
+            Value of y at which the other dimension will be sliced
+        """
+        try:
+            self.parameter_space
+        except AttributeError:
+            self.rupture_params_2_array()
+        
+        xindices = np.where(self.parameter_space[self.parameter_dict[x]] == xvalue)[0]
+        yindices = np.where(self.parameter_space[self.parameter_dict[y]] == yvalue)[0]
+        i = np.intersect1d(xindices,yindices)
+        z_subset = self.parameter_space[self.parameter_dict[z]][i]
+        rmse_subset = self.rmse[i]
+        indices = np.where(rmse_subset < self.uncert_fun.ppf(0.975))[0]
+        zs = z_subset[indices]
+        min_z = min(zs)
+        max_z = max(zs)
+        return min_z, max_z
+
+    def uncertainty_slice2D(self, x, y, z, zvalue, fig_comment=None):
         """ Get 2D slices of uncertainty model for plotting
         :params x:
             Quantity to be used for x-axis
@@ -293,36 +346,18 @@ class RuptureGmf(object):
         :params fig_comment:
             String to be appended to figure name
         """
-        # Generate uncertainty model if doesnt already exist
-    #    if not hasattr(self, uncert_fun):
-    #        self.uncertainty_model() 
-    #    if z='mag':
 
         # Create an array of rupture parameters
-        mags = np.array([rup.mag for rup in self.rupture_list])
-        lons = np.array([rup.hypocenter.longitude for rup in self.rupture_list])   
-        lats = np.array([rup.hypocenter.latitude for rup in self.rupture_list])
-        depths = np.array([rup.hypocenter.depth for rup in self.rupture_list]) 
-        strikes = np.array([rup.surface.get_strike() for rup in self.rupture_list]) 
-        dips = np.array([rup.surface.get_dip() for rup in self.rupture_list]) 
+        try:
+            self.parameter_space
+        except AttributeError:
+            self.rupture_params_2_array()
 
-#        print mags
-        parameter_space = np.vstack([mags,lons,lats,depths,strikes,dips])
-        parameter_dict = {'mag': 0, 'longitude': 1,
-                          'latitude': 2, 'depth': 3,
-                          'strike': 4, 'dip':5}
-        indices = np.where(parameter_space[parameter_dict[z]] == zvalue)
-        #indices = np.where(np.isclose(parameter_space[parameter_dict[z]], zvalue, rtol=1e-5) == True)
-        xvalues = parameter_space[parameter_dict[x], indices][0]
-        yvalues = parameter_space[parameter_dict[y], indices][0]
-#        print xvalues, len(xvalues)
-#        print yvalues, len(yvalues)
+        indices = np.where(self.parameter_space[self.parameter_dict[z]] == zvalue)
+        xvalues = self.parameter_space[self.parameter_dict[x], indices][0]
+        yvalues = self.parameter_space[self.parameter_dict[y], indices][0]
         rmse_subset = self.rmse[indices]
-#        print 'rmse_subset'
-#        print rmse_subset, len(rmse_subset)
-#        print 'min(rmse_subset)', min(rmse_subset)
-#        print np.argmin(self.rmse)
-#        print np.argmin(rmse_subset)
+
         # now get lowest rmse for each combination of remaining parameters at each 
         # xy point
         rmse_list = []
@@ -333,48 +368,19 @@ class RuptureGmf(object):
                 j = np.where(xvalues==xi)
                 k = np.where(yvalues == yi)
                 i = np.intersect1d(j,k) # Get all locations matching both x, y locations
- #               print j
- #               print k
- #               print 'i', i
- #               print xvalues[j]
- #               print yvalues[k]
- #               print self.rmse[i]
- #               print rmse_subset[i]
-#                print 'self.rmse[i]', self.rmse[i]
                 if len(i) > 0:
- #                   print 'self.rmse[i]', self.rmse[i]
- #                   print 'min(self.rmse[i])', min(self.rmse[i])
- #                   print 'min(rmse_subset[i])', min(rmse_subset[i])
                     rmse_list.append(min(rmse_subset[i]))
                     xs.append(xi)
                     ys.append(yi)
-#        print rmse_list
         rmse_subset = np.array(rmse_list)
         xs = np.array(xs)
         ys = np.array(ys)
-        print 'rmse_subset', rmse_subset
-#        xvalues = np.unique(xvalues)
-#        yvalues = np.unique(yvalues)
-#        xy = np.mgrid(np.unique(xvalues), np.unique(yvalues))
-#        print xy
-#        print xy[0][0], len(xy[0][0])
-#        for i in range(len(xy[0][0])):
-            
-#        print 'xs', xs
-#        print 'ys', ys
-#        print rmse_subset
-#        print xvalues
-#        print yvalues
         xx,yy = np.mgrid[min(xvalues):max(xvalues):0.02,min(yvalues):max(yvalues):0.01]
-        #xx,yy=np.meshgrid(xs, ys)
         rmse_grid = interpolate.griddata((xs, ys), rmse_subset, (xx,yy), method='nearest')
-#        print xx, len(xx)
-#        print yy, len(yy)
-#        print rmse_grid, len(rmse_grid)
 
         plt.clf()
         try:
-            CS1=plt.contour(xx, yy, rmse_grid, levels = [self.sigma, self.uncert_fun.ppf(0.975)], linewidths=0.5, colors='k')
+            CS1=plt.contour(xx, yy, rmse_grid, levels = [(min(self.rmse) + self.sigma), self.uncert_fun.ppf(0.975)], linewidths=0.5, colors='k')
         except AttributeError:
             pass
         except ValueError:

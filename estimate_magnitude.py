@@ -37,6 +37,10 @@ trt = f_in.readline().rstrip().split(',')[1]
 site_model_file = f_in.readline().rstrip().split(',')[1]
 site_file = f_in.readline().rstrip().split(',')[1]
 site_file_pts = f_in.readline().rstrip().split(',')[1]
+if event_name == '1852Banda_area':
+    disc = 25
+else:
+    disc = 5
 # Area source model is used to define the parameter space to be searched
 # Note this should be made more generic to use faults as well
 #area_source_file = 'data/java_slab_source_model.xml'
@@ -110,7 +114,7 @@ output_dir = 'outputs'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 #Generate pt sources
-pt_sources = get_sources(area_source_file, discretisation = 10)
+pt_sources = get_sources(area_source_file, discretisation = disc)
 #Loop through source types
 for key,item in pt_sources.iteritems():
 #    print key
@@ -206,10 +210,17 @@ for key,item in pt_sources.iteritems():
             pass
         # Get slices
         fig_comment = event_name
-        lons,lats,rmse = rupture_gmfs.uncertainty_slice('longitude', 'latitude', 'mag', 
-                                                        rupture_gmfs.best_rupture.mag,
-                                                        fig_comment=fig_comment)
-        print lons, lats, rmse
+        lons,lats,rmse = rupture_gmfs.uncertainty_slice2D('longitude', 'latitude', 'mag', 
+                                                          rupture_gmfs.best_rupture.mag,
+                                                          fig_comment=fig_comment)
+        try:
+            min_mag, max_mag =  rupture_gmfs.uncertainty_slice1D('mag', 'longitude', 'latitude',
+                                                                 rupture_gmfs.best_rupture.hypocenter.longitude,
+                                                                 rupture_gmfs.best_rupture.hypocenter.latitude)
+            print '95 percent confidence range on magnitude at best-fit location is %.2f - %.2f' % (
+                min_mag, max_mag)
+        except AttributeError:
+            print 'Not enough data to calculate magnitude uncertainty on best-fit location'
         unc_array = np.vstack([lons,lats,rmse])
         np.savetxt('rmse_%s_%s.csv' % (event_name, gsim), unc_array.T, delimiter=',')
     # Calculate scenario for best rupture

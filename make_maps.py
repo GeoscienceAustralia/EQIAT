@@ -4,7 +4,7 @@ import sys, os
 from glob import glob
 from pipes import quote
 
-filelist = glob(os.path.join('outputs', '*1780*.csv'))
+filelist = glob(os.path.join('outputs', '*1867*.csv'))
 
 bbox_dict = {1699: '104/113/-9/-5',
              1780: '104/113/-9/-5',
