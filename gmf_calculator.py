@@ -13,6 +13,7 @@ from scipy import interpolate
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from collections import defaultdict
 from openquake.hazardlib.calc.gmf import GmfComputer
 from openquake.hazardlib.nrml import SourceModelParser
 from openquake.hazardlib.sourceconverter import SourceConverter, \
@@ -255,10 +256,12 @@ class RuptureGmf(object):
         #print 'max rmse', max(self.rmse)
         # all ruptures within 95% uncertainty bounds 
         self.fitted_ruptures = []
+        self.fitted_rmse = []
 #        print indices
         for index in indices:
 #            print index
             self.fitted_ruptures.append(self.rupture_list[index])
+            self.fitted_rmse.append(self.rmse[index])
         # Create lists for storing ranges of each parameter
         self.fitted_mags = []
         self.fitted_lons = []
@@ -302,6 +305,48 @@ class RuptureGmf(object):
         self.parameter_dict = {'mag': 0, 'longitude': 1,
                           'latitude': 2, 'depth': 3,
                           'strike': 4, 'dip':5}      
+
+    def parameter_pdf(self):
+        """Calculate a pdf for parameter values based on the uncertainty model
+        """
+        try:
+            self.parameter_space
+        except AttributeError:
+            self.rupture_params_2_array()
+            
+        self.parameter_pdfs = self.parameter_space*self.uncert_fun.pdf(self.rmse)
+        # Now sum equal values to build pdfs
+        self.parameter_pdf_sums = {}
+        self.parameter_pdf_values = {}
+        for key, value in self.parameter_dict.iteritems():
+            unique_vals = np.unique(self.parameter_space[value])
+            pdf_sums = []
+            for val in unique_vals:
+                # Just get first occurrence, as pdf sums are repeated
+                ind = np.argwhere(self.parameter_space[value]==val)
+                pdf_sum = np.sum(self.parameter_pdfs[value][ind])
+                pdf_sums.append(pdf_sum)
+            # Normalise pdf sums
+            pdf_sums = np.array(pdf_sums)
+            pdf_sums = pdf_sums/np.sum(pdf_sums)
+            self.parameter_pdf_sums[key] = pdf_sums
+            self.parameter_pdf_values[key] = unique_vals
+            
+            # Now plot the results
+            plt.clf()
+            plt.bar(unique_vals, pdf_sums)
+            plt.savefig('%s_parameter_pdf.png' % key)
+
+#            dic = deafultdic(int)
+#            for j,f in enumerate(self.parameter_space[key]):
+#                dic[f] += self.parameter_space[key][j]
+ #           pdf_sums = np.array([dic[f] for f in self.parameter_space[key]])
+#            # Reduce to unique values
+ #           unique_vals = np.unique(parameter_space[key])
+ #           for val in unique_vals:
+ #               # Just get first occurrence, as pdf sums are repeated
+#                ind = np.argwhere(parameter_space[key]==val)[0]
+#            self.parameter_pdf_sums[key] = pdf_sums
 
     def uncertainty_slice1D(self, z, x, y, xvalue, yvalue):
         """ Get 1D slices of uncertainty model, e.g. to get range of 
