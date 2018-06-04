@@ -334,22 +334,52 @@ class RuptureGmf(object):
         for key, value in self.parameter_dict.iteritems():
             unique_vals = np.unique(self.parameter_space[value])
             pdf_sums = []
-            for val in unique_vals:
-                # Just get first occurrence, as pdf sums are repeated
-                ind = np.argwhere(self.parameter_space[value]==val)
-                pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[ind]))
-                #pdf_sum = np.sum(self.parameter_pdfs[value][ind])
-                pdf_sums.append(pdf_sum)
+            bin=False
+            # Determine if we need to bin values of strike and dip (i.e.
+            # for non-area sources
+            if key == 'strike':
+                if len(unique_vals) > 24:
+                    bin=True
+                    bins =  np.arange(0, 360, 15.)
+            if key == 'dip':
+                if len(unique_vals) > 3:
+                    bin=True
+                    bins = np.arange(min(dip), max(dip)+5, 5.)
+            if bin: # Calculate as histogram
+                hist, bins = np.histogram(self.parameter_space[value], bins)
+                # align to bin centre for plotting
+                bin_width = bins[1] - bins[0]
+                unique_vals = []
+                for i, edge in enumerate(bins):
+                    try:
+                        ind = np.intersect1d(np.where(self.parameter_space[value] >= edge), 
+                                             np.where(self.parameter_space[value] < bins[i+1]))
+                    except IndexError:
+                        ind = np.where(self.parameter_space[value] >= edge)
+                    pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[ind]))
+                    pdf_sums.append(pdf_sum)                              
+                    unique_vals.append(edge + bin_width)
+            else: # Use raw values
+                for val in unique_vals:
+                    # Just unique values, as pdf sums are repeated
+                    ind = np.argwhere(self.parameter_space[value]==val)
+                    pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[ind]))
+                    pdf_sums.append(pdf_sum)
             # Normalise pdf sums
             pdf_sums = np.array(pdf_sums)
             pdf_sums = pdf_sums/np.sum(pdf_sums)
+            print 'pdf_sums', pdf_sums
             self.parameter_pdf_sums[key] = pdf_sums
             self.parameter_pdf_values[key] = unique_vals
             
             # Get the best-fit value for plotting on top
             index = np.argmin(self.rmse)
             best_fit_x =  self.parameter_space[value][index]
-            y_index = np.where(unique_vals == best_fit_x)[0]
+            #y_index = np.where(unique_vals == best_fit_x)[0]
+            try:
+                y_index = (np.abs(unique_vals - best_fit_x)).argmin()[0]
+            except IndexError:
+                y_index = (np.abs(unique_vals - best_fit_x)).argmin()
             best_fit_y = pdf_sums[y_index]
             # Now plot the results
             try:
@@ -358,15 +388,16 @@ class RuptureGmf(object):
                 width = 1.0
             if key=='strike': 
                 # Plot as rose diagram
-                ax = fig.add_subplot(gs[1,3],projection='polar')
+                ax = fig.add_subplot(gs[0,2],projection='polar')
                 ax.bar(np.deg2rad(unique_vals), pdf_sums, width=np.deg2rad(width), bottom=0.0,
                        align='center', color='0.5', edgecolor='k')
                 ax.scatter(np.deg2rad(best_fit_x), best_fit_y, marker = '*', color='0.5', edgecolor='k', s=200,zorder=10 )
                 ax.set_theta_zero_location('N')
                 ax.set_theta_direction(-1)
                 ax.set_thetagrids(np.arange(0, 360, 15))
-                ax.set_rgrids(np.arange(0.01, max(pdf_sums) + 0.01, 0.01), angle= np.deg2rad(7.5), weight= 'black')
+                ax.set_rgrids(np.arange(0.01, max(pdf_sums)+0.01, 0.02), angle= np.deg2rad(7.5), weight= 'black')
                 ax.set_xlabel(xlabel_dict[key])
+                ax.text(-0.07, 1.02, 'b)', transform=ax.transAxes, fontsize=14)
                 #ax.set_title('Rose Diagram of Strike PDF"', y=1.10, fontsize=15)
                 #plt.savefig('%s_%s_%s_parameter_pdf_rose_diagram.png' % (fig_comment,self.gsim, key), \
                  #       dpi=300, format='png', bbox_inches='tight')
@@ -377,11 +408,8 @@ class RuptureGmf(object):
                 lby = [0, ymax]
                 ubx = [self.max_mag, self.max_mag]
                 uby = [0, ymax]
-            #elif key == 'longitude' or key == 'latitude' :
-            #    ax =  fig.add_subplot(gs[0,2])
-            #    ymax = max(pdf_sums)*1.1
             elif key == 'depth':
-                ax =  fig.add_subplot(gs[0,3])
+                ax =  fig.add_subplot(gs[1,3])
                 ymax = max(pdf_sums)*1.1
                 lbx = [self.min_depth, self.min_depth]
                 lby = [0, ymax]
@@ -394,7 +422,7 @@ class RuptureGmf(object):
                 lby = [0, ymax]
                 ubx = [self.max_dip, self.max_dip]
                 uby = [0, ymax]
-            if key == 'magnitude' or key == 'dip' or key == 'depth' :
+            if key == 'mag' or key == 'dip' or key == 'depth' :
                 ax.bar(unique_vals, pdf_sums, width, align='center', color='0.5')
                 ax.scatter(best_fit_x, best_fit_y, marker = '*', color='0.5', 
                            edgecolor='k', s=200, zorder=10)
@@ -404,17 +432,26 @@ class RuptureGmf(object):
                 ax.set_ylim(0, ymax)
                 ax.set_ylabel('Probability')
                 ax.set_xlabel(xlabel_dict[key])
-
+                if key == 'mag':
+                    ax.text(0.05, 0.95, 'a)', transform=ax.transAxes, fontsize=14)
+                if key == 'dip':
+                    ax.text(0.05, 0.92, 'd)', transform=ax.transAxes, fontsize=14)
+                if key == 'depth':
+                    ax.text(0.05, 0.92, 'e)', transform=ax.transAxes, fontsize=14)
         # Now plot a map of location uncertainty
         # First get 2D pdf
         pdf_sums = []
         all_lons = []
         all_lats = []
-        for lon in self.parameter_pdf_values['longitude']:
-            for lat in self.parameter_pdf_values['latitude']:
+        for i, lon in enumerate(self.parameter_space[self.parameter_dict['longitude']]):
+            if lon in all_lons:
+                continue
+            else:
+                lat = self.parameter_space[self.parameter_dict['latitude']][i]
+#               lat = self.parameter_pdf_values['latitude'][i]
                 index = np.intersect1d(np.argwhere(self.parameter_space[self.parameter_dict['longitude']]==lon), \
                                            np.argwhere(self.parameter_space[self.parameter_dict['latitude']]==lat))
-                pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[ind]))
+                pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[index]))
                 pdf_sums.append(pdf_sum)
                 all_lons.append(lon)
                 all_lats.append(lat)
@@ -425,7 +462,12 @@ class RuptureGmf(object):
         all_lons = np.array(all_lons)
         all_lats = np.array(all_lats)
 
-        ax =  fig.add_subplot(gs[0,2])
+        # Get best fit value
+        index = np.argmin(self.rmse)
+        best_fit_lon =  self.parameter_space[self.parameter_dict['longitude']][index]
+        best_fit_lat =  self.parameter_space[self.parameter_dict['latitude']][index]
+
+        ax =  fig.add_subplot(gs[0,3])
         minlon = min(self.parameter_pdf_values['longitude'])
         maxlon = max(self.parameter_pdf_values['longitude'])
         minlat = min(self.parameter_pdf_values['latitude'])
@@ -443,38 +485,44 @@ class RuptureGmf(object):
         m.drawcountries(color='0.2')
         m.drawstates(color='0.2')
         
-        m.drawparallels(np.arange(-90.,90.,2), labels=[1,0,0,0],
+        m.drawparallels(np.arange(-90.,90.,0.5), labels=[1,0,0,0],
                         fontsize=10, dashes=[2, 2], color='0.5',
                         linewidth=0.5)
-        m.drawmeridians(np.arange(0.,360.,2), labels=[0,0,0,1],
+        m.drawmeridians(np.arange(0.,360.,0.5), labels=[0,0,0,1],
                         fontsize=10, dashes=[2, 2], color='0.5',
                         linewidth=0.5)
         max_val = max(pdf_sums)*1.1
-        print pdf_sum
+        print 'pdf_sums', pdf_sums
         clevs = np.arange(0.0,max_val,(max_val/50))
-        cmap = plt.get_cmap('gray')
-        xy = np.mgrid[minlon:maxlon:0.02,minlat:maxlat:0.02]
+        cmap = plt.get_cmap('gray_r')
+        # Adjust resolution to avoid memory intense interpolations
+        res = max((maxlon-minlon)/50., (maxlat-minlat)/50.)
+        xy = np.mgrid[minlon:maxlon:res,minlat:maxlat:res]
         xx,yy=np.meshgrid(xy[0,:,0], xy[1][0])
         griddata = interpolate.griddata((all_lons, all_lats), pdf_sums, (xx,yy), method='nearest')
         # now plot filled contours of pdf 
-        m.contourf(xx, yy, griddata, clevs, latlon=True)
-
-
+        cs = m.contourf(xx, yy, griddata, clevs, cmap=cmap, vmax=max(pdf_sums), vmin=min(pdf_sums), latlon=True)
+        # Mask areas outside of source model
+        if limits_filename is not None:
+            limits_data = np.genfromtxt(limits_filename, delimiter=',')
+            limits_x = limits_data[:,0]
+            limits_y = limits_data[:,1]
+            clippath = Path(np.c_[limits_x, limits_y])
+            patch = PathPatch(clippath, facecolor='none')
+            ax = plt.gca()
+            ax.add_patch(patch)
+        # Now add best-fit location on top
+        m.scatter(best_fit_lon, best_fit_lat, marker = '*', color='w', 
+                   edgecolor='k', s=200, zorder=10, latlon=True)
+        #m.text(0.05, 0.95, 'c)', transform=ax.transAxes, fontsize=14)
+        plt.annotate('c)', xy=(0.05, 0.9),xycoords='axes fraction', fontsize=14)
+        ticks = np.arange(0.0, max_val+0.05, 0.05) 
+        cbar = m.colorbar(cs, ticks=ticks)
+        cbar.ax.set_ylabel('Probability')
         figname = '%s_%s_all_parameter_pdf.png' % (fig_comment,self.gsim)
         figname = figname.replace('()', '')
         plt.tight_layout()
         plt.savefig(figname, dpi=300, format='png', bbox_inches='tight')
-
-#            dic = deafultdic(int)
-#            for j,f in enumerate(self.parameter_space[key]):
-#                dic[f] += self.parameter_space[key][j]
- #           pdf_sums = np.array([dic[f] for f in self.parameter_space[key]])
-#            # Reduce to unique values
- #           unique_vals = np.unique(parameter_space[key])
- #           for val in unique_vals:
- #               # Just get first occurrence, as pdf sums are repeated
-#                ind = np.argwhere(parameter_space[key]==val)[0]
-#            self.parameter_pdf_sums[key] = pdf_sums
 
     def uncertainty_slice1D(self, z, x, y, xvalue, yvalue):
         """ Get 1D slices of uncertainty model, e.g. to get range of 
@@ -556,6 +604,7 @@ class RuptureGmf(object):
         xx,yy = np.mgrid[min(xvalues):max(xvalues):0.02,min(yvalues):max(yvalues):0.01]
         rmse_grid = interpolate.griddata((xs, ys), rmse_subset, (xx,yy), method='nearest')
 
+        plt.clf()
         # Get data for clipping
         if limits_filename is not None:
             limits_data = np.genfromtxt(limits_filename, delimiter=',')
@@ -563,7 +612,6 @@ class RuptureGmf(object):
             limits_y = limits_data[:,1]
             clippath = Path(np.c_[limits_x, limits_y])
             patch = PathPatch(clippath, facecolor='none')
-        plt.clf()
         try:
             CS1=plt.contour(xx, yy, rmse_grid, levels = [(min(self.rmse) + self.sigma), self.uncert_fun.ppf(0.975)], linewidths=0.5, colors='k')
         except AttributeError:
@@ -574,13 +622,21 @@ class RuptureGmf(object):
 #        CS2=plt.contourf(xx, yy, rmse_grid, 8,vmax=np.max(rmse_grid), vmin=np.min(rmse_grid))
         try:
             CS2=plt.contourf(xx, yy, rmse_grid, 8,vmax=max(self.rmse), vmin=min(self.rmse))
-#        CS2=plt.contourf(xs, ys, rmse_subset, 8,vmax=max(self.rmse), vmin=min(self.rmse)) 
-            # add patch to mask no data area
-            ax = plt.gca()
-            ax.add_patch(patch)
             cbar = plt.colorbar(CS2)
             cbar.ax.set_ylabel('RMSE')
-            
+        except ValueError:
+            print 'only one best fit locations, cannnot plot locations uncertainty'
+            pass
+#        CS2=plt.contourf(xs, ys, rmse_subset, 8,vmax=max(self.rmse), vmin=min(self.rmse)) 
+            # add patch to mask no data area
+        try:
+            ax = plt.gca()
+            ax.add_patch(patch)
+        except:
+            print 'No limits file'
+            pass   
+
+        try:
             figname = '%s_rmse_slice_%s_%.2f_%s_%s_%s.png' % (
                 fig_comment, z, zvalue, x, y, self.gsim)
             figname = figname.replace('()', '')

@@ -104,11 +104,13 @@ output_dir = 'outputs'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 #Generate pt sources
+print 'Generating source model'
 pt_sources = get_sources(area_source_file, discretisation = disc)
 #Loop through source types
 for key,item in pt_sources.iteritems():
     # Different key for different tectonic regions
     for gsim in gsim_list:
+        print 'Running for %s' % gsim
         rupture_gmfs = RuptureGmf(pt_sources[key], gsim, sitecol)
         rupture_gmfs.calculate()
         print rupture_gmfs.gmf_list[-1]
@@ -130,7 +132,7 @@ for key,item in pt_sources.iteritems():
                                                                                       rupture_gmfs.best_rupture.hypocenter.latitude,
                                                                                       rupture_gmfs.best_rupture.hypocenter.depth)
         output_shp = os.path.join(output_dir, output_shp_filename)
-        print type(rupture_gmfs.best_rupture.surface)
+        #print type(rupture_gmfs.best_rupture.surface)
         if isinstance(rupture_gmfs.best_rupture.surface, SimpleFaultSurface) or \
                 isinstance(rupture_gmfs.best_rupture.surface, ComplexFaultSurface):
             # Dealing with simple faults
