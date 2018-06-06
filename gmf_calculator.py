@@ -15,7 +15,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
-from matplotlib.patches import PathPatch
+from matplotlib.patches import PathPatch, Polygon
 from collections import defaultdict
 from openquake.hazardlib.calc.gmf import GmfComputer
 from openquake.hazardlib.nrml import SourceModelParser
@@ -341,10 +341,13 @@ class RuptureGmf(object):
                 if len(unique_vals) > 24:
                     bin=True
                     bins =  np.arange(0, 360, 15.)
-            if key == 'dip':
+            if key == 'dip' or key == 'depth':
                 if len(unique_vals) > 3:
                     bin=True
-                    bins = np.arange(min(dip), max(dip)+5, 5.)
+                    if key == 'dip':
+                        bins = np.arange(min(self.parameter_space[value]), max(self.parameter_space[value])+5, 5.)
+                    elif key == 'depth':
+                        bins = np.arange(min(self.parameter_space[value]), max(self.parameter_space[value])+20, 20.)
             if bin: # Calculate as histogram
                 hist, bins = np.histogram(self.parameter_space[value], bins)
                 # align to bin centre for plotting
@@ -507,10 +510,15 @@ class RuptureGmf(object):
             limits_data = np.genfromtxt(limits_filename, delimiter=',')
             limits_x = limits_data[:,0]
             limits_y = limits_data[:,1]
-            clippath = Path(np.c_[limits_x, limits_y])
-            patch = PathPatch(clippath, facecolor='none')
+            limits_x, limits_y = m(limits_x, limits_y) # Convert to map coordinates
+            poly = Polygon(np.c_[limits_x, limits_y], closed=True)
+            clippath =  poly.get_path()
             ax = plt.gca()
+            patch = PathPatch(clippath, transform=ax.transData, facecolor='none', linewidth=0.4)
+            print 'Adding patch'
             ax.add_patch(patch)
+            for contour in cs.collections:
+                contour.set_clip_path(patch)
         # Now add best-fit location on top
         m.scatter(best_fit_lon, best_fit_lat, marker = '*', color='w', 
                    edgecolor='k', s=200, zorder=10, latlon=True)
