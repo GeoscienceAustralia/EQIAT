@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='utf-8'?>
+<nrml xmlns:gml="http://www.opengis.net/gml" xmlns="http://openquake.org/xmlns/nrml/0.4">
+  <sourceModel name="BANDA02">
+  <complexFaultSource id="1" name="BandaDetachment" tectonicRegion="Banda">
+
+      <complexFaultGeometry>
+        <faultTopEdge>
+          <gml:LineString>
+            <gml:posList>
+               129.5114924542 -3.3161165010 0.0
+               129.9241701937 -3.7064470704 0.0
+               130.4947679345 -4.5899051913 0.0
+               130.6306540564 -5.0447293496 0.0
+               130.7018517099 -5.8175097303 0.0
+            </gml:posList>
+          </gml:LineString>
+        </faultTopEdge>
+
+        <intermediateEdge>
+          <gml:LineString>
+            <gml:posList>
+               129.4936147182 -3.3503821617 5.0
+               129.9033128350 -3.7615700898 5.0
+               130.2340509511 -4.2785346226 5.0
+               130.1252947237 -4.9608682134 5.0
+               130.1848871771 -5.7474885976 5.0
+            </gml:posList>
+          </gml:LineString>
+        </intermediateEdge>
+
+        <intermediateEdge>
+          <gml:LineString>
+            <gml:posList>
+               129.4562837813 -3.3628159782 10.0
+               129.8585328414 -3.7710242837 10.0
+               130.1013720888 -4.1717835324 10.0
+               130.0849841641 -4.3729080625 10.0
+               129.6737962360 -5.0671601440 10.0
+               129.6201630280 -5.6988401495 10.0
+            </gml:posList>
+          </gml:LineString>
+        </intermediateEdge>
+
+        <intermediateEdge>
+          <gml:LineString>
+            <gml:posList>
+               129.4160588753 -3.3963367332 15.0
+               129.8153283127 -3.8008205103 15.0
+               130.0142181258 -4.1688039098 15.0
+               129.9933607671 -4.2648967408 15.0
+               129.6495303923 -4.7865792909 15.0
+               129.2454678318 -5.1106600441 15.0
+               128.9817788715 -5.7509835462 15.0
+            </gml:posList>
+          </gml:LineString>
+        </intermediateEdge>
+
+        <faultBottomEdge>
+          <gml:LineString>
+            <gml:posList>
+               129.3370988746 -3.4425208846 20.0
+               129.7602052934 -3.8388106994 20.0
+               129.8808800114 -4.2097737214 20.0
+               129.5546113293 -4.6671458009 20.0
+               128.9363396258 -4.8578416516 20.0
+               128.6681735858 -5.1632529750 20.0
+               128.6175200004 -5.6727684511 20.0
+            </gml:posList>
+          </gml:LineString>
+        </faultBottomEdge>
+      </complexFaultGeometry>
+
+      <magScaleRel>WC1994</magScaleRel>
+
+      <ruptAspectRatio>3.5</ruptAspectRatio>
+
+      <truncGutenbergRichterMFD aValue="20" bValue="1.0" minMag="4.5" maxMag="9.7" />
+
+      <rake>-90</rake>
+    </complexFaultSource>
+  </sourceModel>
+</nrml>

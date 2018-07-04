@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<nrml xmlns:gml="http://www.opengis.net/gml" xmlns="http://openquake.org/xmlns/nrml/0.4">
+  <sourceModel name="BANDA01">
+  <complexFaultSource id="1" name="BandaDetachment" tectonicRegion="Banda">
+
+      <complexFaultGeometry>
+        <faultTopEdge>
+          <gml:LineString>
+            <gml:posList>
+               129.4921249069 -3.3325044257 1.0
+               130.0224977417 -3.7854070711 1.0
+               130.3860117071 -4.3932500953 1.0
+               130.7793218992 -5.6566101063 1.0
+            </gml:posList>
+          </gml:LineString>
+        </faultTopEdge>
+
+        <faultBottomEdge>
+          <gml:LineString>
+            <gml:posList>
+               129.3550622642 -3.4457300870 5.0
+               129.8615981177 -3.9045919778 5.0
+               130.1953158564 -4.4945572660 5.0
+               130.4158079338 -5.0368485914 5.0
+               130.3681339711 -5.6268138796 5.0
+            </gml:posList>
+          </gml:LineString>
+        </faultBottomEdge>
+      </complexFaultGeometry>
+
+      <magScaleRel>WC1994</magScaleRel>
+
+      <ruptAspectRatio>2.0</ruptAspectRatio>
+
+      <truncGutenbergRichterMFD aValue="20" bValue="1.0" minMag="4.5" maxMag="9.7" />
+
+      <rake>-90</rake>
+    </complexFaultSource>
+  </sourceModel>
+</nrml>
