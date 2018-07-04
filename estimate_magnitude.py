@@ -15,8 +15,12 @@ from write_fault_shp import fault2shp
 from openquake.hazardlib.site import SiteCollection
 from openquake.hazardlib import nrml
 from openquake.hazardlib.gsim.campbell_bozorgnia_2008 import CampbellBozorgnia2008
+from openquake.hazardlib.gsim.campbell_bozorgnia_2014 import CampbellBozorgnia2014
+from openquake.hazardlib.gsim.abrahamson_2015 import AbrahamsonEtAl2015SSlab, AbrahamsonEtAl2015SInter
 from openquake.hazardlib.gsim.chiou_youngs_2008 import ChiouYoungs2008
+from openquake.hazardlib.gsim.chiou_youngs_2014 import ChiouYoungs2014
 from openquake.hazardlib.gsim.boore_atkinson_2008 import BooreAtkinson2008
+from openquake.hazardlib.gsim.boore_2014 import BooreEtAl2014
 from openquake.hazardlib.gsim.youngs_1997 import YoungsEtAl1997SInter, YoungsEtAl1997SSlab
 from openquake.hazardlib.gsim.atkinson_boore_2003 import AtkinsonBoore2003SSlab, \
     AtkinsonBoore2003SSlabCascadia, AtkinsonBoore2003SInter
@@ -47,11 +51,11 @@ else:
     disc = 20
 # Area or fault source model is used to define the parameter space to be searched
 if trt == 'Subduction Intraslab':
-    gsim_list = [ZhaoEtAl2006SSlab(), AtkinsonBoore2003SSlab(), AtkinsonBoore2003SSlabCascadia()]
+    gsim_list = [ZhaoEtAl2006SSlab(), AtkinsonBoore2003SSlab(), AtkinsonBoore2003SSlabCascadia(), AbrahamsonEtAl2015SSlab()]
 if trt == 'Active':
-    gsim_list = [ChiouYoungs2008(), BooreAtkinson2008(), CampbellBozorgnia2008()]
+    gsim_list = [ChiouYoungs2008()]#, ChiouYoungs2014(), BooreAtkinson2008(), BooreEtAl2014(), CampbellBozorgnia2008(), CampbellBozorgnia2014() ]
 if trt == 'Subduction Interface':
-    gsim_list = [YoungsEtAl1997SInter(), AtkinsonBoore2003SInter(), ZhaoEtAl2006SInter()]
+    gsim_list = [YoungsEtAl1997SInter(), AtkinsonBoore2003SInter(), ZhaoEtAl2006SInter(), AbrahamsonEtAl2015SInter()]
 
 def build_site_col(sites_data, site_model_file, filename=None):
     """Interpolate vs30 values to sites of interest
@@ -174,7 +178,9 @@ for key,item in pt_sources.iteritems():
                       rupture_gmfs.best_rupture.surface.corner_depths)
         print 'RMSE', rupture_gmfs.min_rmse
         # Calculate uncertainty model
-        rupture_gmfs.uncertainty_model()
+        parameter_llh_filename = os.path.join(output_dir, event_name + ('_%s_parameter_llh.csv' % gsim))
+        parameter_llh_filename = parameter_llh_filename.replace('()', '')
+        rupture_gmfs.uncertainty_model(filename=parameter_llh_filename)
         try:
             print 'Magnitude range is %.2f - %.2f' % (rupture_gmfs.min_mag, rupture_gmfs.max_mag)
             print 'Longitude range is %.2f - %.2f' % (rupture_gmfs.min_lon,rupture_gmfs.max_lon)

@@ -8,7 +8,7 @@ Geoscience Australia, December 2016
 
 import os, sys
 import numpy as np
-from scipy.stats import norm
+from scipy.stats import norm, chi2
 from scipy import interpolate
 from mpl_toolkits.basemap import Basemap, maskoceans
 import matplotlib
@@ -233,7 +233,22 @@ class RuptureGmf(object):
         self.best_rupture = self.rupture_list[index]
         self.min_rmse = self.rmse[index]
 
-    def uncertainty_model(self, min_rmse=None):
+    def rupture_params_2_array(self):
+        """Create an array of all rupture parameters for later slicing                                                                      
+        """
+        # Create an array of the full rupture parameter space                                                                               
+        mags = np.array([rup.mag for rup in self.rupture_list])
+        lons = np.array([rup.hypocenter.longitude for rup in self.rupture_list])
+        lats = np.array([rup.hypocenter.latitude for rup in self.rupture_list])
+        depths = np.array([rup.hypocenter.depth for rup in self.rupture_list])
+        strikes = np.array([rup.surface.get_strike() for rup in self.rupture_list])
+        dips = np.array([rup.surface.get_dip() for rup in self.rupture_list])
+        self.parameter_space = np.vstack([mags,lons,lats,depths,strikes,dips])
+        self.parameter_dict = {'mag': 0, 'longitude': 1,
+                          'latitude': 2, 'depth': 3,
+                          'strike': 4, 'dip':5}
+
+    def uncertainty_model(self, min_rmse=None, filename='param_model.csv'):
         """Estimate parameter uncertainties by 
         assuming the minimum rmse is maximum likelihood.
         We use the residuals of the best-fit parameters 
@@ -248,25 +263,48 @@ class RuptureGmf(object):
         else:
             if min_rmse is not None:
                 index = np.argmin(self.rmse)
-                self.sigma=(1./(len(self.mmi_obs)-6))*self.sum_squares_list[index]
+                self.sigma=np.sqrt((1./(len(self.mmi_obs)-6))*self.sum_squares_list[index])
 #                self.sigma=(1./(len(self.mmi_obs)-6))*np.power(min_rmse,2)
                 print 'sigma', self.sigma
                 self.uncert_fun = norm(min_rmse,self.sigma)
             else:
                 index = np.argmin(self.rmse)
-                self.sigma=(1./(len(self.mmi_obs)-6))*self.sum_squares_list[index]
+                self.sigma=np.sqrt((1./(len(self.mmi_obs)-6))*self.sum_squares_list[index])
                 #self.sigma=(1./(len(self.mmi_obs)-6))*np.power(min(self.rmse),2)
                 print 'sigma', self.sigma
                 self.uncert_fun = norm(min(self.rmse),self.sigma)
+                #self.log_lik = (-1/2)*self.sum_squares_list[index]/(self.sigma**2) - \
+                  #  len(self.mmi_obs)*np.log(self.sigma*np.sqrt(2*np.pi))
+                #print 'Log likelihood', self.log_lik
+                self.max_lik = np.power((1/(self.sigma*np.sqrt(2*np.pi))), len(self.mmi_obs)) * \
+                    np.exp((-1/2)*((self.sum_squares_list[index]/self.sigma**2)))
+#                self.max_lik = np.power(10, self.log_lik)
+                print 'Maxmium likelihood = ', self.max_lik
+                #df = len(self.mmi_obs)-6
+                #chi_bv = chi2(df).ppf(0.95)/df
+                #self.uncert_fun = min(self.rmse)+ chi2(df).ppf(0.95)/df
             print self.uncert_fun.ppf(0.975)
             indices = np.where(self.rmse < self.uncert_fun.ppf(0.975))[0]
-        #print 'max rmse', max(self.rmse)
+        # Dump all data to a file
+        try:
+            self.parameter_space
+        except AttributeError:
+            self.rupture_params_2_array() 
+        rmses = np.array(self.rmse)
+        llhs = []
+        for i, rup in enumerate(self.rupture_list):
+            likelihood = np.power((1/(self.sigma*np.sqrt(2*np.pi))), len(self.mmi_obs)) * \
+                np.exp((-1/2)*((self.sum_squares_list[i]/self.sigma**2)))
+            llhs.append(likelihood)
+        llhs = np.array(llhs)
+        self.parameter_space_llh = np.vstack([self.parameter_space, rmses, llhs])
+        self.parameter_space_llh = self.parameter_space_llh.T
+        header = 'mag,lon,lat,depth,strike,dip,rmse,likelihood'
+        np.savetxt(filename, self.parameter_space_llh, delimiter=',', header = header)
         # all ruptures within 95% uncertainty bounds 
         self.fitted_ruptures = []
         self.fitted_rmse = []
-#        print indices
         for index in indices:
-#            print index
             self.fitted_ruptures.append(self.rupture_list[index])
             self.fitted_rmse.append(self.rmse[index])
         # Create lists for storing ranges of each parameter
@@ -298,21 +336,6 @@ class RuptureGmf(object):
         print 'strikes',  np.unique(np.array(self.fitted_strikes))
         print 'dips', np.unique(np.array(self.fitted_dips))
 
-    def rupture_params_2_array(self):
-        """Create an array of all rupture parameters for later slicing
-        """
-        # Create an array of the full rupture parameter space
-        mags = np.array([rup.mag for rup in self.rupture_list])
-        lons = np.array([rup.hypocenter.longitude for rup in self.rupture_list])   
-        lats = np.array([rup.hypocenter.latitude for rup in self.rupture_list])
-        depths = np.array([rup.hypocenter.depth for rup in self.rupture_list]) 
-        strikes = np.array([rup.surface.get_strike() for rup in self.rupture_list]) 
-        dips = np.array([rup.surface.get_dip() for rup in self.rupture_list]) 
-        self.parameter_space = np.vstack([mags,lons,lats,depths,strikes,dips])
-        self.parameter_dict = {'mag': 0, 'longitude': 1,
-                          'latitude': 2, 'depth': 3,
-                          'strike': 4, 'dip':5}      
-
     def parameter_pdf(self, fig_comment='', limits_filename=None):
         """Calculate a pdf for parameter values based on the uncertainty model
         """
@@ -342,7 +365,7 @@ class RuptureGmf(object):
                     bin=True
                     bins =  np.arange(0, 360, 15.)
             if key == 'dip' or key == 'depth':
-                if len(unique_vals) > 3:
+                if len(unique_vals) > 4:
                     bin=True
                     if key == 'dip':
                         bins = np.arange(min(self.parameter_space[value]), max(self.parameter_space[value])+5, 5.)
@@ -351,7 +374,7 @@ class RuptureGmf(object):
             if bin: # Calculate as histogram
                 hist, bins = np.histogram(self.parameter_space[value], bins)
                 # align to bin centre for plotting
-                bin_width = bins[1] - bins[0]
+                #bin_width = bins[1] - bins[0]
                 unique_vals = []
                 for i, edge in enumerate(bins):
                     try:
@@ -359,14 +382,24 @@ class RuptureGmf(object):
                                              np.where(self.parameter_space[value] < bins[i+1]))
                     except IndexError:
                         ind = np.where(self.parameter_space[value] >= edge)
-                    pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[ind]))
+                    pdf_sum = 0
+                    for index in ind:
+                        likelihood = np.power((1/(self.sigma*np.sqrt(2*np.pi))), len(self.mmi_obs)) * \
+                            np.exp((-1/2)*((self.sum_squares_list[index]/self.sigma**2)))
+                        pdf_sum += likelihood
+                    #pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[ind]))
                     pdf_sums.append(pdf_sum)                              
-                    unique_vals.append(edge + bin_width)
+                    unique_vals.append(edge)# + bin_width)
             else: # Use raw values
                 for val in unique_vals:
                     # Just unique values, as pdf sums are repeated
                     ind = np.argwhere(self.parameter_space[value]==val)
-                    pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[ind]))
+                    pdf_sum = 0
+                    for index in ind:
+                        likelihood = np.power((1/(self.sigma*np.sqrt(2*np.pi))), len(self.mmi_obs)) * \
+                            np.exp((-1/2)*((self.sum_squares_list[index]/self.sigma**2)))
+                        pdf_sum += likelihood
+                    #pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[ind]))
                     pdf_sums.append(pdf_sum)
             # Normalise pdf sums
             pdf_sums = np.array(pdf_sums)
@@ -398,7 +431,12 @@ class RuptureGmf(object):
                 ax.set_theta_zero_location('N')
                 ax.set_theta_direction(-1)
                 ax.set_thetagrids(np.arange(0, 360, 15))
-                ax.set_rgrids(np.arange(0.01, max(pdf_sums)+0.01, 0.02), angle= np.deg2rad(7.5), weight= 'black')
+                # Define grids intervals for radial axis
+                if max(pdf_sums) < 0.11:
+                    r_int = 0.02
+                else:
+                    r_int = 0.1
+                ax.set_rgrids(np.arange(0.01, max(pdf_sums)+0.01, r_int), angle= np.deg2rad(7.5), weight= 'black')
                 ax.set_xlabel(xlabel_dict[key])
                 ax.text(-0.07, 1.02, 'b)', transform=ax.transAxes, fontsize=14)
                 #ax.set_title('Rose Diagram of Strike PDF"', y=1.10, fontsize=15)
@@ -487,11 +525,18 @@ class RuptureGmf(object):
         m.drawcoastlines(linewidth=0.5,color='k')
         m.drawcountries(color='0.2')
         m.drawstates(color='0.2')
-        
-        m.drawparallels(np.arange(-90.,90.,0.5), labels=[1,0,0,0],
+        if maxlon-minlon < 2:
+            gridspace = 0.5
+        elif maxlon-minlon < 3:
+            gridspace = 1.0
+        elif maxlon-minlon < 7:
+            gridspace = 2.0
+        else:
+            gridspace = 5.0
+        m.drawparallels(np.arange(-90.,90.,gridspace), labels=[1,0,0,0],
                         fontsize=10, dashes=[2, 2], color='0.5',
                         linewidth=0.5)
-        m.drawmeridians(np.arange(0.,360.,0.5), labels=[0,0,0,1],
+        m.drawmeridians(np.arange(0.,360.,gridspace), labels=[0,0,0,1],
                         fontsize=10, dashes=[2, 2], color='0.5',
                         linewidth=0.5)
         max_val = max(pdf_sums)*1.1
@@ -524,7 +569,13 @@ class RuptureGmf(object):
                    edgecolor='k', s=200, zorder=10, latlon=True)
         #m.text(0.05, 0.95, 'c)', transform=ax.transAxes, fontsize=14)
         plt.annotate('c)', xy=(0.05, 0.9),xycoords='axes fraction', fontsize=14)
-        ticks = np.arange(0.0, max_val+0.05, 0.05) 
+        if max_val < 0.001:
+            loc_int = 0.0005
+        elif max_val < 0.01:
+            loc_int = 0.005
+        else:
+            loc_int = 0.05
+        ticks = np.arange(0.0, max_val*1.1, loc_int) 
         cbar = m.colorbar(cs, ticks=ticks)
         cbar.ax.set_ylabel('Probability')
         figname = '%s_%s_all_parameter_pdf.png' % (fig_comment,self.gsim)
