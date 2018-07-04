@@ -4,3 +4,4 @@ trt,Subduction Interface
 site_model_file,data/jawa_sumatra_site_model.xml
 site_file,data/1699HMMI_weighted_mod.txt
 site_file_pts,data/jawa_sumatra_site_model.xml
+limits_filename,data/java_megathrust.xml.limits.txt

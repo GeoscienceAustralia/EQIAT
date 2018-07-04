@@ -1,6 +1,7 @@
-event_name,1867
-area_source_file,data/java_slab_source_model.xml
+event_name,1867slab
+area_source_file,data/java_slab_source_model_300km_109E_114E.xml
 trt,Subduction Intraslab
 site_model_file,data/jawa_sumatra_site_model.xml
 site_file,data/1867HMMI.txt
 site_file_pts,data/jawa_sumatra_site_model.xml
+limits_filename,data/java_slab_source_model.xml.limits.txt

@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<nrml xmlns:gml="http://www.opengis.net/gml"
+	  xmlns="http://openquake.org/xmlns/nrml/0.4">
+
+	<simpleFaultSource id="1" name="Banda Detachment" tectonicRegion="Active">
+		<simpleFaultGeometry>
+			<gml:LineString>
+				<gml:posList>
+					130.015 -3.776
+					130.450 -4.515
+					130.625 -5.221
+				</gml:posList>
+			</gml:LineString>
+			<dip>
+				15.0
+			</dip>
+			<upperSeismoDepth>
+				0.0
+			</upperSeismoDepth>
+			<lowerSeismoDepth>
+				30.0
+			</lowerSeismoDepth>
+		</simpleFaultGeometry>
+		<magScaleRel>
+			WC1994
+		</magScaleRel>
+		<ruptAspectRatio>
+			1.0
+		</ruptAspectRatio>
+		<truncGutenbergRichterMFD aValue="2.276" bValue="0.940" minMag="5.5" maxMag="7.2" />
+		<rake>
+			-90.0
+		</rake>
+	</simpleFaultSource>
+</nrml>
