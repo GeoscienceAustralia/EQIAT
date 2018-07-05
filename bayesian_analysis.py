@@ -16,6 +16,48 @@ from matplotlib.patches import PathPatch, Polygon
 from scipy import interpolate
 
 data_file = 'outputs/1847_BooreEtAl2014_parameter_llh.csv'
+data_files = ['outputs/1847_BooreEtAl2014_parameter_llh.csv',
+              'outputs/1847_CampbellBozorgnia2014_parameter_llh.csv',
+              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
+gmpe_weights = [0.4, 0.2, 0.4]
+
+if sum(gmpe_weights) != 1.:
+    msg = 'GMPE weights must sum to 1'
+    raise(msg)
+
+def update_weights_gmpe(parameter_space, prior_pdfs):
+    """Update weights in a Bayesian sense                                                                           Includ GMPE uncertainty
+    """
+    prior_weights = []
+    llhs = parameter_space[7]
+    print llhs, sum(llhs)
+    print max(llhs), min(llhs)
+    parameter_space = parameter_space.T
+    for combo in parameter_space:
+#        print combo                                                                                             
+        i0 = np.where(prior_pdfs[0][0]==combo[0])
+        i1 = np.where(prior_pdfs[0][1]==combo[1])
+        i2 = np.where(prior_pdfs[0][2]==combo[2])
+        i3 = np.where(prior_pdfs[0][3]==combo[3])
+        i4 = np.where(prior_pdfs[0][4]==combo[4])
+        i5 = np.where(prior_pdfs[0][5]==combo[5])
+        i6 = np.where(prior_pdfs[0][6]==combo[8])
+#        print 'i0', i0
+ #       print 'i6', i6
+        prior_weight = prior_pdfs[1][0][i0] * prior_pdfs[1][1][i1] * \
+            prior_pdfs[1][2][i2] * prior_pdfs[1][3][i3] * \
+            prior_pdfs[1][4][i4] * prior_pdfs[1][5][i5] * \
+            prior_pdfs[1][6][i6]
+
+        prior_weights.append(prior_weight)
+#    print prior_weights                                                                                         
+    prior_weights = np.array(prior_weights).flatten()
+    print 'priors', prior_weights, sum(prior_weights)
+    print max(prior_weights), min(prior_weights)
+    posterior_probs = llhs*prior_weights/sum(llhs*prior_weights)#prior_weights)#denominator                      
+    print 'updates', posterior_probs, max(posterior_probs), min(posterior_probs)
+    print 'sum', sum(posterior_probs)
+    return posterior_probs
 
 def update_weights(parameter_space, prior_pdfs):
     """Update weights in a Bayesian sense
@@ -327,23 +369,54 @@ if __name__ == "__main__":
     dip_priors = np.ones(len(np.unique(parameter_space[5]))) * \
         (1./len(np.unique(parameter_space[5])))
 
-    # Calculate normalising denominator
-#    denom = 0
-#    for m in mag_priors:
-#        for lon in lon_priors:
-#            for lat in lat_priors:
-#                for dep in depth_priors:
-#                    for strike in strike_priors:
-#                        for dip in dip_priors:
-#                            denom += m*lon*lat*dep*strike*dip
-#    print denom
     priors = np.array([[np.unique(parameter_space[0]), np.unique(parameter_space[1]),
                        np.unique(parameter_space[2]), np.unique(parameter_space[3]),
                        np.unique(parameter_space[4]), np.unique(parameter_space[5])],
                       [mag_priors, lon_priors, lat_priors,
                        depth_priors, strike_priors, dip_priors]])
-    posterior_probs = update_weights(parameter_space, priors)
+##    posterior_probs = update_weights(parameter_space, priors)
 
-    print parameter_space
+##    print parameter_space
+##    parameter_space[7] = posterior_probs
+##    parameter_pdf(parameter_space, fig_comment = fig_comment)
+
+    # Now combine for different GMPEs
+    fig_comment = 'figures/' + data_files[0].split('/')[1][:4] + '_all_gmpes'
+    gmpe_inds = []
+    # Here we add a dimension to the parameter space that contains an index
+    # for which gmpe was used
+    for i, filename in enumerate(data_files):
+        gmpe_inds.append(i)
+        if i == 0:
+            parameter_space = np.genfromtxt(filename, delimiter=',', skip_header=1)
+            parameter_space = parameter_space.T
+            gmm_ids = np.array([np.ones(len(parameter_space[7]))*i])
+            print parameter_space
+            print gmm_ids
+            parameter_space = np.concatenate([parameter_space, gmm_ids])
+            parameter_space = parameter_space.T
+        else:
+            tmp_ps = np.genfromtxt(filename, delimiter=',', skip_header=1)
+            tmp_ps = tmp_ps.T
+            gmm_ids = np.array([np.ones(len(tmp_ps[7]))*i])
+            tmp_ps = np.concatenate([tmp_ps, gmm_ids])
+            tmp_ps = tmp_ps.T
+            parameter_space = np.concatenate([parameter_space, tmp_ps])
+    parameter_space = parameter_space.T
+    priors = np.array([[np.unique(parameter_space[0]), np.unique(parameter_space[1]),
+                        np.unique(parameter_space[2]), np.unique(parameter_space[3]),
+                        np.unique(parameter_space[4]), np.unique(parameter_space[5]),
+                        gmpe_inds],
+                       [mag_priors, lon_priors, lat_priors,
+                        depth_priors, strike_priors, dip_priors,
+                        np.array(gmpe_weights)]])
+#    print priors
+#    priors = np.concatenate([priors, [gmpe_inds, gmpe_weights]], axis=1)
+#    print priors
+#priors[0][6] = gmpe_inds
+    #priors[1][6] = gmpe_weights
+    print 'priors', priors
+    print 'parameter_space', parameter_space
+    posterior_probs = update_weights_gmpe(parameter_space, priors)
     parameter_space[7] = posterior_probs
     parameter_pdf(parameter_space, fig_comment = fig_comment)
