@@ -15,15 +15,30 @@ from matplotlib.path import Path
 from matplotlib.patches import PathPatch, Polygon
 from scipy import interpolate
 
-data_file = 'outputs/1847_BooreEtAl2014_parameter_llh.csv'
+data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_BooreEtAl2014_parameter_llh.csv'
 data_files = ['outputs/1847_BooreEtAl2014_parameter_llh.csv',
               'outputs/1847_CampbellBozorgnia2014_parameter_llh.csv',
               'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
-gmpe_weights = [0.4, 0.2, 0.4]
-
-if sum(gmpe_weights) != 1.:
-    msg = 'GMPE weights must sum to 1'
-    raise(msg)
+data_files = ['outputs/1847_ChiouYoungs2008_parameter_llh.csv',
+              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
+#data_files = ['outputs/1840_BooreAtkinson2008_parameter_llh.csv',
+#              'outputs/1840_CampbellBozorgnia2014_parameter_llh.csv',
+#              'outputs/1840_BooreEtAl2014_parameter_llh.csv',
+#	      'outputs/1840_ChiouYoungs2008_parameter_llh.csv',
+#              'outputs/1840_CampbellBozorgnia2008_parameter_llh.csv',
+#              'outputs/1840_ChiouYoungs2014_parameter_llh.csv']
+#gmpe_weights = [0.1, 0.1, 0.3, 0.1, 0.1, 0.3]
+data_files = ['outputs/1847_BooreAtkinson2008_parameter_llh.csv',
+              'outputs/1847_BooreEtAl2014_parameter_llh.csv',
+              'outputs/1847_ChiouYoungs2008_parameter_llh.csv',       
+              'outputs/1847_CampbellBozorgnia2008_parameter_llh.csv',
+              'outputs/1847_ChiouYoungs2014_parameter_llh.csv',
+              'outputs/1847_CampbellBozorgnia2014_parameter_llh.csv']
+gmpe_weights = [0.1, 0.3, 0.1, 0.1, 0.3, 0.1]
+print 'sum(gmpe_weights)', sum(gmpe_weights)
+#if sum(gmpe_weights) != 1.:
+#    msg = 'GMPE weights must sum to 1'
+#    raise(msg)
 
 def update_weights_gmpe(parameter_space, prior_pdfs):
     """Update weights in a Bayesian sense                                                                           Includ GMPE uncertainty
@@ -163,12 +178,19 @@ def parameter_pdf(parameter_space, fig_comment='', limits_filename=None):
         # Get the best-fit value for plotting on top                                                                                               
         index = np.argmin(parameter_space[6])
         best_fit_x =  parameter_space[value][index]
+        index_posterior = np.argmax(parameter_space[7])
+        best_fit_x_posterior = parameter_space[value][index_posterior]
         #y_index = np.where(unique_vals == best_fit_x)[0]                                                                                          
         try:
             y_index = (np.abs(unique_vals - best_fit_x)).argmin()[0]
         except IndexError:
             y_index = (np.abs(unique_vals - best_fit_x)).argmin()
         best_fit_y = pdf_sums[y_index]
+        try:
+            y_index_posterior = (np.abs(unique_vals - best_fit_x_posterior)).argmin()[0]
+        except IndexError:
+            y_index_posterior = (np.abs(unique_vals - best_fit_x_posterior)).argmin()
+        best_fit_y_posterior = pdf_sums[y_index_posterior]
         # Now plot the results                                                                                                                     
         try:
             width = unique_vals[1] - unique_vals[0] # Scale width by discretisation                                                                
@@ -179,7 +201,8 @@ def parameter_pdf(parameter_space, fig_comment='', limits_filename=None):
             ax = fig.add_subplot(gs[0,2],projection='polar')
             ax.bar(np.deg2rad(unique_vals), pdf_sums, width=np.deg2rad(width), bottom=0.0,
                    align='center', color='0.5', edgecolor='k')
-            ax.scatter(np.deg2rad(best_fit_x), best_fit_y, marker = '*', color='0.5', edgecolor='k', s=200,zorder=10 )
+            ax.scatter(np.deg2rad(best_fit_x), best_fit_y, marker = '*', c='#696969', edgecolor='k', s=100,zorder=10 )
+            ax.scatter(np.deg2rad(best_fit_x_posterior), best_fit_y_posterior, marker = '*', c='w', edgecolor='k', s=500,zorder=9 )
             ax.set_theta_zero_location('N')
             ax.set_theta_direction(-1)
             ax.set_thetagrids(np.arange(0, 360, 15))
@@ -214,8 +237,10 @@ def parameter_pdf(parameter_space, fig_comment='', limits_filename=None):
 #            uby = [0, ymax]
         if key == 'mag' or key == 'dip' or key == 'depth' :
             ax.bar(unique_vals, pdf_sums, width, align='center', color='0.5')
-            ax.scatter(best_fit_x, best_fit_y, marker = '*', color='0.5',
-                       edgecolor='k', s=200, zorder=10)
+            ax.scatter(best_fit_x, best_fit_y, marker = '*', c='#696969',
+                       edgecolor='k', s=100, zorder=10)
+            ax.scatter(best_fit_x_posterior, best_fit_y_posterior, marker = '*', c='w',
+                       edgecolor='k', s=500, zorder=9)
             #if key != 'latitude' and key != 'longitude':
 #            ax.plot(lbx, lby, color='k')
 #            ax.plot(ubx, uby, color='k')
@@ -255,6 +280,9 @@ def parameter_pdf(parameter_space, fig_comment='', limits_filename=None):
     index = np.argmin(parameter_space[6])
     best_fit_lon =  parameter_space[parameter_dict['longitude']][index]
     best_fit_lat =  parameter_space[parameter_dict['latitude']][index]
+    index_posterior = np.argmax(parameter_space[7])
+    best_fit_lon_posterior =  parameter_space[parameter_dict['longitude']][index_posterior]
+    best_fit_lat_posterior =  parameter_space[parameter_dict['latitude']][index_posterior]
     ax =  fig.add_subplot(gs[0,3])
     minlon = min(parameter_pdf_values['longitude'])
     maxlon = max(parameter_pdf_values['longitude'])
@@ -312,8 +340,10 @@ def parameter_pdf(parameter_space, fig_comment='', limits_filename=None):
         for contour in cs.collections:
             contour.set_clip_path(patch)
     # Now add best-fit location on top                                                                                                             
-    m.scatter(best_fit_lon, best_fit_lat, marker = '*', color='w',
-              edgecolor='k', s=200, zorder=10, latlon=True)
+    m.scatter(best_fit_lon, best_fit_lat, marker = '*', c='#696969',
+              edgecolor='k', s=100, zorder=10, latlon=True)
+    m.scatter(best_fit_lon_posterior, best_fit_lat_posterior, marker = '*', c='w',
+              edgecolor='k', s=500, zorder=9, latlon=True)
     #m.text(0.05, 0.95, 'c)', transform=ax.transAxes, fontsize=14)                                                                                 
     plt.annotate('c)', xy=(0.05, 0.9),xycoords='axes fraction', fontsize=14)
     if max_val < 0.001:
@@ -374,11 +404,31 @@ if __name__ == "__main__":
                        np.unique(parameter_space[4]), np.unique(parameter_space[5])],
                       [mag_priors, lon_priors, lat_priors,
                        depth_priors, strike_priors, dip_priors]])
-##    posterior_probs = update_weights(parameter_space, priors)
 
-##    print parameter_space
-##    parameter_space[7] = posterior_probs
-##    parameter_pdf(parameter_space, fig_comment = fig_comment)
+    # Get number of observations for re-calculating likelihoods across all files
+    event = data_file.split('/')[1][:4]
+    hmmi_file  = 'data/' + event + 'HMMI.txt'
+    with open(hmmi_file) as f:
+        for obs_count, l in enumerate(f):
+            pass
+    num_obs = obs_count + 1
+    # Re-calculate sigma and then the likelihoods
+    min_rmse = min(parameter_space[6])
+    print 'min_rmse', min_rmse
+    sum_squares = parameter_space[6]**2 # Weighted sum of square*num_obs    
+    sigma=np.sqrt((1./(num_obs-6))*(min_rmse**2))
+    print 'sigma', sigma
+    print sum_squares, num_obs
+    print sum_squares/sigma**2
+    likelihoods = np.power((1/(sigma*np.sqrt(2*np.pi))), num_obs) * \
+                np.exp((-1/2)*(sum_squares/sigma**2))
+    print min(likelihoods), max(likelihoods)
+    print min(parameter_space[7]), max(parameter_space[7])
+    parameter_space[7] = likelihoods
+#    posterior_probs = update_weights(parameter_space, priors)
+#    print parameter_space
+#    parameter_space[7] = posterior_probs
+#    parameter_pdf(parameter_space, fig_comment = fig_comment)
 
     # Now combine for different GMPEs
     fig_comment = 'figures/' + data_files[0].split('/')[1][:4] + '_all_gmpes'
@@ -403,6 +453,17 @@ if __name__ == "__main__":
             tmp_ps = tmp_ps.T
             parameter_space = np.concatenate([parameter_space, tmp_ps])
     parameter_space = parameter_space.T
+        # longitude, latitude, strike, depth and dip - uniform across parameter space                             
+    lon_priors = np.ones(len(np.unique(parameter_space[1]))) * \
+        (1./len(np.unique(parameter_space[1])))
+    lat_priors = np.ones(len(np.unique(parameter_space[2]))) * \
+        (1./len(np.unique(parameter_space[2])))
+    depth_priors = np.ones(len(np.unique(parameter_space[3]))) * \
+        (1./len(np.unique(parameter_space[3])))
+    strike_priors = np.ones(len(np.unique(parameter_space[4]))) * \
+        (1./len(np.unique(parameter_space[4])))
+    dip_priors = np.ones(len(np.unique(parameter_space[5]))) * \
+        (1./len(np.unique(parameter_space[5])))
     priors = np.array([[np.unique(parameter_space[0]), np.unique(parameter_space[1]),
                         np.unique(parameter_space[2]), np.unique(parameter_space[3]),
                         np.unique(parameter_space[4]), np.unique(parameter_space[5]),
@@ -410,6 +471,22 @@ if __name__ == "__main__":
                        [mag_priors, lon_priors, lat_priors,
                         depth_priors, strike_priors, dip_priors,
                         np.array(gmpe_weights)]])
+
+        # Re-calculate sigma and then the likelihoods                                                                                               
+    min_rmse = min(parameter_space[6])
+    print 'min_rmse', min_rmse
+    sum_squares = parameter_space[6]**2 # Weighted sum of square*num_obs                                                                   
+    sigma=np.sqrt((1./(num_obs-7))*(min_rmse**2))
+    print 'sigma', sigma
+#    sigma = 1.0
+#    print 'updated sigma', sigma
+    print sum_squares, num_obs
+    print sum_squares/sigma**2
+    likelihoods = np.power((1/(sigma*np.sqrt(2*np.pi))), num_obs) * \
+                np.exp((-1/2)*(sum_squares/sigma**2))
+    print min(likelihoods), max(likelihoods)
+    print min(parameter_space[7]), max(parameter_space[7])
+    parameter_space[7] = likelihoods
 #    print priors
 #    priors = np.concatenate([priors, [gmpe_inds, gmpe_weights]], axis=1)
 #    print priors
