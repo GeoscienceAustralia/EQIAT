@@ -14,31 +14,76 @@ import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from matplotlib.patches import PathPatch, Polygon
 from scipy import interpolate
+from adjustText import adjust_text # Small package to improve label locations                                                         
+from collections import OrderedDict                     
 
 data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_BooreEtAl2014_parameter_llh.csv'
-data_files = ['outputs/1847_BooreEtAl2014_parameter_llh.csv',
-              'outputs/1847_CampbellBozorgnia2014_parameter_llh.csv',
-              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
-data_files = ['outputs/1847_ChiouYoungs2008_parameter_llh.csv',
-              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
-#data_files = ['outputs/1840_BooreAtkinson2008_parameter_llh.csv',
-#              'outputs/1840_CampbellBozorgnia2014_parameter_llh.csv',
-#              'outputs/1840_BooreEtAl2014_parameter_llh.csv',
-#	      'outputs/1840_ChiouYoungs2008_parameter_llh.csv',
-#              'outputs/1840_CampbellBozorgnia2008_parameter_llh.csv',
-#              'outputs/1840_ChiouYoungs2014_parameter_llh.csv']
-#gmpe_weights = [0.1, 0.1, 0.3, 0.1, 0.1, 0.3]
-data_files = ['outputs/1847_BooreAtkinson2008_parameter_llh.csv',
-              'outputs/1847_BooreEtAl2014_parameter_llh.csv',
-              'outputs/1847_ChiouYoungs2008_parameter_llh.csv',       
-              'outputs/1847_CampbellBozorgnia2008_parameter_llh.csv',
-              'outputs/1847_ChiouYoungs2014_parameter_llh.csv',
-              'outputs/1847_CampbellBozorgnia2014_parameter_llh.csv']
-gmpe_weights = [0.1, 0.3, 0.1, 0.1, 0.3, 0.1]
+#data_files = [data_file]
+#gmpe_weights = [1.]
+#mmi_obs_file = 'data/1847HMMI.txt'
+#data_files = ['outputs/1847_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/1847_CampbellBozorgnia2014_parameter_llh.csv',
+#              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
+#data_files = ['outputs/1847_ChiouYoungs2008_parameter_llh.csv',
+#              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
+data_files = ['outputs/1840_BooreAtkinson2008_parameter_llh.csv',
+              'outputs/1840_CampbellBozorgnia2014_parameter_llh.csv',
+              'outputs/1840_BooreEtAl2014_parameter_llh.csv',
+	      'outputs/1840_ChiouYoungs2008_parameter_llh.csv',
+              'outputs/1840_CampbellBozorgnia2008_parameter_llh.csv',
+              'outputs/1840_ChiouYoungs2014_parameter_llh.csv']
+gmpe_weights = [0.1, 0.1, 0.3, 0.1, 0.1, 0.3]
+mmi_obs_file = 'data/1840HMMI.txt'
+#data_files = ['outputs/1847_BooreAtkinson2008_parameter_llh.csv',
+#              'outputs/1847_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/1847_ChiouYoungs2008_parameter_llh.csv',       
+#              'outputs/1847_CampbellBozorgnia2008_parameter_llh.csv',
+#              'outputs/1847_ChiouYoungs2014_parameter_llh.csv',
+#              'outputs/1847_CampbellBozorgnia2014_parameter_llh.csv']
+#gmpe_weights = [0.1, 0.3, 0.1, 0.1, 0.3, 0.1]
+#data_files = ['outputs/1834_BooreAtkinson2008_parameter_llh.csv',
+#              'outputs/1834_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/1834_ChiouYoungs2008_parameter_llh.csv',
+#              'outputs/1834_CampbellBozorgnia2008_parameter_llh.csv',
+#              'outputs/1834_ChiouYoungs2014_parameter_llh.csv',
+#              'outputs/1834_CampbellBozorgnia2014_parameter_llh.csv']
+#gmpe_weights = [0.1, 0.3, 0.1, 0.1, 0.3, 0.1]
 print 'sum(gmpe_weights)', sum(gmpe_weights)
+# Read observation data                                                                                                              
+mmi_obs = np.genfromtxt(mmi_obs_file)
 #if sum(gmpe_weights) != 1.:
 #    msg = 'GMPE weights must sum to 1'
 #    raise(msg)
+
+# function fro roman numerals                                                                                                                              
+def write_roman(num):
+
+    roman = OrderedDict()
+    roman[1000] = "M"
+    roman[900] = "CM"
+    roman[500] = "D"
+    roman[400] = "CD"
+    roman[100] = "C"
+    roman[90] = "XC"
+    roman[50] = "L"
+    roman[40] = "XL"
+    roman[10] = "X"
+    roman[9] = "IX"
+    roman[5] = "V"
+    roman[4] = "IV"
+    roman[1] = "I"
+
+    def roman_num(num):
+        for r in roman.keys():
+            x, y = divmod(num, r)
+            yield roman[r] * x
+            num -= (r * x)
+            if num > 0:
+                roman_num(num)
+            else:
+                break
+
+    return "".join([a for a in roman_num(num)])
 
 def update_weights_gmpe(parameter_space, prior_pdfs):
     """Update weights in a Bayesian sense                                                                           Includ GMPE uncertainty
@@ -69,7 +114,7 @@ def update_weights_gmpe(parameter_space, prior_pdfs):
     prior_weights = np.array(prior_weights).flatten()
     print 'priors', prior_weights, sum(prior_weights)
     print max(prior_weights), min(prior_weights)
-    posterior_probs = llhs*prior_weights/sum(llhs*prior_weights)#prior_weights)#denominator                      
+    posterior_probs = llhs*prior_weights/sum(llhs*prior_weights)
     print 'updates', posterior_probs, max(posterior_probs), min(posterior_probs)
     print 'sum', sum(posterior_probs)
     return posterior_probs
@@ -104,7 +149,7 @@ def update_weights(parameter_space, prior_pdfs):
     print 'sum', sum(posterior_probs)
     return posterior_probs
 
-def parameter_pdf(parameter_space, fig_comment='', limits_filename=None):
+def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename=None):
     """Calculate a pdf for parameter values based on the uncertainty model                                
     """
 
@@ -339,14 +384,32 @@ def parameter_pdf(parameter_space, fig_comment='', limits_filename=None):
         ax.add_patch(patch)
         for contour in cs.collections:
             contour.set_clip_path(patch)
-    # Now add best-fit location on top                                                                                                             
+    # Now add historical points on top
+    if mmi_obs is not None:
+        clevs = np.arange(0.5,9.5,1.0)
+        cmap = plt.get_cmap('YlOrRd')
+        mmi_labels = []
+        for obs in mmi_obs[:,2]:
+            mmi_labels.append(write_roman(int(obs)))
+            m.scatter(mmi_obs[:,0], mmi_obs[:,1], c=mmi_obs[:,2], cmap=cmap,
+                      vmin=1.5, vmax=8.5, s=40, latlon=True)
+        texts = []
+        for label, x, y in zip(mmi_labels, mmi_obs[:,0], mmi_obs[:,1]):
+            x,y =  m(x,y)
+            texts.append(plt.text(x,y,label))
+        adjust_text(texts, only_move='xy',
+                    arrowprops=dict(arrowstyle="->",
+                                    color='k', lw=0.5))
+    # Now add best-fit location on top                                                                     
     m.scatter(best_fit_lon, best_fit_lat, marker = '*', c='#696969',
               edgecolor='k', s=100, zorder=10, latlon=True)
     m.scatter(best_fit_lon_posterior, best_fit_lat_posterior, marker = '*', c='w',
               edgecolor='k', s=500, zorder=9, latlon=True)
     #m.text(0.05, 0.95, 'c)', transform=ax.transAxes, fontsize=14)                                                                                 
     plt.annotate('c)', xy=(0.05, 0.9),xycoords='axes fraction', fontsize=14)
-    if max_val < 0.001:
+    if max_val < 0.0001:
+        loc_int = 0.00005
+    elif max_val < 0.001:
         loc_int = 0.0005
     elif max_val < 0.01:
         loc_int = 0.005
@@ -496,4 +559,4 @@ if __name__ == "__main__":
     print 'parameter_space', parameter_space
     posterior_probs = update_weights_gmpe(parameter_space, priors)
     parameter_space[7] = posterior_probs
-    parameter_pdf(parameter_space, fig_comment = fig_comment)
+    parameter_pdf(parameter_space, fig_comment = fig_comment, mmi_obs = mmi_obs)
