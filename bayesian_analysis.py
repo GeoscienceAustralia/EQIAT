@@ -6,6 +6,7 @@ Geoscience Australia
 July 2018
 """
 
+import sys
 import numpy as np
 from mpl_toolkits.basemap import Basemap, maskoceans
 import matplotlib
@@ -26,14 +27,22 @@ data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_Boor
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
 #data_files = ['outputs/1847_ChiouYoungs2008_parameter_llh.csv',
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
-data_files = ['outputs/1840_BooreAtkinson2008_parameter_llh.csv',
-              'outputs/1840_CampbellBozorgnia2014_parameter_llh.csv',
-              'outputs/1840_BooreEtAl2014_parameter_llh.csv',
-	      'outputs/1840_ChiouYoungs2008_parameter_llh.csv',
-              'outputs/1840_CampbellBozorgnia2008_parameter_llh.csv',
-              'outputs/1840_ChiouYoungs2014_parameter_llh.csv']
-gmpe_weights = [0.1, 0.1, 0.3, 0.1, 0.1, 0.3]
-mmi_obs_file = 'data/1840HMMI.txt'
+data_files = ['outputs/1699slab_ZhaoEtAl2006SSlab_parameter_llh.csv',
+              'outputs/1699slab_AtkinsonBoore2003SSlab_parameter_llh.csv',
+              'outputs/1699slab_AtkinsonBoore2003SSlabCascadia_parameter_llh.csv',
+              'outputs/1699slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']
+gmpe_weights = [0.3, 0.15, 0.15, 0.4]
+mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
+#data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',
+#              'outputs/1699megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',
+#              'outputs/1699megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#gmpe_weights = [0.3, 0.3, 0.4]
+#mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
+#data_files = ['outputs/1840_CampbellBozorgnia2014_parameter_llh.csv',
+#              'outputs/1840_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/1840_ChiouYoungs2014_parameter_llh.csv']
+#gmpe_weights = [0.33, 0.34, 0.33]
+#mmi_obs_file = 'data/1840HMMI.txt'
 #data_files = ['outputs/1847_BooreAtkinson2008_parameter_llh.csv',
 #              'outputs/1847_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/1847_ChiouYoungs2008_parameter_llh.csv',       
@@ -41,16 +50,18 @@ mmi_obs_file = 'data/1840HMMI.txt'
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv',
 #              'outputs/1847_CampbellBozorgnia2014_parameter_llh.csv']
 #gmpe_weights = [0.1, 0.3, 0.1, 0.1, 0.3, 0.1]
-#data_files = ['outputs/1834_BooreAtkinson2008_parameter_llh.csv',
+#data_files = [#'outputs/1834_BooreAtkinson2008_parameter_llh.csv',
 #              'outputs/1834_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/1834_ChiouYoungs2008_parameter_llh.csv',
-#              'outputs/1834_CampbellBozorgnia2008_parameter_llh.csv',
+              #'outputs/1834_ChiouYoungs2008_parameter_llh.csv',
+              #'outputs/1834_CampbellBozorgnia2008_parameter_llh.csv',
 #              'outputs/1834_ChiouYoungs2014_parameter_llh.csv',
 #              'outputs/1834_CampbellBozorgnia2014_parameter_llh.csv']
-#gmpe_weights = [0.1, 0.3, 0.1, 0.1, 0.3, 0.1]
+#gmpe_weights = [0.34, 0.33, 0.33]
+#mmi_obs_file = 'data/1834HMMI.txt'
 print 'sum(gmpe_weights)', sum(gmpe_weights)
 # Read observation data                                                                                                              
 mmi_obs = np.genfromtxt(mmi_obs_file)
+
 #if sum(gmpe_weights) != 1.:
 #    msg = 'GMPE weights must sum to 1'
 #    raise(msg)
@@ -104,11 +115,27 @@ def update_weights_gmpe(parameter_space, prior_pdfs):
         i6 = np.where(prior_pdfs[0][6]==combo[8])
 #        print 'i0', i0
  #       print 'i6', i6
-        prior_weight = prior_pdfs[1][0][i0] * prior_pdfs[1][1][i1] * \
-            prior_pdfs[1][2][i2] * prior_pdfs[1][3][i3] * \
-            prior_pdfs[1][4][i4] * prior_pdfs[1][5][i5] * \
-            prior_pdfs[1][6][i6]
-
+        try:
+            prior_weight = prior_pdfs[1][0][i0] * prior_pdfs[1][1][i1] * \
+                prior_pdfs[1][2][i2] * prior_pdfs[1][3][i3] * \
+                prior_pdfs[1][4][i4] * prior_pdfs[1][5][i5] * \
+                prior_pdfs[1][6][i6]
+        except IndexError:
+            print combo
+            print i0,i1,i2,i3,i4,i5,i6
+            print len(prior_pdfs[1][0]), len(prior_pdfs[1][1])
+            print len(prior_pdfs[1][2]), len(prior_pdfs[1][3])
+            print len(prior_pdfs[1][4]), len(prior_pdfs[1][5])
+            print len(prior_pdfs[1][6])
+            print (prior_pdfs[1][0])
+            print (prior_pdfs[1][1])
+            print (prior_pdfs[1][2])
+            print (prior_pdfs[1][3])
+            print (prior_pdfs[1][4])
+            print (prior_pdfs[1][5])
+            print (prior_pdfs[1][6])
+            print 'Error in indexing of priors, check priors are defined for full parameter space'
+            sys.exit()
         prior_weights.append(prior_weight)
 #    print prior_weights                                                                                         
     prior_weights = np.array(prior_weights).flatten()
@@ -191,7 +218,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
                     ind = np.intersect1d(np.where(parameter_space[value] >= edge),
                                          np.where(parameter_space[value] < bins[i+1]))
                 except IndexError:
-                    ind = np.where(parameter_space[value] >= edge)
+                    ind = np.where(parameter_space[value] >= edge)[0] #[0] to get array from tuple
                 pdf_sum = 0
                 for index in ind:
 #                    likelihood = np.power((1/(self.sigma*np.sqrt(2*np.pi))), len(self.mmi_obs)) * \
@@ -213,14 +240,12 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
                     pdf_sum += posterior_prob
                     #pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[ind]))                                                                             
                 pdf_sums.append(pdf_sum)
-        # Normalise pdf sums       
         pdf_sums = np.array(pdf_sums)
-        #pdf_sums = pdf_sums/np.sum(pdf_sums)
         print 'pdf_sums', pdf_sums
         parameter_pdf_sums[key] = pdf_sums
         parameter_pdf_values[key] = unique_vals
 
-        # Get the best-fit value for plotting on top                                                                                               
+        # Get the best-fit value for plotting on top                                                                                              
         index = np.argmin(parameter_space[6])
         best_fit_x =  parameter_space[value][index]
         index_posterior = np.argmax(parameter_space[7])
@@ -494,7 +519,7 @@ if __name__ == "__main__":
 #    parameter_pdf(parameter_space, fig_comment = fig_comment)
 
     # Now combine for different GMPEs
-    fig_comment = 'figures/' + data_files[0].split('/')[1][:4] + '_all_gmpes'
+    fig_comment = 'figures/' + event + '_' + data_files[0].split('/')[1].split('_')[0] + '_all_gmpes'
     gmpe_inds = []
     # Here we add a dimension to the parameter space that contains an index
     # for which gmpe was used
@@ -516,6 +541,35 @@ if __name__ == "__main__":
             tmp_ps = tmp_ps.T
             parameter_space = np.concatenate([parameter_space, tmp_ps])
     parameter_space = parameter_space.T
+    # Set up prior pdfs - set-up using basic assumptions and limits of data                                                   
+    # magnitude - based on Gutenberg-Richter assuming b value = 1, and that                                                        
+    # CDF from mmin to mmax = 1                                                                                                    
+    mags = np.unique(parameter_space[0])
+    # Hack to avoid help get intcremental rate on max mag by adding a bin
+    mags = list(mags)
+    print mags
+    mags.append(max(mags)+0.1)
+    print mags
+    mags = np.array(mags)
+    print mags
+    mmax = max(mags)
+    mmin = min(mags)
+    b=1.
+    a = np.log10(1./(np.power(10,-1*b*mmin) - np.power(10, -1*b*mmax)))
+    print a
+    # Now we need to generate an incremental pdf                                                                                    
+    reversed_mag_priors = []
+    reversed_mags = list(reversed(mags))
+    for i, mag in enumerate(reversed_mags):
+        if i == 0:
+            prior = np.power(10, a - b*mag)
+            # We don't add first bin as this is a dummy bin only
+        else:
+            prior = np.power(10, a - b*mag) - np.power(10, a - b*reversed_mags[i-1])
+            reversed_mag_priors.append(prior)
+    mag_priors = np.array(list(reversed(reversed_mag_priors)))
+    print 'mags',mags
+    print 'mag_priors', mag_priors, sum(mag_priors)
         # longitude, latitude, strike, depth and dip - uniform across parameter space                             
     lon_priors = np.ones(len(np.unique(parameter_space[1]))) * \
         (1./len(np.unique(parameter_space[1])))
