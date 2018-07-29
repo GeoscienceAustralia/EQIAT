@@ -260,6 +260,8 @@ class RuptureGmf(object):
         if len(self.mmi_obs) <= 6:
             print 'Not enough data points to calculate uncertainties'
             indices = np.where(self.rmse < 1e24)[0]
+            # Hacky estimate of sigma
+            self.sigma = 1.0
         else:
             if min_rmse is not None:
                 index = np.argmin(self.rmse)
@@ -383,11 +385,18 @@ class RuptureGmf(object):
                     except IndexError:
                         ind = np.where(self.parameter_space[value] >= edge)
                     pdf_sum = 0
-                    for index in ind:
-                        likelihood = np.power((1/(self.sigma*np.sqrt(2*np.pi))), len(self.mmi_obs)) * \
-                            np.exp((-1/2)*((self.sum_squares_list[index]/self.sigma**2)))
-                        pdf_sum += likelihood
-                    #pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[ind]))
+                    if len(ind) < 1:
+                        print ind
+                    else:
+                        for index in ind:
+                            #                        print index
+                            try:
+                                likelihood = np.power((1/(self.sigma*np.sqrt(2*np.pi))), len(self.mmi_obs)) * \
+                                    np.exp((-1/2)*((self.sum_squares_list[index]/self.sigma**2)))
+                                pdf_sum += likelihood
+                            except TypeError:
+                                print 'ind', ind
+                                print 'index',index
                     pdf_sums.append(pdf_sum)                              
                     unique_vals.append(edge)# + bin_width)
             else: # Use raw values
@@ -395,7 +404,9 @@ class RuptureGmf(object):
                     # Just unique values, as pdf sums are repeated
                     ind = np.argwhere(self.parameter_space[value]==val)
                     pdf_sum = 0
+#                    print ind
                     for index in ind:
+ #                       print index
                         likelihood = np.power((1/(self.sigma*np.sqrt(2*np.pi))), len(self.mmi_obs)) * \
                             np.exp((-1/2)*((self.sum_squares_list[index]/self.sigma**2)))
                         pdf_sum += likelihood

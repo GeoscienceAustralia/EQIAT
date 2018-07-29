@@ -27,37 +27,63 @@ data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_Boor
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
 #data_files = ['outputs/1847_ChiouYoungs2008_parameter_llh.csv',
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
-data_files = ['outputs/1699slab_ZhaoEtAl2006SSlab_parameter_llh.csv',
-              'outputs/1699slab_AtkinsonBoore2003SSlab_parameter_llh.csv',
-              'outputs/1699slab_AtkinsonBoore2003SSlabCascadia_parameter_llh.csv',
-              'outputs/1699slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']
-gmpe_weights = [0.3, 0.15, 0.15, 0.4]
-mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
-#data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',
-#              'outputs/1699megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',
-#              'outputs/1699megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-#gmpe_weights = [0.3, 0.3, 0.4]
+#data_files = ['outputs/1699slab_ZhaoEtAl2006SSlab_parameter_llh.csv',
+#              'outputs/1699slab_AtkinsonBoore2003SSlab_parameter_llh.csv',
+#              'outputs/1699slab_AtkinsonBoore2003SSlabCascadia_parameter_llh.csv',
+#              'outputs/1699slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']
+#gmpe_weights = [0.3, 0.15, 0.15, 0.4]
 #mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
+data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',
+              'outputs/1699megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',
+              'outputs/1699megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+gmpe_weights = [0.2, 0.3, 0.5]
+mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
 #data_files = ['outputs/1840_CampbellBozorgnia2014_parameter_llh.csv',
 #              'outputs/1840_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/1840_ChiouYoungs2014_parameter_llh.csv']
-#gmpe_weights = [0.33, 0.34, 0.33]
+#gmpe_weights = [0.15, 0.5, 0.35]
 #mmi_obs_file = 'data/1840HMMI.txt'
-#data_files = ['outputs/1847_BooreAtkinson2008_parameter_llh.csv',
-#              'outputs/1847_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/1847_ChiouYoungs2008_parameter_llh.csv',       
-#              'outputs/1847_CampbellBozorgnia2008_parameter_llh.csv',
+#data_files = ['outputs/1847_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv',
 #              'outputs/1847_CampbellBozorgnia2014_parameter_llh.csv']
-#gmpe_weights = [0.1, 0.3, 0.1, 0.1, 0.3, 0.1]
+#gmpe_weights = [0.5, 0.35, 0.15]
+#mmi_obs_file = 'data/1847HMMI.txt'
+#data_files = ['outputs/1867_BooreEtAl2014_parameter_llh.csv',                                
+#              'outputs/1867_ChiouYoungs2014_parameter_llh.csv',                                                          
+#              'outputs/1867_CampbellBozorgnia2014_parameter_llh.csv']                                                        
+#gmpe_weights = [0.5, 0.35, 0.15]                                                                                                 
+#mmi_obs_file = 'data/1867HMMI.txt' 
+#data_files = ['outputs/1867slab_ZhaoEtAl2006SSlab_parameter_llh.csv',                                                             
+#              'outputs/1867slab_AtkinsonBoore2003SSlab_parameter_llh.csv',                                                        
+#              'outputs/1867slab_AtkinsonBoore2003SSlabCascadia_parameter_llh.csv',                               
+#              'outputs/1867slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']                                           
+#gmpe_weights = [0.3, 0.15, 0.15, 0.4]                                                                                              
+#mmi_obs_file = 'data/1867HMMI.txt'
+#data_files = ['outputs/1867megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',                                                  
+#              'outputs/1867megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',                                                      
+#              'outputs/1867megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                
+#gmpe_weights = [0.2, 0.3, 0.5]                                                                                                    
+#mmi_obs_file = 'data/1867HMMI.txt'
 #data_files = [#'outputs/1834_BooreAtkinson2008_parameter_llh.csv',
 #              'outputs/1834_BooreEtAl2014_parameter_llh.csv',
               #'outputs/1834_ChiouYoungs2008_parameter_llh.csv',
               #'outputs/1834_CampbellBozorgnia2008_parameter_llh.csv',
 #              'outputs/1834_ChiouYoungs2014_parameter_llh.csv',
 #              'outputs/1834_CampbellBozorgnia2014_parameter_llh.csv']
-#gmpe_weights = [0.34, 0.33, 0.33]
+#gmpe_weights = [0.5, 0.35, 0.15]
 #mmi_obs_file = 'data/1834HMMI.txt'
+
+
+bbox_dict = {1699: '104/113/-9/-5',
+             1780: '104/113/-9/-5',
+             1834: '105/110/-8/-5',
+             1840: '105/115/-9/-5',
+             1847: '105/110/-9/-5',
+             1867: '105.7/115/-10/-3',
+             1815: '110/126/-10/-5',
+             1818: '110/126/-10/-5',
+             1820: '110/126/-10/-5'}
+
 print 'sum(gmpe_weights)', sum(gmpe_weights)
 # Read observation data                                                                                                              
 mmi_obs = np.genfromtxt(mmi_obs_file)
@@ -176,7 +202,7 @@ def update_weights(parameter_space, prior_pdfs):
     print 'sum', sum(posterior_probs)
     return posterior_probs
 
-def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename=None):
+def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename=None, bbox=None):
     """Calculate a pdf for parameter values based on the uncertainty model                                
     """
 
@@ -354,10 +380,17 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     best_fit_lon_posterior =  parameter_space[parameter_dict['longitude']][index_posterior]
     best_fit_lat_posterior =  parameter_space[parameter_dict['latitude']][index_posterior]
     ax =  fig.add_subplot(gs[0,3])
-    minlon = min(parameter_pdf_values['longitude'])
-    maxlon = max(parameter_pdf_values['longitude'])
-    minlat = min(parameter_pdf_values['latitude'])
-    maxlat = max(parameter_pdf_values['latitude'])
+    bbox = bbox.split('/')
+    if bbox is not None:
+        minlon = float(bbox[0])
+        maxlon = float(bbox[1])
+        minlat = float(bbox[2])
+        maxlat = float(bbox[3])
+    else:
+        minlon = min(parameter_pdf_values['longitude'])
+        maxlon = max(parameter_pdf_values['longitude'])
+        minlat = min(parameter_pdf_values['latitude'])
+        maxlat = max(parameter_pdf_values['latitude'])
     lat_0 = minlat + (maxlat-minlat)/2.
     lon_0 = minlon + (maxlon-minlon)/2.
     m = Basemap(projection='tmerc',
@@ -381,7 +414,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     m.drawparallels(np.arange(-90.,90.,gridspace), labels=[1,0,0,0],
                     fontsize=10, dashes=[2, 2], color='0.5',
                     linewidth=0.5)
-    m.drawmeridians(np.arange(0.,360.,gridspace), labels=[0,0,0,1],
+    m.drawmeridians(np.arange(0.,360.,gridspace), labels=[0,0,1,0],
                     fontsize=10, dashes=[2, 2], color='0.5',
                     linewidth=0.5)
     max_val = max(pdf_sums)*1.1
@@ -404,7 +437,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         poly = Polygon(np.c_[limits_x, limits_y], closed=True)
         clippath =  poly.get_path()
         ax = plt.gca()
-        patch = PathPatch(clippath, transform=ax.transData, facecolor='none', linewidth=0.4)
+        patch = PathPatch(clippath, transform=ax.transData, facecolor='none', linewidth=0.4, linestyle='--')
         print 'Adding patch'
         ax.add_patch(patch)
         for contour in cs.collections:
@@ -416,23 +449,32 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         mmi_labels = []
         for obs in mmi_obs[:,2]:
             mmi_labels.append(write_roman(int(obs)))
-            m.scatter(mmi_obs[:,0], mmi_obs[:,1], c=mmi_obs[:,2], cmap=cmap,
-                      vmin=1.5, vmax=8.5, s=40, latlon=True)
-        texts = []
-        for label, x, y in zip(mmi_labels, mmi_obs[:,0], mmi_obs[:,1]):
-            x,y =  m(x,y)
-            texts.append(plt.text(x,y,label))
-        adjust_text(texts, only_move='xy',
-                    arrowprops=dict(arrowstyle="->",
-                                    color='k', lw=0.5))
+            sp = m.scatter(mmi_obs[:,0], mmi_obs[:,1], c=mmi_obs[:,2], cmap=cmap,
+                           vmin=1.5, vmax=8.5, s=30, latlon=True)
+            sp_ticks = np.arange(1,9,1)
+        # Label only if there aren't too many to avoid plots being too busy
+        if len(mmi_obs[:,2]) < 12:
+            texts = []
+            for label, x, y in zip(mmi_labels, mmi_obs[:,0], mmi_obs[:,1]):
+                x,y =  m(x,y)
+                texts.append(plt.text(x,y,label, fontsize=8))
+            adjust_text(texts, only_move='xy',
+                        arrowprops=dict(arrowstyle="->",
+                                        color='k', lw=0.5))
+        # Give the color bar some axes to help locate it
+        #cbaxes = fig.add_axes([0.95, 0.6, 0.03, 0.3]) 
+        cbar1 = m.colorbar(sp, ticks=sp_ticks, location='right', pad = 0.1)
+        cbar1.ax.set_ylabel('MMI')
     # Now add best-fit location on top                                                                     
-    m.scatter(best_fit_lon, best_fit_lat, marker = '*', c='#696969',
+    m.scatter(best_fit_lon, best_fit_lat, marker = '*', facecolor='none', #c='#696969',
               edgecolor='k', s=100, zorder=10, latlon=True)
-    m.scatter(best_fit_lon_posterior, best_fit_lat_posterior, marker = '*', c='w',
+    m.scatter(best_fit_lon_posterior, best_fit_lat_posterior, marker = '*', facecolor='none',
               edgecolor='k', s=500, zorder=9, latlon=True)
     #m.text(0.05, 0.95, 'c)', transform=ax.transAxes, fontsize=14)                                                                                 
     plt.annotate('c)', xy=(0.05, 0.9),xycoords='axes fraction', fontsize=14)
-    if max_val < 0.0001:
+    if max_val < 0.00001:
+        loc_int = 0.000005
+    elif max_val < 0.0001:
         loc_int = 0.00005
     elif max_val < 0.001:
         loc_int = 0.0005
@@ -441,8 +483,8 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     else:
         loc_int = 0.05
     ticks = np.arange(0.0, max_val*1.1, loc_int)
-    cbar = m.colorbar(cs, ticks=ticks)
-    cbar.ax.set_ylabel('Probability')
+    cbar = m.colorbar(cs, ticks=ticks, location='bottom')#orientation='horizontal')
+    cbar.ax.set_xlabel('Probability')
     figname = '%s_all_parameter_pdf.png' % (fig_comment)
     figname = figname.replace('()', '')
     plt.tight_layout()
@@ -519,7 +561,19 @@ if __name__ == "__main__":
 #    parameter_pdf(parameter_space, fig_comment = fig_comment)
 
     # Now combine for different GMPEs
-    fig_comment = 'figures/' + event + '_' + data_files[0].split('/')[1].split('_')[0] + '_all_gmpes'
+    year = data_files[0].split('/')[1][:4]
+    year = int(year)
+    print 'year', year
+    event_name = data_files[0].split('/')[1].split('_')[0]
+    fig_comment = 'figures/' + event_name + '_all_gmpes'
+    # Get limits_filename from params.txt
+    param_filename = 'data/' + event_name + '_params.txt'
+    f_in = open(param_filename)
+    limits_filename = None
+    for line in f_in.readlines():
+        row = line.rstrip().split(',')
+        if row[0] == 'limits_filename':
+            limits_filename = row[1]
     gmpe_inds = []
     # Here we add a dimension to the parameter space that contains an index
     # for which gmpe was used
@@ -581,6 +635,15 @@ if __name__ == "__main__":
         (1./len(np.unique(parameter_space[4])))
     dip_priors = np.ones(len(np.unique(parameter_space[5]))) * \
         (1./len(np.unique(parameter_space[5])))
+
+    # Special cases of priors to limit extent of subduction zone megathrust
+    # or slab considered
+    if event_name == '1867slab':
+        lon_index = np.intersect1d((np.where(np.unique(parameter_space[1]) > 108.0)),
+                                   (np.where(np.unique(parameter_space[1]) < 113.0)))
+        lon_priors = np.zeros(len(np.unique(parameter_space[1])))
+        lon_priors[lon_index] = 1./len(lon_index)
+        print 'Updated longitude priors', lon_priors
     priors = np.array([[np.unique(parameter_space[0]), np.unique(parameter_space[1]),
                         np.unique(parameter_space[2]), np.unique(parameter_space[3]),
                         np.unique(parameter_space[4]), np.unique(parameter_space[5]),
@@ -613,4 +676,6 @@ if __name__ == "__main__":
     print 'parameter_space', parameter_space
     posterior_probs = update_weights_gmpe(parameter_space, priors)
     parameter_space[7] = posterior_probs
-    parameter_pdf(parameter_space, fig_comment = fig_comment, mmi_obs = mmi_obs)
+    bbox = bbox_dict[year]
+    parameter_pdf(parameter_space, fig_comment = fig_comment, mmi_obs = mmi_obs,
+                  limits_filename = limits_filename, bbox=bbox)

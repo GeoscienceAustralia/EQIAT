@@ -48,12 +48,13 @@ except:
 if event_name == '1852Banda_area':
     disc = 25
 else:
-    disc = 20
+    disc = 5
 # Area or fault source model is used to define the parameter space to be searched
 if trt == 'Subduction Intraslab':
     gsim_list = [ZhaoEtAl2006SSlab(), AtkinsonBoore2003SSlab(), AtkinsonBoore2003SSlabCascadia(), AbrahamsonEtAl2015SSlab()]
 if trt == 'Active':
-    gsim_list = [ChiouYoungs2008()]#, ChiouYoungs2014(), BooreAtkinson2008(), BooreEtAl2014(), CampbellBozorgnia2008(), CampbellBozorgnia2014() ]
+#    gsim_list = [ChiouYoungs2008(), ChiouYoungs2014(), BooreAtkinson2008(), BooreEtAl2014(), CampbellBozorgnia2008(), CampbellBozorgnia2014() ]
+    gsim_list = [ChiouYoungs2014(), BooreEtAl2014(), CampbellBozorgnia2014()]
 if trt == 'Subduction Interface':
     gsim_list = [YoungsEtAl1997SInter(), AtkinsonBoore2003SInter(), ZhaoEtAl2006SInter(), AbrahamsonEtAl2015SInter()]
 
@@ -193,13 +194,19 @@ for key,item in pt_sources.iteritems():
             pass
         # Get parameter pdfs
         fig_comment = 'figures/' + event_name
-        rupture_gmfs.parameter_pdf(fig_comment=fig_comment,limits_filename=limits_filename)
+        try:
+            rupture_gmfs.parameter_pdf(fig_comment=fig_comment,limits_filename=limits_filename)
         # Get slices
-        fig_comment = 'rmse_png/' + event_name
-        lons,lats,rmse = rupture_gmfs.uncertainty_slice2D('longitude', 'latitude', 'mag', 
-                                                          rupture_gmfs.best_rupture.mag,
-                                                          fig_comment=fig_comment,
-                                                          limits_filename=limits_filename)
+            fig_comment = 'rmse_png/' + event_name
+            lons,lats,rmse = rupture_gmfs.uncertainty_slice2D('longitude', 'latitude', 'mag', 
+                                                              rupture_gmfs.best_rupture.mag,
+                                                              fig_comment=fig_comment,
+                                                              limits_filename=limits_filename)
+            unc_array = np.vstack([lons,lats,rmse])
+            np.savetxt('rmse_csv/rmse_%s_%s.csv' % (event_name, gsim), unc_array.T, delimiter=',')
+        except:
+            # Not enough data to calcualte uncertainties                                                                             
+            pass
         try:
             min_mag, max_mag =  rupture_gmfs.uncertainty_slice1D('mag', 'longitude', 'latitude',
                                                                  rupture_gmfs.best_rupture.hypocenter.longitude,
@@ -208,8 +215,6 @@ for key,item in pt_sources.iteritems():
                 min_mag, max_mag)
         except AttributeError:
             print 'Not enough data to calculate magnitude uncertainty on best-fit location'
-        unc_array = np.vstack([lons,lats,rmse])
-        np.savetxt('rmse_csv/rmse_%s_%s.csv' % (event_name, gsim), unc_array.T, delimiter=',')
         # Calculate scenario for best rupture
         rupture_gmfs.calculate_from_rupture(rupture_gmfs.best_rupture, site_col_scenario)
         # Save best fit rupture parameters
