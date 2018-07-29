@@ -1,9 +1,9 @@
 #!/bin/bash
 #PBS -P n74
-#PBS -q normal
-#PBS -l walltime=48:00:00
-#PBS -lmem=128GB
-#PBS -lncpus=16
+#PBS -q hugemem
+#PBS -l walltime=32:00:00
+#PBS -lmem=1024GB
+#PBS -lncpus=21
 #PBS -l wd
 
 module load intel-cc/12.1.9.293
@@ -23,7 +23,7 @@ export LD_LIBRARY_PATH=/short/n74/jdg547/spatialindex-src-1.8.5/lib:$LD_LIBRARY_
 export PYTHONPATH=.:/home/547/jdg547/.local/lib/python2.7/site-packages:${PYTHONPATH}
 export PYTHONPATH=.:/short/w84/NSHA18/sandpit/jdg547/oq-hazardlib:${PYTHONPATH}
 export PYTHONPATH=.:/short/w84/NSHA18/sandpit/jdg547/oq-engine:${PYTHONPATH}
-export PYTHONPATH=.:/short/n74/src/lib/python/:${PYTHONPATH}
+
 
 # Script to submit several single cpu jobs at once
 counter=0
@@ -39,7 +39,7 @@ for i in $all_param_files; do
     python estimate_magnitude.py -param_file $i > $log_file &
     counter=$(($counter+$one));
     # Once we have submitted n jobs, break from this loop.
-    if [ $counter = 15 ];
+    if [ $counter = 17 ];
     then
         break
     fi

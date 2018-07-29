@@ -1,9 +1,8 @@
-#!/bin/bash
 #PBS -P n74
-#PBS -q normal
-#PBS -l walltime=48:00:00
-#PBS -lmem=128GB
-#PBS -lncpus=16
+#PBS -q express
+#PBS -l walltime=02:00:00
+#PBS -l ncpus=1
+#PBS -l mem=16GB
 #PBS -l wd
 
 module load intel-cc/12.1.9.293
@@ -25,24 +24,4 @@ export PYTHONPATH=.:/short/w84/NSHA18/sandpit/jdg547/oq-hazardlib:${PYTHONPATH}
 export PYTHONPATH=.:/short/w84/NSHA18/sandpit/jdg547/oq-engine:${PYTHONPATH}
 export PYTHONPATH=.:/short/n74/src/lib/python/:${PYTHONPATH}
 
-# Script to submit several single cpu jobs at once
-counter=0
-one=1
-# List all subdirectories at the level of individual tsunami runs
-all_param_files=$(ls data/*params*.txt)
-
-#mybasedir=$(pwd)
-
-# Loop over all subdirectories
-for i in $all_param_files; do
-    log_file=$i'.log'
-    python estimate_magnitude.py -param_file $i > $log_file &
-    counter=$(($counter+$one));
-    # Once we have submitted n jobs, break from this loop.
-    if [ $counter = 15 ];
-    then
-        break
-    fi
-done      
-
-wait
+python bayesian_analysis.py >& bayesian_analysis.log
