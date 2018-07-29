@@ -10,10 +10,10 @@
                     <gml:exterior>
                         <gml:LinearRing>
                             <gml:posList>
-			      106.5  -5.8
-			      106.5  -6.4
-			      107.0  -6.4
-			      107.0  -5.8
+			      103.0  -5.5
+			      103.0  -8.5
+			      109.5  -8.5
+			      109.5  -5.5
                             </gml:posList>
                         </gml:LinearRing>
                     </gml:exterior>
@@ -23,7 +23,7 @@
             </areaGeometry>
             <magScaleRel>Leonard2014_Interplate</magScaleRel>
             <ruptAspectRatio>1.0</ruptAspectRatio>
-            <truncGutenbergRichterMFD aValue="2.276" bValue="0.940" minMag="5.5" maxMag="7.2" />
+            <truncGutenbergRichterMFD aValue="2.276" bValue="0.940" minMag="5.5" maxMag="8.6" />
             <nodalPlaneDist>
 	        <nodalPlane probability="0.01" strike="0.0" dip="90.0" rake="0.0" />
                 <nodalPlane probability="0.01" strike="15.0" dip="90.0" rake="0.0" />
@@ -37,6 +37,18 @@
 		<nodalPlane probability="0.01" strike="135.0" dip="90.0" rake="0.0" />
 		<nodalPlane probability="0.01" strike="150.0" dip="90.0" rake="0.0" />
 		<nodalPlane probability="0.01" strike="165.0" dip="90.0" rake="0.0" />
+		<nodalPlane probability="0.01" strike="180.0" dip="90.0" rake="0.0" />
+                <nodalPlane probability="0.01" strike="195.0" dip="90.0" rake="0.0" />
+		<nodalPlane probability="0.01" strike="210.0" dip="90.0" rake="0.0" />
+		<nodalPlane probability="0.01" strike="225.0" dip="90.0" rake="0.0" />
+		<nodalPlane probability="0.01" strike="240.0" dip="90.0" rake="0.0" />
+                <nodalPlane probability="0.01" strike="255.0" dip="90.0" rake="0.0" />
+		<nodalPlane probability="0.01" strike="270.0" dip="90.0" rake="0.0" />
+		<nodalPlane probability="0.01" strike="285.0" dip="90.0" rake="0.0" />
+		<nodalPlane probability="0.01" strike="300.0" dip="90.0" rake="0.0" />
+		<nodalPlane probability="0.01" strike="315.0" dip="90.0" rake="0.0" />
+		<nodalPlane probability="0.01" strike="330.0" dip="90.0" rake="0.0" />
+		<nodalPlane probability="0.01" strike="345.0" dip="90.0" rake="0.0" />
 		<nodalPlane probability="0.01" strike="0.0" dip="30.0" rake="90.0" />
                 <nodalPlane probability="0.01" strike="15.0" dip="30.0" rake="90.0" />
 		<nodalPlane probability="0.01" strike="30.0" dip="30.0" rake="90.0" />
@@ -84,7 +96,7 @@
 		<nodalPlane probability="0.01" strike="300.0" dip="60.0" rake="-90.0" />
 		<nodalPlane probability="0.01" strike="315.0" dip="60.0" rake="-90.0" />
 		<nodalPlane probability="0.01" strike="330.0" dip="60.0" rake="-90.0" />
-		<nodalPlane probability="0.41" strike="345.0" dip="60.0" rake="-90.0" />
+		<nodalPlane probability="0.29" strike="345.0" dip="60.0" rake="-90.0" />
             </nodalPlaneDist>
             <hypoDepthDist>
                 <hypoDepth probability="0.25" depth="20.0" />
