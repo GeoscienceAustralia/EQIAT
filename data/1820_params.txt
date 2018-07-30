@@ -4,3 +4,4 @@ trt,Subduction Interface
 site_model_file,data/jawa_bali_nt_sulawesi_site_model.xml
 site_file,data/1820HMMI.txt
 site_file_pts,data/jawa_bali_nt_sulawesi_site_model.xml
+limits_filename,data/Flores_thrust.xml.limits.txt

@@ -77,16 +77,16 @@ data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_Boor
 #              'outputs/1820_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                      
 #gmpe_weights = [0.2, 0.3, 0.5]                                                                                                  
 #mmi_obs_file = 'data/1820HMMI.txt' 
-data_files = ['outputs/1818_AtkinsonBoore2003SInter_parameter_llh.csv',
-              'outputs/1818_ZhaoEtAl2006SInter_parameter_llh.csv',
-              'outputs/1818_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-gmpe_weights = [0.2, 0.3, 0.5]
-mmi_obs_file = 'data/1818HMMI.txt'
-#data_files = ['outputs/1815_AtkinsonBoore2003SInter_parameter_llh.csv',
-#              'outputs/1815_ZhaoEtAl2006SInter_parameter_llh.csv',
-#              'outputs/1815_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#data_files = ['outputs/1818_AtkinsonBoore2003SInter_parameter_llh.csv',
+#              'outputs/1818_ZhaoEtAl2006SInter_parameter_llh.csv',
+#              'outputs/1818_AbrahamsonEtAl2015SInter_parameter_llh.csv']
 #gmpe_weights = [0.2, 0.3, 0.5]
-#mmi_obs_file = 'data/1815HMMI.txt'
+#mmi_obs_file = 'data/1818HMMI.txt'
+data_files = ['outputs/1815_AtkinsonBoore2003SInter_parameter_llh.csv',
+              'outputs/1815_ZhaoEtAl2006SInter_parameter_llh.csv',
+             'outputs/1815_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+gmpe_weights = [0.2, 0.3, 0.5]
+mmi_obs_file = 'data/1815HMMI.txt'
 
 bbox_dict = {1699: '104/110/-11/-5',
              1780: '104/113/-9/-5',
@@ -96,7 +96,7 @@ bbox_dict = {1699: '104/110/-11/-5',
              1867: '105.7/115/-10/-3',
              1815: '110/126/-10/-5',
              1818: '112/121/-10/-5',
-             1820: '114/124/-10/-4'}
+             1820: '113/124/-10/-4'}
 
 print 'sum(gmpe_weights)', sum(gmpe_weights)
 # Read observation data                                                                                                              
