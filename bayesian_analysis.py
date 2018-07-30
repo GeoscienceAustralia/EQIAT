@@ -31,13 +31,13 @@ data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_Boor
 #              'outputs/1699slab_AtkinsonBoore2003SSlab_parameter_llh.csv',
 #              'outputs/1699slab_AtkinsonBoore2003SSlabCascadia_parameter_llh.csv',
 #              'outputs/1699slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']
-#gmpe_weights = [0.3, 0.15, 0.15, 0.4]
+#gmpe_weights = [0.3, 0.1, 0.1, 0.5]
 #mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
-data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',
-              'outputs/1699megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',
-              'outputs/1699megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-gmpe_weights = [0.2, 0.3, 0.5]
-mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
+#data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',
+#              'outputs/1699megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',
+#              'outputs/1699megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#gmpe_weights = [0.2, 0.3, 0.5]
+#mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
 #data_files = ['outputs/1840_CampbellBozorgnia2014_parameter_llh.csv',
 #              'outputs/1840_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/1840_ChiouYoungs2014_parameter_llh.csv']
@@ -53,11 +53,11 @@ mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
 #              'outputs/1867_CampbellBozorgnia2014_parameter_llh.csv']                                                        
 #gmpe_weights = [0.5, 0.35, 0.15]                                                                                                 
 #mmi_obs_file = 'data/1867HMMI.txt' 
-#data_files = ['outputs/1867slab_ZhaoEtAl2006SSlab_parameter_llh.csv',                                                             
-#              'outputs/1867slab_AtkinsonBoore2003SSlab_parameter_llh.csv',                                                        
+#data_files = ['outputs/1867slab_ZhaoEtAl2006SSlab_parameter_llh.csv',                                                      
+#              'outputs/1867slab_AtkinsonBoore2003SSlab_parameter_llh.csv',                                             
 #              'outputs/1867slab_AtkinsonBoore2003SSlabCascadia_parameter_llh.csv',                               
 #              'outputs/1867slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']                                           
-#gmpe_weights = [0.3, 0.15, 0.15, 0.4]                                                                                              
+#gmpe_weights = [0.3, 0.1, 0.1, 0.5]                                                                                    
 #mmi_obs_file = 'data/1867HMMI.txt'
 #data_files = ['outputs/1867megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',                                                  
 #              'outputs/1867megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',                                                      
@@ -72,17 +72,31 @@ mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
 #              'outputs/1834_CampbellBozorgnia2014_parameter_llh.csv']
 #gmpe_weights = [0.5, 0.35, 0.15]
 #mmi_obs_file = 'data/1834HMMI.txt'
+#data_files = ['outputs/1820_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                  
+#              'outputs/1820_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                             
+#              'outputs/1820_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                      
+#gmpe_weights = [0.2, 0.3, 0.5]                                                                                                  
+#mmi_obs_file = 'data/1820HMMI.txt' 
+data_files = ['outputs/1818_AtkinsonBoore2003SInter_parameter_llh.csv',
+              'outputs/1818_ZhaoEtAl2006SInter_parameter_llh.csv',
+              'outputs/1818_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+gmpe_weights = [0.2, 0.3, 0.5]
+mmi_obs_file = 'data/1818HMMI.txt'
+#data_files = ['outputs/1815_AtkinsonBoore2003SInter_parameter_llh.csv',
+#              'outputs/1815_ZhaoEtAl2006SInter_parameter_llh.csv',
+#              'outputs/1815_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#gmpe_weights = [0.2, 0.3, 0.5]
+#mmi_obs_file = 'data/1815HMMI.txt'
 
-
-bbox_dict = {1699: '104/113/-9/-5',
+bbox_dict = {1699: '104/110/-11/-5',
              1780: '104/113/-9/-5',
              1834: '105/110/-8/-5',
              1840: '105/115/-9/-5',
              1847: '105/110/-9/-5',
              1867: '105.7/115/-10/-3',
              1815: '110/126/-10/-5',
-             1818: '110/126/-10/-5',
-             1820: '110/126/-10/-5'}
+             1818: '112/121/-10/-5',
+             1820: '114/124/-10/-4'}
 
 print 'sum(gmpe_weights)', sum(gmpe_weights)
 # Read observation data                                                                                                              
@@ -546,7 +560,10 @@ if __name__ == "__main__":
     min_rmse = min(parameter_space[6])
     print 'min_rmse', min_rmse
     sum_squares = parameter_space[6]**2 # Weighted sum of square*num_obs    
-    sigma=np.sqrt((1./(num_obs-6))*(min_rmse**2))
+    if num_obs > 6:
+        sigma=np.sqrt((1./(num_obs-6))*(min_rmse**2))
+    else: 
+        sigma = 0.3 # Estimate sigma if not enough observations
     print 'sigma', sigma
     print sum_squares, num_obs
     print sum_squares/sigma**2
@@ -655,8 +672,11 @@ if __name__ == "__main__":
         # Re-calculate sigma and then the likelihoods                                                                                               
     min_rmse = min(parameter_space[6])
     print 'min_rmse', min_rmse
-    sum_squares = parameter_space[6]**2 # Weighted sum of square*num_obs                                                                   
-    sigma=np.sqrt((1./(num_obs-7))*(min_rmse**2))
+    sum_squares = parameter_space[6]**2 # Weighted sum of square*num_obs
+    if num_obs > 7:
+        sigma=np.sqrt((1./(num_obs-7))*(min_rmse**2))
+    else:
+        sigma = 0.3 # Estimate sigma based on other results if not enough data
     print 'sigma', sigma
 #    sigma = 1.0
 #    print 'updated sigma', sigma

@@ -259,9 +259,13 @@ class RuptureGmf(object):
         """
         if len(self.mmi_obs) <= 6:
             print 'Not enough data points to calculate uncertainties'
-            indices = np.where(self.rmse < 1e24)[0]
+            #indices = np.where(self.rmse < 1e24)[0]
             # Hacky estimate of sigma
-            self.sigma = 1.0
+            self.sigma = 0.3
+            index = np.argmin(self.rmse)
+            self.uncert_fun = norm(min(self.rmse),self.sigma)
+            self.max_lik = np.power((1/(self.sigma*np.sqrt(2*np.pi))), len(self.mmi_obs)) * \
+                np.exp((-1/2)*((self.sum_squares_list[index]/self.sigma**2)))
         else:
             if min_rmse is not None:
                 index = np.argmin(self.rmse)
