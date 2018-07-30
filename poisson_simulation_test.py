@@ -10,6 +10,8 @@ July 2016
 
 import sys
 import numpy
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot
 
 def poisson_samples(lam, time, size=1):
@@ -230,17 +232,21 @@ def plot_mmi_hazmap_and_obs(median, percentile1, percentile2, mmi_obs, city,
 #    pyplot.savefig('mmi_hazmap_and_observations_%s.png' % city)
 
 if __name__ == "__main__":
-    filename = 'data/hazard_curves_1.0s.csv'
+    filename = 'data/2017_hazard_curves_PGA.csv'
+    filename2 = 'data/hazard_curves_PGA.csv'
     obs_filename = 'data/City_MMI_all_mentions.csv'
-    period = 1.0
+    period = 0.0
     site_class = 'C'
     cities = ['Jakarta', 'Bandung', 'Semarang', 'Yogyakarta', 'Surabaya']
+#    cities = ['Semarang', 'Yogyakarta', 'Surabaya']
     time = 69 # number of years in time interval - annual rates
     time_others = 69
     time_jkt = 196 # complmeteness for Jakarta
     mmi_obs_dict = read_mmi_obs(obs_filename)
-    #    print mmi_obs_dict                                                                                      
+    print mmi_obs_dict                                                                                      
     data = numpy.genfromtxt(filename, delimiter= ',', skip_header=1)
+    data2 = numpy.genfromtxt(filename2, delimiter= ',', skip_header=1)
+    data_list = [data, data2]
     gm = data[:,0]
     haz_mmi_dict = {}
 #    city = 'Jakarta'
@@ -267,39 +273,44 @@ if __name__ == "__main__":
             site_class = 'D'
             data_index = 5
         # Calculate incremental rate
-        hazard_curve = numpy.array([gm, data[:,data_index]])
+        hazard_curve_2017 = numpy.array([gm, data_list[0][:,data_index]])
+        hazard_curve_2010 = numpy.array([gm, data_list[1][:,data_index]])
         # interpolate hazard curve
         interpolate = False
         if interpolate:
             x_values = numpy.power(10, numpy.arange(-4, 1.7, 0.1))
             hazard_curve_interp = numpy.interp(x_values, gm, data[:,1])
             hazard_curve = numpy.array([x_values, hazard_curve_interp])
-        plot_hazard_curve(hazard_curve)
-        incremental_hazard_curve = calculate_incremental_rates(hazard_curve)
-        realisations = \
-            simulate_gm_realisations(incremental_hazard_curve,
-                                     time, 100000)
+        plot_hazard_curve(hazard_curve_2010)
+        plot_hazard_curve(hazard_curve_2017)
+        haz_mmi_dict_list = []
+        for hazard_curve in [hazard_curve_2010, hazard_curve_2017]:
+            incremental_hazard_curve = calculate_incremental_rates(hazard_curve)
+            realisations = \
+                simulate_gm_realisations(incremental_hazard_curve,
+                                         time, 100000)
         #Convert to MMI including uncertainty
         #Remove site effects first
         # i.e. for each realisation we want to consider 
         # how we might observe it
-        gm_site_effects = gm_site_amplification(hazard_curve[0], period, site_class)
-        mmi_sample_database, mmi_sample_cumulative_database = build_mmi_samples(gm_site_effects, realisations, period)
-        percentile_97_5 = numpy.percentile(mmi_sample_cumulative_database, 97.5, axis=0,
-                                           interpolation='linear') # nearest/linear
-        percentile_2_5 = numpy.percentile(mmi_sample_cumulative_database, 2.5, axis=0,
-                                          interpolation='linear')
-        median = numpy.median(mmi_sample_cumulative_database, axis=0)
-        median[median == 0] = 0.0000001
-        percentile_2_5[percentile_2_5 == 0] = 0.0000001
-        percentile_97_5[percentile_97_5 == 0] = 0.0000001
-        print percentile_97_5
-        print percentile_2_5
-        print 'median', median
-        # Don't always need to do this, it takes a long time
-        #    plot_mmi_samples(mmi_sample_database, mmi_sample_cumulative_database)
-        haz_mmi_dict[city]=[median, percentile_97_5, percentile_2_5]
+            gm_site_effects = gm_site_amplification(hazard_curve[0], period, site_class)
+            mmi_sample_database, mmi_sample_cumulative_database = build_mmi_samples(gm_site_effects, realisations, period)
 
+            percentile_97_5 = numpy.percentile(mmi_sample_cumulative_database, 97.5, axis=0,
+                                               interpolation='linear') # nearest/linear
+            percentile_2_5 = numpy.percentile(mmi_sample_cumulative_database, 2.5, axis=0,
+                                              interpolation='linear')
+            median = numpy.median(mmi_sample_cumulative_database, axis=0)
+            median[median == 0] = 0.0000001
+            percentile_2_5[percentile_2_5 == 0] = 0.0000001
+            percentile_97_5[percentile_97_5 == 0] = 0.0000001
+            print percentile_97_5
+            print percentile_2_5
+            print 'median', median
+            # Don't always need to do this, it takes a long time
+            #    plot_mmi_samples(mmi_sample_database, mmi_sample_cumulative_database)
+            haz_mmi_dict[city]=[median, percentile_97_5, percentile_2_5]
+            haz_mmi_dict_list.append(haz_mmi_dict)
     # Now plot all onto one figure
     pyplot.clf()
     fig = pyplot.figure(figsize=(15,20))
@@ -311,14 +322,17 @@ if __name__ == "__main__":
         else: 
             time = time_others
         ax = pyplot.subplot(3,2,i)
-        a,b,c = plot_mmi_hazmap_and_obs(haz_mmi_dict[city][0], haz_mmi_dict[city][1],
-                                haz_mmi_dict[city][2], mmi_obs_dict, city, years=time,
+        a,b,c = plot_mmi_hazmap_and_obs(haz_mmi_dict_list[0][city][0], haz_mmi_dict_list[0][city][1],
+                                haz_mmi_dict_list[0][city][2], mmi_obs_dict, city, years=time,
+                                ax=ax)
+        a,b,c = plot_mmi_hazmap_and_obs(haz_mmi_dict_list[1][city][0], haz_mmi_dict_list[1][city][1],
+                                haz_mmi_dict_list[1][city][2], mmi_obs_dict, city, years=time,
                                 ax=ax)
         i+=1
     fig.legend((a,b,c), ('Median number of exceedances \n from the hazard curve',
                          '2.5 and 97.5 percentiles of \n number of exceedances \n from the hazard curve',
                          'Number of observed exceedances'), 'lower right',
                bbox_to_anchor=(0.85, 0.19))
-    pyplot.savefig('mmi_hazmap_and_observations_%.1f.png' % period)
+    pyplot.savefig('mmi_2017_hazmap_and_observations_%.1f.png' % period)
         
 
