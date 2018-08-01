@@ -223,6 +223,10 @@ def plot_mmi_hazmap_and_obs(median, percentile1, percentile2, mmi_obs, city,
     b, = pyplot.semilogy(x_values, percentile1, color='b', linestyle='--')
     pyplot.semilogy(x_values, percentile2, color='b', linestyle='--')
     c = pyplot.scatter(mmi_obs[city][0], mmi_obs[city][1])
+    # Add completeness
+    xx = [6.5, 6.5]
+    yy = [0.8, 1000]
+    pyplot.plot(xx,yy,linestyle = ':', color='0.3')
     pyplot.xlim(2.9,10)
     pyplot.ylim(0.8, 1000)
     ax.set_title(city)
@@ -234,6 +238,8 @@ def plot_mmi_hazmap_and_obs(median, percentile1, percentile2, mmi_obs, city,
 if __name__ == "__main__":
     filename = 'data/2017_hazard_curves_PGA.csv'
     filename2 = 'data/hazard_curves_PGA.csv'
+#    filename2 = 'data/2017_hazard_curves_1.0s.csv'
+#    filename = 'data/hazard_curves_1.0s.csv'
     obs_filename = 'data/City_MMI_all_mentions.csv'
     period = 0.0
     site_class = 'C'

@@ -27,14 +27,14 @@ from collections import OrderedDict
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
 #data_files = ['outputs/1847_ChiouYoungs2008_parameter_llh.csv',
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
-#data_files = ['outputs/1780megathrust_inc_sq_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                 
-#              'outputs/1780megathrust_inc_sq_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                       
-#              'outputs/1780megathrust_inc_sq_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                 
+data_files = ['outputs/1780megathrust_inc_sq_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                 
+              'outputs/1780megathrust_inc_sq_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                       
+              'outputs/1780megathrust_inc_sq_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                 
 #data_files = ['outputs/1780_BooreEtAl2014_parameter_llh.csv',                                                                                             
 #              'outputs/1780_ChiouYoungs2014_parameter_llh.csv']                                                                                           
 #gmpe_weights = [0.5, 0.5]                                                                                                                          
-#mmi_obs_file = 'data/1780HMMI.txt' 
-#gmpe_weights = [0.2, 0.3, 0.5]
+mmi_obs_file = 'data/1780HMMI.txt' 
+gmpe_weights = [0.2, 0.3, 0.5]
 #mmi_obs_file = 'data/1780HMMI.txt'
 #data_files = ['outputs/1699slab_ZhaoEtAl2006SSlab_parameter_llh.csv',
 #              'outputs/1699slab_AtkinsonBoore2003SSlab_parameter_llh.csv',
@@ -73,14 +73,14 @@ from collections import OrderedDict
 #              'outputs/1867megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                
 #gmpe_weights = [0.2, 0.3, 0.5]                                                                                                    
 #mmi_obs_file = 'data/1867HMMI.txt'
-data_files = [#'outputs/1834_BooreAtkinson2008_parameter_llh.csv',
-              'outputs/1834_BooreEtAl2014_parameter_llh.csv',
+#data_files = [#'outputs/1834_BooreAtkinson2008_parameter_llh.csv',
+#              'outputs/1834_BooreEtAl2014_parameter_llh.csv',
               #'outputs/1834_ChiouYoungs2008_parameter_llh.csv',
               #'outputs/1834_CampbellBozorgnia2008_parameter_llh.csv',
-              'outputs/1834_ChiouYoungs2014_parameter_llh.csv',
-              'outputs/1834_CampbellBozorgnia2014_parameter_llh.csv']
-gmpe_weights = [0.5, 0.35, 0.15]
-mmi_obs_file = 'data/1834HMMI.txt'
+#              'outputs/1834_ChiouYoungs2014_parameter_llh.csv',
+#              'outputs/1834_CampbellBozorgnia2014_parameter_llh.csv']
+#gmpe_weights = [0.5, 0.35, 0.15]
+#mmi_obs_file = 'data/1834HMMI.txt'
 #data_files = ['outputs/1820_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                  
 #              'outputs/1820_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                             
 #              'outputs/1820_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                      
@@ -110,7 +110,8 @@ bbox_dict = {1699: '104/110/-10.5/-5',
              1867: '105.7/115/-12/-3',
              1815: '112/120/-10/-5',
              1818: '112/121/-10/-5',
-             1820: '113/124/-10/-4'}
+             1820: '113/124/-10/-4',
+             2006: '108.0/114/-9/-5'}
 
 print 'sum(gmpe_weights)', sum(gmpe_weights)
 # Read observation data                                                                                                              
