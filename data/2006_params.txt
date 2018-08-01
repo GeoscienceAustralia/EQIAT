@@ -1,0 +1,7 @@
+event_name,2006
+area_source_file,data/source_model_2006.xml
+trt,Active
+site_model_file,data/jawa_site_model.xml
+site_file,data/2006HMMI.txt
+site_file_pts,data/jawa_site_model.xml
+limits_filename,data/source_model_1847.xml.limits.txt
