@@ -18,7 +18,7 @@ from scipy import interpolate
 from adjustText import adjust_text # Small package to improve label locations                                                         
 from collections import OrderedDict                     
 
-data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_BooreEtAl2014_parameter_llh.csv'
+#data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_BooreEtAl2014_parameter_llh.csv'
 #data_files = [data_file]
 #gmpe_weights = [1.]
 #mmi_obs_file = 'data/1847HMMI.txt'
@@ -27,6 +27,15 @@ data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_Boor
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
 #data_files = ['outputs/1847_ChiouYoungs2008_parameter_llh.csv',
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
+#data_files = ['outputs/1780megathrust_inc_sq_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                 
+#              'outputs/1780megathrust_inc_sq_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                       
+#              'outputs/1780megathrust_inc_sq_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                 
+#data_files = ['outputs/1780_BooreEtAl2014_parameter_llh.csv',                                                                                             
+#              'outputs/1780_ChiouYoungs2014_parameter_llh.csv']                                                                                           
+#gmpe_weights = [0.5, 0.5]                                                                                                                          
+#mmi_obs_file = 'data/1780HMMI.txt' 
+#gmpe_weights = [0.2, 0.3, 0.5]
+#mmi_obs_file = 'data/1780HMMI.txt'
 #data_files = ['outputs/1699slab_ZhaoEtAl2006SSlab_parameter_llh.csv',
 #              'outputs/1699slab_AtkinsonBoore2003SSlab_parameter_llh.csv',
 #              'outputs/1699slab_AtkinsonBoore2003SSlabCascadia_parameter_llh.csv',
@@ -64,14 +73,14 @@ data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_Boor
 #              'outputs/1867megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                
 #gmpe_weights = [0.2, 0.3, 0.5]                                                                                                    
 #mmi_obs_file = 'data/1867HMMI.txt'
-#data_files = [#'outputs/1834_BooreAtkinson2008_parameter_llh.csv',
-#              'outputs/1834_BooreEtAl2014_parameter_llh.csv',
+data_files = [#'outputs/1834_BooreAtkinson2008_parameter_llh.csv',
+              'outputs/1834_BooreEtAl2014_parameter_llh.csv',
               #'outputs/1834_ChiouYoungs2008_parameter_llh.csv',
               #'outputs/1834_CampbellBozorgnia2008_parameter_llh.csv',
-#              'outputs/1834_ChiouYoungs2014_parameter_llh.csv',
-#              'outputs/1834_CampbellBozorgnia2014_parameter_llh.csv']
-#gmpe_weights = [0.5, 0.35, 0.15]
-#mmi_obs_file = 'data/1834HMMI.txt'
+              'outputs/1834_ChiouYoungs2014_parameter_llh.csv',
+              'outputs/1834_CampbellBozorgnia2014_parameter_llh.csv']
+gmpe_weights = [0.5, 0.35, 0.15]
+mmi_obs_file = 'data/1834HMMI.txt'
 #data_files = ['outputs/1820_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                  
 #              'outputs/1820_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                             
 #              'outputs/1820_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                      
@@ -82,19 +91,24 @@ data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_Boor
 #              'outputs/1818_AbrahamsonEtAl2015SInter_parameter_llh.csv']
 #gmpe_weights = [0.2, 0.3, 0.5]
 #mmi_obs_file = 'data/1818HMMI.txt'
-data_files = ['outputs/1815_AtkinsonBoore2003SInter_parameter_llh.csv',
-              'outputs/1815_ZhaoEtAl2006SInter_parameter_llh.csv',
-             'outputs/1815_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-gmpe_weights = [0.2, 0.3, 0.5]
-mmi_obs_file = 'data/1815HMMI.txt'
+#data_files = ['outputs/1815_AtkinsonBoore2003SInter_parameter_llh.csv',
+#              'outputs/1815_ZhaoEtAl2006SInter_parameter_llh.csv',
+#              'outputs/1815_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#gmpe_weights = [0.2, 0.3, 0.5]
+#mmi_obs_file = 'data/1815HMMI.txt'
+#data_files = ['outputs/2006_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/2006_ChiouYoungs2014_parameter_llh.csv',
+#              'outputs/2006_CampbellBozorgnia2014_parameter_llh.csv']
+#gmpe_weights = [0.5, 0.35, 0.15]
+#mmi_obs_file = 'data/2006HMMI.txt'
 
-bbox_dict = {1699: '104/110/-11/-5',
+bbox_dict = {1699: '104/110/-10.5/-5',
              1780: '104/113/-9/-5',
              1834: '105/110/-8/-5',
-             1840: '105/115/-9/-5',
+             1840: '108.0/114/-9/-5',
              1847: '105/110/-9/-5',
-             1867: '105.7/115/-10/-3',
-             1815: '110/126/-10/-5',
+             1867: '105.7/115/-12/-3',
+             1815: '112/120/-10/-5',
              1818: '112/121/-10/-5',
              1820: '113/124/-10/-4'}
 
@@ -216,7 +230,8 @@ def update_weights(parameter_space, prior_pdfs):
     print 'sum', sum(posterior_probs)
     return posterior_probs
 
-def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename=None, bbox=None):
+def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename=None,
+                  bbox=None, localities_file = None):
     """Calculate a pdf for parameter values based on the uncertainty model                                
     """
 
@@ -456,6 +471,27 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         ax.add_patch(patch)
         for contour in cs.collections:
             contour.set_clip_path(patch)
+
+    # Now add some locations                                                                                                                               
+    if localities_file is not None:
+        f_in = open(localities_file)
+        loc_lon = []
+        loc_lat = []
+        loc_name = []
+        for line in f_in.readlines():
+            row = line.split()
+            loc_lon.append(float(row[0]))
+            loc_lat.append(float(row[1]))
+            loc_name.append(row[2])
+        loc_sp = m.scatter(loc_lon, loc_lat, c='k', s=40, marker='s', latlon=True)
+        texts = []
+        for label, x, y in zip(loc_name, loc_lon, loc_lat):
+            x,y =  m(x,y)
+            texts.append(plt.text(x,y,label, fontsize=12, color='0.4', zorder=20))
+#        adjust_text(texts, only_move='xy',
+#                    arrowprops=dict(arrowstyle="-",
+#                                    color='k', lw=0.5))
+
     # Now add historical points on top
     if mmi_obs is not None:
         clevs = np.arange(0.5,9.5,1.0)
@@ -467,18 +503,20 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
                            vmin=1.5, vmax=8.5, s=30, latlon=True)
             sp_ticks = np.arange(1,9,1)
         # Label only if there aren't too many to avoid plots being too busy
-        if len(mmi_obs[:,2]) < 12:
-            texts = []
+        if len(mmi_obs[:,2]) < 8:
+ #           texts = []
             for label, x, y in zip(mmi_labels, mmi_obs[:,0], mmi_obs[:,1]):
                 x,y =  m(x,y)
                 texts.append(plt.text(x,y,label, fontsize=8))
+        if len(texts) > 0:
             adjust_text(texts, only_move='xy',
-                        arrowprops=dict(arrowstyle="->",
+                        arrowprops=dict(arrowstyle="-",
                                         color='k', lw=0.5))
         # Give the color bar some axes to help locate it
         #cbaxes = fig.add_axes([0.95, 0.6, 0.03, 0.3]) 
         cbar1 = m.colorbar(sp, ticks=sp_ticks, location='right', pad = 0.1)
         cbar1.ax.set_ylabel('MMI')
+
     # Now add best-fit location on top                                                                     
     m.scatter(best_fit_lon, best_fit_lat, marker = '*', facecolor='none', #c='#696969',
               edgecolor='k', s=100, zorder=10, latlon=True)
@@ -487,15 +525,17 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     #m.text(0.05, 0.95, 'c)', transform=ax.transAxes, fontsize=14)                                                                                 
     plt.annotate('c)', xy=(0.05, 0.9),xycoords='axes fraction', fontsize=14)
     if max_val < 0.00001:
-        loc_int = 0.000005
+        loc_int = 0.000002
     elif max_val < 0.0001:
-        loc_int = 0.00005
+        loc_int = 0.00002
     elif max_val < 0.001:
-        loc_int = 0.0005
+        loc_int = 0.0002
     elif max_val < 0.01:
-        loc_int = 0.005
+        loc_int = 0.002
+    elif max_val < 0.1:
+        loc_int = 0.02
     else:
-        loc_int = 0.05
+        loc_int = 0.2
     ticks = np.arange(0.0, max_val*1.1, loc_int)
     cbar = m.colorbar(cs, ticks=ticks, location='bottom')#orientation='horizontal')
     cbar.ax.set_xlabel('Probability')
@@ -505,73 +545,73 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     plt.savefig(figname, dpi=300, format='png', bbox_inches='tight')
 
 if __name__ == "__main__":
-    parameter_space = np.genfromtxt(data_file, delimiter=',', skip_header=1)
-    fig_comment = 'figures/' + data_file.split('/')[1][:-4]
-    print fig_comment
-    parameter_space = parameter_space.T
+#    parameter_space = np.genfromtxt(data_file, delimiter=',', skip_header=1)
+#    fig_comment = 'figures/' + data_file.split('/')[1][:-4]
+#    print fig_comment
+#    parameter_space = parameter_space.T
     # Set up prior pdfs - set-up using basic assumptions and limits of data
     # magnitude - based on Gutenberg-Richter assuming b value = 1, and that
     # CDF from mmin to mmax = 1
-    mags = np.unique(parameter_space[0])
-    mmax = max(mags)
-    mmin = min(mags)
-    b=1.
-    a = np.log10(1./(np.power(10,-1*b*mmin) - np.power(10, -1*b*mmax)))
-    print a
-    # Now we need to generate an incremental pdf 
-    reversed_mag_priors = []
-    reversed_mags = list(reversed(mags))
-    for i, mag in enumerate(reversed_mags):
-        if i == 0:
-            prior = np.power(10, a - b*mag)
-        else:
-            prior = np.power(10, a - b*mag) - np.power(10, a - b*reversed_mags[i-1])
-        reversed_mag_priors.append(prior)
-    mag_priors = np.array(list(reversed(reversed_mag_priors)))
-    print mags
-    print mag_priors, sum(mag_priors)
+#    mags = np.unique(parameter_space[0])
+#    mmax = max(mags)
+#    mmin = min(mags)
+ #   b=1.
+ #   a = np.log10(1./(np.power(10,-1*b*mmin) - np.power(10, -1*b*mmax)))
+ #   print a
+ #   # Now we need to generate an incremental pdf 
+ #   reversed_mag_priors = []
+ #   reversed_mags = list(reversed(mags))
+ #   for i, mag in enumerate(reversed_mags):
+ #       if i == 0:
+ #           prior = np.power(10, a - b*mag)
+ #       else:
+ #           prior = np.power(10, a - b*mag) - np.power(10, a - b*reversed_mags[i-1])
+ #       reversed_mag_priors.append(prior)
+ #   mag_priors = np.array(list(reversed(reversed_mag_priors)))
+ #   print mags
+ #   print mag_priors, sum(mag_priors)
 
     # longitude, latitude, strike, depth and dip - uniform across parameter space
-    lon_priors = np.ones(len(np.unique(parameter_space[1]))) * \
-        (1./len(np.unique(parameter_space[1])))
-    lat_priors = np.ones(len(np.unique(parameter_space[2]))) * \
-        (1./len(np.unique(parameter_space[2])))
-    depth_priors = np.ones(len(np.unique(parameter_space[3]))) * \
-        (1./len(np.unique(parameter_space[3])))
-    strike_priors = np.ones(len(np.unique(parameter_space[4]))) * \
-        (1./len(np.unique(parameter_space[4])))
-    dip_priors = np.ones(len(np.unique(parameter_space[5]))) * \
-        (1./len(np.unique(parameter_space[5])))
+#    lon_priors = np.ones(len(np.unique(parameter_space[1]))) * \
+#        (1./len(np.unique(parameter_space[1])))
+#    lat_priors = np.ones(len(np.unique(parameter_space[2]))) * \
+#        (1./len(np.unique(parameter_space[2])))
+#    depth_priors = np.ones(len(np.unique(parameter_space[3]))) * \
+#        (1./len(np.unique(parameter_space[3])))
+#    strike_priors = np.ones(len(np.unique(parameter_space[4]))) * \
+#        (1./len(np.unique(parameter_space[4])))
+#    dip_priors = np.ones(len(np.unique(parameter_space[5]))) * \
+#        (1./len(np.unique(parameter_space[5])))##
 
-    priors = np.array([[np.unique(parameter_space[0]), np.unique(parameter_space[1]),
-                       np.unique(parameter_space[2]), np.unique(parameter_space[3]),
-                       np.unique(parameter_space[4]), np.unique(parameter_space[5])],
-                      [mag_priors, lon_priors, lat_priors,
-                       depth_priors, strike_priors, dip_priors]])
+#    priors = np.array([[np.unique(parameter_space[0]), np.unique(parameter_space[1]),
+#                       np.unique(parameter_space[2]), np.unique(parameter_space[3]),
+#                       np.unique(parameter_space[4]), np.unique(parameter_space[5])],
+#                      [mag_priors, lon_priors, lat_priors,
+#                       depth_priors, strike_priors, dip_priors]])
 
     # Get number of observations for re-calculating likelihoods across all files
-    event = data_file.split('/')[1][:4]
-    hmmi_file  = 'data/' + event + 'HMMI.txt'
-    with open(hmmi_file) as f:
-        for obs_count, l in enumerate(f):
-            pass
-    num_obs = obs_count + 1
-    # Re-calculate sigma and then the likelihoods
-    min_rmse = min(parameter_space[6])
-    print 'min_rmse', min_rmse
-    sum_squares = parameter_space[6]**2 # Weighted sum of square*num_obs    
-    if num_obs > 6:
-        sigma=np.sqrt((1./(num_obs-6))*(min_rmse**2))
-    else: 
-        sigma = 0.3 # Estimate sigma if not enough observations
-    print 'sigma', sigma
-    print sum_squares, num_obs
-    print sum_squares/sigma**2
-    likelihoods = np.power((1/(sigma*np.sqrt(2*np.pi))), num_obs) * \
-                np.exp((-1/2)*(sum_squares/sigma**2))
-    print min(likelihoods), max(likelihoods)
-    print min(parameter_space[7]), max(parameter_space[7])
-    parameter_space[7] = likelihoods
+#    event = data_file.split('/')[1][:4]
+#    hmmi_file  = 'data/' + event + 'HMMI.txt'
+#    with open(hmmi_file) as f:
+#        for obs_count, l in enumerate(f):
+#            pass
+#    num_obs = obs_count + 1
+#    print 'num_obs', num_obs # Re-calculate sigma and then the likelihoods
+#    min_rmse = min(parameter_space[6])
+#    print 'min_rmse', min_rmse
+#    sum_squares = parameter_space[6]**2 # Weighted sum of square*num_obs    
+#    if num_obs > 6:
+#        sigma=np.sqrt((1./(num_obs-6))*(min_rmse**2))
+#    else: 
+#        sigma = 0.3 # Estimate sigma if not enough observations
+#    print 'sigma', sigma
+#    print sum_squares, num_obs
+#    print sum_squares/sigma**2
+#    likelihoods = np.power((1/(sigma*np.sqrt(2*np.pi))), num_obs) * \
+#                np.exp((-1/2)*(sum_squares/sigma**2))
+#    print min(likelihoods), max(likelihoods)
+#    print min(parameter_space[7]), max(parameter_space[7])
+#    parameter_space[7] = likelihoods
 #    posterior_probs = update_weights(parameter_space, priors)
 #    print parameter_space
 #    parameter_space[7] = posterior_probs
@@ -592,6 +632,14 @@ if __name__ == "__main__":
         if row[0] == 'limits_filename':
             limits_filename = row[1]
     gmpe_inds = []
+    # Count number of data points
+    event = data_files[0].split('/')[1][:4]    
+    hmmi_file  = 'data/' + event + 'HMMI.txt'
+    with open(hmmi_file) as f:                                                                                                                             
+        for obs_count, l in enumerate(f):                                                                                                                
+            pass                                                                                                                                          
+    num_obs = obs_count + 1                                                                                                                               
+    print 'num_obs', num_obs 
     # Here we add a dimension to the parameter space that contains an index
     # for which gmpe was used
     for i, filename in enumerate(data_files):
@@ -625,7 +673,7 @@ if __name__ == "__main__":
     print mags
     mmax = max(mags)
     mmin = min(mags)
-    b=1.
+    b=1.0
     a = np.log10(1./(np.power(10,-1*b*mmin) - np.power(10, -1*b*mmax)))
     print a
     # Now we need to generate an incremental pdf                                                                                    
@@ -673,10 +721,10 @@ if __name__ == "__main__":
     min_rmse = min(parameter_space[6])
     print 'min_rmse', min_rmse
     sum_squares = parameter_space[6]**2 # Weighted sum of square*num_obs
-    if num_obs > 7:
+    if num_obs > 8:
         sigma=np.sqrt((1./(num_obs-7))*(min_rmse**2))
     else:
-        sigma = 0.3 # Estimate sigma based on other results if not enough data
+        sigma = 0.5 # Estimate sigma based on other results if not enough data
     print 'sigma', sigma
 #    sigma = 1.0
 #    print 'updated sigma', sigma
@@ -696,6 +744,21 @@ if __name__ == "__main__":
     print 'parameter_space', parameter_space
     posterior_probs = update_weights_gmpe(parameter_space, priors)
     parameter_space[7] = posterior_probs
+    # Write posterior best-fit to file
+    posterior_filename = fig_comment + '_best_posterior.txt'
+    f_out = open(posterior_filename, 'w')
+    header = '#mag,lon,lat,depth,strike,dip,rmse,posterior_prob,gmpe,sigma\n'
+    f_out.write(header)
+    j = np.argmax(parameter_space[7])
+    line = ''
+    for k in range(8):
+        s = '%.6f,' % parameter_space[k][j]
+        line+=s
+    s = '%.3f' % sigma
+    line+=s
+    f_out.write(line)
+    f_out.close()
     bbox = bbox_dict[year]
+    localities_file = 'data/localities%s.txt' % year 
     parameter_pdf(parameter_space, fig_comment = fig_comment, mmi_obs = mmi_obs,
-                  limits_filename = limits_filename, bbox=bbox)
+                  limits_filename = limits_filename, bbox=bbox, localities_file = localities_file)
