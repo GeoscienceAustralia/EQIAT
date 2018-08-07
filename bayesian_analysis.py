@@ -6,7 +6,7 @@ Geoscience Australia
 July 2018
 """
 
-import sys
+import sys, os
 import numpy as np
 from mpl_toolkits.basemap import Basemap, maskoceans
 import matplotlib
@@ -18,6 +18,7 @@ from scipy import interpolate
 from adjustText import adjust_text # Small package to improve label locations                                                         
 from collections import OrderedDict                     
 
+plot_additions = None # Variable for storing additional info to be added to plots
 #data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_BooreEtAl2014_parameter_llh.csv'
 #data_files = [data_file]
 #gmpe_weights = [1.]
@@ -27,14 +28,14 @@ from collections import OrderedDict
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
 #data_files = ['outputs/1847_ChiouYoungs2008_parameter_llh.csv',
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
-data_files = ['outputs/1780megathrust_inc_sq_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                 
-              'outputs/1780megathrust_inc_sq_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                       
-              'outputs/1780megathrust_inc_sq_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                 
+#data_files = ['outputs/1780megathrust_inc_sq_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                 
+#              'outputs/1780megathrust_inc_sq_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                       
+#              'outputs/1780megathrust_inc_sq_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                 
 #data_files = ['outputs/1780_BooreEtAl2014_parameter_llh.csv',                                                                                             
 #              'outputs/1780_ChiouYoungs2014_parameter_llh.csv']                                                                                           
 #gmpe_weights = [0.5, 0.5]                                                                                                                          
-mmi_obs_file = 'data/1780HMMI.txt' 
-gmpe_weights = [0.2, 0.3, 0.5]
+#mmi_obs_file = 'data/1780HMMI.txt' 
+#gmpe_weights = [0.2, 0.3, 0.5]
 #mmi_obs_file = 'data/1780HMMI.txt'
 #data_files = ['outputs/1699slab_ZhaoEtAl2006SSlab_parameter_llh.csv',
 #              'outputs/1699slab_AtkinsonBoore2003SSlab_parameter_llh.csv',
@@ -101,6 +102,35 @@ gmpe_weights = [0.2, 0.3, 0.5]
 #              'outputs/2006_CampbellBozorgnia2014_parameter_llh.csv']
 #gmpe_weights = [0.5, 0.35, 0.15]
 #mmi_obs_file = 'data/2006HMMI.txt'
+#data_files = ['outputs/2017slab_ZhaoEtAl2006SSlab_parameter_llh.csv',                                                  
+#              'outputs/2017slab_AtkinsonBoore2003SSlab_parameter_llh.csv',                                             
+#              'outputs/2017slab_AtkinsonBoore2003SSlabCascadia_parameter_llh.csv',                     
+#              'outputs/2017slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']    
+#gmpe_weights = [0.3, 0.1, 0.1, 0.5]
+#mmi_obs_file = 'data/2017HMMI.txt'
+#plot_additions = {'mag': 6.5, # USGS data
+#                  'longitude': 108.174,
+#                  'latitude': -7.492,
+#                  'depth': 90.0}
+
+data_files = ['outputs/2018_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                                 
+              'outputs/2018_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                                      
+              'outputs/2018_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                                
+gmpe_weights = [0.2, 0.3, 0.5]   
+mmi_obs_file = 'data/2018HMMI.txt'
+plot_additions = {'mag': 6.9, # USGS data                                                                                                              
+                  'longitude': 116.452,
+                  'latitude': -8.287,
+                  'depth': 31.0}                  
+
+#data_files = ['outputs/1852Banda_area_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/1852Banda_area_ChiouYoungs2014_parameter_llh.csv',                             
+#              'outputs/1852Banda_area_CampbellBozorgnia2014_parameter_llh.csv',
+#              'outputs/1852Banda_area_AtkinsonBoore2003SInter_parameter_llh.csv',                                      
+#              'outputs/1852Banda_area_ZhaoEtAl2006SInter_parameter_llh.csv',                                             
+#              'outputs/1852Banda_area_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#gmpe_weights = [0.2, 0.3, 0.5]  
+#mmi_obs_file = 'data/1852Banda_MMI.txt'
 
 bbox_dict = {1699: '104/110/-10.5/-5',
              1780: '104/113/-9/-5',
@@ -111,7 +141,10 @@ bbox_dict = {1699: '104/110/-10.5/-5',
              1815: '112/120/-10/-5',
              1818: '112/121/-10/-5',
              1820: '113/124/-10/-4',
-             2006: '108.0/114/-9/-5'}
+             2006: '108.0/114/-9/-5',
+             2017: '104/114/-10.5/-5',
+             2018: '112/120/-10/-5',
+             1852: '126/133/-8/0'}
 
 print 'sum(gmpe_weights)', sum(gmpe_weights)
 # Read observation data                                                                                                              
@@ -232,7 +265,7 @@ def update_weights(parameter_space, prior_pdfs):
     return posterior_probs
 
 def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename=None,
-                  bbox=None, localities_file = None):
+                  bbox=None, localities_file = None, plot_additions=None):
     """Calculate a pdf for parameter values based on the uncertainty model                                
     """
 
@@ -317,6 +350,15 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         except IndexError:
             y_index_posterior = (np.abs(unique_vals - best_fit_x_posterior)).argmin()
         best_fit_y_posterior = pdf_sums[y_index_posterior]
+        # Get plot additions to plot on top
+#        if plot_additions is not None:
+#            x_addition = plot_additions[key]
+#            try:
+#                y_index = np.where(unique_(np.abs(unique_vals - best_fit_x)).argmin()[0]
+#            except IndexError:
+#                y_index = (np.abs(unique_vals - best_fit_x)).argmin()
+#            best_fit_y = pdf_sums[y_index]
+
         # Now plot the results                                                                                                                     
         try:
             width = unique_vals[1] - unique_vals[0] # Scale width by discretisation                                                                
@@ -364,10 +406,20 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         if key == 'mag' or key == 'dip' or key == 'depth' :
             ax.bar(unique_vals, pdf_sums, width, align='center', color='0.5')
             ax.scatter(best_fit_x, best_fit_y, marker = '*', c='#696969',
-                       edgecolor='k', s=100, zorder=10)
+                       edgecolor='k', s=100, zorder=11)
             ax.scatter(best_fit_x_posterior, best_fit_y_posterior, marker = '*', c='w',
                        edgecolor='k', s=500, zorder=9)
-            #if key != 'latitude' and key != 'longitude':
+            if plot_additions is not None:
+                try:
+                    x_addition = plot_additions[key]
+                    y_addition = best_fit_y_posterior*1.1
+                except KeyError:
+                    x_addition = None
+                if x_addition is not None:
+                    ax.scatter(x_addition, y_addition, marker = '*', c='b',
+                       edgecolor='k', s=200, zorder=10)
+                
+#if key != 'latitude' and key != 'longitude':
 #            ax.plot(lbx, lby, color='k')
 #            ax.plot(ubx, uby, color='k')
             ax.set_ylim(0, ymax)
@@ -523,7 +575,16 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
               edgecolor='k', s=100, zorder=10, latlon=True)
     m.scatter(best_fit_lon_posterior, best_fit_lat_posterior, marker = '*', facecolor='none',
               edgecolor='k', s=500, zorder=9, latlon=True)
-    #m.text(0.05, 0.95, 'c)', transform=ax.transAxes, fontsize=14)                                                                                 
+    #m.text(0.05, 0.95, 'c)', transform=ax.transAxes, fontsize=14)                                                        
+    if plot_additions is not None:
+        try:
+            x_addition = plot_additions['longitude']
+            y_addition = plot_additions['latitude']
+        except KeyError:
+            x_addition = None
+        if x_addition is not None:
+            m.scatter(x_addition, best_fit_y_posterior, marker = '*', c='b',
+                       edgecolor='k', s=200, zorder=10, latlon=True)
     plt.annotate('c)', xy=(0.05, 0.9),xycoords='axes fraction', fontsize=14)
     if max_val < 0.00001:
         loc_int = 0.000002
@@ -546,6 +607,8 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     plt.savefig(figname, dpi=300, format='png', bbox_inches='tight')
 
 if __name__ == "__main__":
+    if not os.path.exists('figures'):
+        os.makedirs('figures')
 #    parameter_space = np.genfromtxt(data_file, delimiter=',', skip_header=1)
 #    fig_comment = 'figures/' + data_file.split('/')[1][:-4]
 #    print fig_comment
@@ -635,8 +698,8 @@ if __name__ == "__main__":
     gmpe_inds = []
     # Count number of data points
     event = data_files[0].split('/')[1][:4]    
-    hmmi_file  = 'data/' + event + 'HMMI.txt'
-    with open(hmmi_file) as f:                                                                                                                             
+    #hmmi_file  = 'data/' + event + 'HMMI.txt'
+    with open(mmi_obs_file) as f:                                                                                                                             
         for obs_count, l in enumerate(f):                                                                                                                
             pass                                                                                                                                          
     num_obs = obs_count + 1                                                                                                                               
@@ -762,4 +825,5 @@ if __name__ == "__main__":
     bbox = bbox_dict[year]
     localities_file = 'data/localities%s.txt' % year 
     parameter_pdf(parameter_space, fig_comment = fig_comment, mmi_obs = mmi_obs,
-                  limits_filename = limits_filename, bbox=bbox, localities_file = localities_file)
+                  limits_filename = limits_filename, bbox=bbox, localities_file = localities_file,
+                  plot_additions=plot_additions)
