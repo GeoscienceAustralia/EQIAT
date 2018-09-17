@@ -14,6 +14,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from matplotlib.patches import PathPatch, Polygon
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy import interpolate
 from adjustText import adjust_text # Small package to improve label locations                                                         
 from collections import OrderedDict                     
@@ -113,8 +114,8 @@ plot_additions = None # Variable for storing additional info to be added to plot
 #                  'latitude': -7.492,
 #                  'depth': 90.0}
 
-data_files = ['outputs/2018_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                                 
-              'outputs/2018_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                                      
+data_files = ['outputs/2018_AtkinsonBoore2003SInter_parameter_llh.csv',
+              'outputs/2018_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                               
               'outputs/2018_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                                
 gmpe_weights = [0.2, 0.3, 0.5]   
 mmi_obs_file = 'data/2018HMMI.txt'
@@ -143,7 +144,7 @@ bbox_dict = {1699: '104/110/-10.5/-5',
              1820: '113/124/-10/-4',
              2006: '108.0/114/-9/-5',
              2017: '104/114/-10.5/-5',
-             2018: '112/120/-10/-5',
+             2018: '112/118/-10/-5',
              1852: '126/133/-8/0'}
 
 print 'sum(gmpe_weights)', sum(gmpe_weights)
@@ -294,9 +295,15 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
             if len(unique_vals) > 4:
                 bin=True
                 if key == 'dip':
-                    bins = np.arange(min(parameter_space[value]), max(parameter_space[value])+5, 5.)
+                    if (max(parameter_space[value]) - min(parameter_space[value])) > 10.0:
+                        bins = np.arange(min(parameter_space[value]), max(parameter_space[value])+5, 5.)
+                    else:
+                        bins = np.arange(min(parameter_space[value]), max(parameter_space[value])+1, 1.)
                 elif key == 'depth':
+                    if max(parameter_space[value]) > 50.0:
                         bins = np.arange(min(parameter_space[value]), max(parameter_space[value])+20, 20.)
+                    else:
+                        bins = np.arange(0.0, max(parameter_space[value])+5.0, 5.)
         if bin: # Calculate as histogram                                                                                                           
             hist, bins = np.histogram(parameter_space[value], bins)
             # align to bin centre for plotting                                                                                                     
@@ -330,7 +337,8 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
                     #pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[ind]))                                                                             
                 pdf_sums.append(pdf_sum)
         pdf_sums = np.array(pdf_sums)
-        print 'pdf_sums', pdf_sums
+#        print 'pdf_sums', pdf_sums
+#        print 'sum', sum(pdf_sums)
         parameter_pdf_sums[key] = pdf_sums
         parameter_pdf_values[key] = unique_vals
 
@@ -350,6 +358,34 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         except IndexError:
             y_index_posterior = (np.abs(unique_vals - best_fit_x_posterior)).argmin()
         best_fit_y_posterior = pdf_sums[y_index_posterior]
+
+        # Now calculate the range that contains 95% of the distribution
+        # Sort the pdf values, descending
+        pdf_sums_flat = pdf_sums.flatten()
+        try:
+            unique_vals_flat = unique_vals.flatten()
+        except AttributeError:
+            unique_vals_flat = np.array(unique_vals).flatten()
+        sorted_probs_args = np.argsort(pdf_sums_flat)[::-1]#.argsort()
+        sorted_probs = pdf_sums_flat[sorted_probs_args]
+        sorted_values = unique_vals_flat[sorted_probs_args]
+        sum_probs = sum(sorted_probs)
+        prob_limit = 0.95*sum_probs
+        print 'Sum probs, should be 1', sum_probs
+        print prob_limit
+        prob_sum = 0.0
+        for pi, prob_val in enumerate(sorted_probs):
+            if prob_sum > prob_limit:
+                prob_index = pi
+                break
+            else:
+                prob_sum += prob_val
+        values_in_bounds = sorted_values[0:prob_index]
+        min_bound = min(values_in_bounds)
+        max_bound = max(values_in_bounds)
+        print 'min_bound', min_bound
+        print 'max_bound', max_bound
+
         # Get plot additions to plot on top
 #        if plot_additions is not None:
 #            x_addition = plot_additions[key]
@@ -366,7 +402,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
             width = 1.0
         if key=='strike':
             # Plot as rose diagram                                                                                                                 
-            ax = fig.add_subplot(gs[0,2],projection='polar')
+            ax = fig.add_subplot(gs[0,3],projection='polar')
             ax.bar(np.deg2rad(unique_vals), pdf_sums, width=np.deg2rad(width), bottom=0.0,
                    align='center', color='0.5', edgecolor='k')
             ax.scatter(np.deg2rad(best_fit_x), best_fit_y, marker = '*', c='#696969', edgecolor='k', s=100,zorder=10 )
@@ -378,12 +414,12 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
             if max(pdf_sums) < 0.11:
                 r_int = 0.02
             else:
-                r_int = 0.1
-            ax.set_rgrids(np.arange(0.01, max(pdf_sums)+0.01, r_int), angle= np.deg2rad(7.5), weight= 'black')
+                r_int = 0.2
+            ax.set_rgrids(np.arange(r_int, max(pdf_sums)+0.01, r_int), angle= np.deg2rad(7.5))#, weight= 'black')
             ax.set_xlabel(xlabel_dict[key])
-            ax.text(-0.07, 1.02, 'b)', transform=ax.transAxes, fontsize=14)
+            ax.text(-0.07, 1.02, 'c)', transform=ax.transAxes, fontsize=14)
         elif key == 'mag':
-            ax =  fig.add_subplot(gs[:,0:2])
+            ax =  fig.add_subplot(gs[0,2])
             ymax = max(pdf_sums)*1.1
 #            lbx = [self.min_mag, self.min_mag]
 #            lby = [0, ymax]
@@ -409,10 +445,13 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
                        edgecolor='k', s=100, zorder=11)
             ax.scatter(best_fit_x_posterior, best_fit_y_posterior, marker = '*', c='w',
                        edgecolor='k', s=500, zorder=9)
+            if min_bound != max_bound:
+                ax.plot([min_bound, min_bound], [0.0, ymax], linewidth=0.9, linestyle='--', c='k')
+                ax.plot([max_bound,max_bound], [0.0, ymax], linewidth=0.9, linestyle='--', c='k')
             if plot_additions is not None:
                 try:
                     x_addition = plot_additions[key]
-                    y_addition = best_fit_y_posterior*1.1
+                    y_addition = best_fit_y_posterior*1.03
                 except KeyError:
                     x_addition = None
                 if x_addition is not None:
@@ -426,7 +465,8 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
             ax.set_ylabel('Probability')
             ax.set_xlabel(xlabel_dict[key])
             if key == 'mag':
-                ax.text(0.05, 0.95, 'a)', transform=ax.transAxes, fontsize=14)
+                ax.text(0.05, 0.92, 'b)', transform=ax.transAxes, fontsize=14)
+                ax.set_xlim((min(unique_vals)-0.4), (max(unique_vals)+0.2))
             if key == 'dip':
                 ax.text(0.05, 0.92, 'd)', transform=ax.transAxes, fontsize=14)
             if key == 'depth':
@@ -461,7 +501,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     index_posterior = np.argmax(parameter_space[7])
     best_fit_lon_posterior =  parameter_space[parameter_dict['longitude']][index_posterior]
     best_fit_lat_posterior =  parameter_space[parameter_dict['latitude']][index_posterior]
-    ax =  fig.add_subplot(gs[0,3])
+    ax =  fig.add_subplot(gs[:,0:2])
     bbox = bbox.split('/')
     if bbox is not None:
         minlon = float(bbox[0])
@@ -502,14 +542,15 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     max_val = max(pdf_sums)*1.1
     print 'pdf_sums', pdf_sums
     clevs = np.arange(0.0,max_val,(max_val/50))
+#    clevs = np.arange(0.0,max(pdf_sums),(max_val/50))
     cmap = plt.get_cmap('gray_r')
     # Adjust resolution to avoid memory intense interpolations                                                                                     
-    res = max((maxlon-minlon)/50., (maxlat-minlat)/50.)
+    res = max((maxlon-minlon)/75., (maxlat-minlat)/75.)
     xy = np.mgrid[minlon:maxlon:res,minlat:maxlat:res]
     xx,yy=np.meshgrid(xy[0,:,0], xy[1][0])
     griddata = interpolate.griddata((all_lons, all_lats), pdf_sums, (xx,yy), method='nearest')
     # now plot filled contours of pdf                                                                                                              
-    cs = m.contourf(xx, yy, griddata, clevs, cmap=cmap, vmax=max(pdf_sums), vmin=min(pdf_sums), latlon=True)
+    cs = m.contourf(xx, yy, griddata, clevs, cmap=cmap, vmax=max_val, vmin=0.0, latlon=True)
     # Mask areas outside of source model                                                                                                           
     if limits_filename is not None:
         limits_data = np.genfromtxt(limits_filename, delimiter=',')
@@ -540,7 +581,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         texts = []
         for label, x, y in zip(loc_name, loc_lon, loc_lat):
             x,y =  m(x,y)
-            texts.append(plt.text(x,y,label, fontsize=12, color='0.4', zorder=20))
+            texts.append(plt.text(x,y,label, fontsize=14, color='0.4', zorder=20))
 #        adjust_text(texts, only_move='xy',
 #                    arrowprops=dict(arrowstyle="-",
 #                                    color='k', lw=0.5))
@@ -548,7 +589,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     # Now add historical points on top
     if mmi_obs is not None:
         clevs = np.arange(0.5,9.5,1.0)
-        cmap = plt.get_cmap('YlOrRd')
+        cmap = plt.get_cmap('YlOrRd', 7)
         mmi_labels = []
         for obs in mmi_obs[:,2]:
             mmi_labels.append(write_roman(int(obs)))
@@ -556,18 +597,21 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
                            vmin=1.5, vmax=8.5, s=30, latlon=True)
             sp_ticks = np.arange(1,9,1)
         # Label only if there aren't too many to avoid plots being too busy
-        if len(mmi_obs[:,2]) < 8:
+        if len(mmi_obs[:,2]) < 20:
  #           texts = []
             for label, x, y in zip(mmi_labels, mmi_obs[:,0], mmi_obs[:,1]):
                 x,y =  m(x,y)
-                texts.append(plt.text(x,y,label, fontsize=8))
+                texts.append(plt.text(x,y,label, fontsize=10))
         if len(texts) > 0:
             adjust_text(texts, only_move='xy',
                         arrowprops=dict(arrowstyle="-",
                                         color='k', lw=0.5))
-        # Give the color bar some axes to help locate it
-        #cbaxes = fig.add_axes([0.95, 0.6, 0.03, 0.3]) 
-        cbar1 = m.colorbar(sp, ticks=sp_ticks, location='right', pad = 0.1)
+        # Divide the axes to make the colorbar locatable to right of maps
+        #divider = make_axes_locatable(ax)
+        #cax = divider.append_axes("right", size="5%", pad=0.05)
+       # plt.colorbar(im, cax=cax)
+        #fig.add_axes(cax)
+        cbar1 = m.colorbar(sp, ticks=sp_ticks, location='right', pad = 0.2)
         cbar1.ax.set_ylabel('MMI')
 
     # Now add best-fit location on top                                                                     
@@ -583,9 +627,9 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         except KeyError:
             x_addition = None
         if x_addition is not None:
-            m.scatter(x_addition, best_fit_y_posterior, marker = '*', c='b',
+            m.scatter(x_addition, y_addition, marker = '*', c='b',
                        edgecolor='k', s=200, zorder=10, latlon=True)
-    plt.annotate('c)', xy=(0.05, 0.9),xycoords='axes fraction', fontsize=14)
+    plt.annotate('a)', xy=(0.025, 0.95),xycoords='axes fraction', fontsize=14)
     if max_val < 0.00001:
         loc_int = 0.000002
     elif max_val < 0.0001:
