@@ -29,7 +29,7 @@
           </gml:LineString>
           <dip>27.0</dip>
           <upperSeismoDepth>0.001</upperSeismoDepth>
-          <lowerSeismoDepth>20</lowerSeismoDepth>
+          <lowerSeismoDepth>35</lowerSeismoDepth>
       </simpleFaultGeometry>
       <magScaleRel>StrasserInterface</magScaleRel>
       <ruptAspectRatio>1.5</ruptAspectRatio>
