@@ -238,8 +238,8 @@ def plot_mmi_hazmap_and_obs(median, percentile1, percentile2, mmi_obs, city,
 #    pyplot.savefig('mmi_hazmap_and_observations_%s.png' % city)
 
 if __name__ == "__main__":
-    filename = 'data/2017_hazard_curves_PGA.csv'
-    filename2 = 'data/hazard_curves_PGA.csv'
+    filename2 = 'data/2017_hazard_curves_PGA.csv'
+    filename = 'data/hazard_curves_PGA.csv'
     #filename2 = 'data/2017_hazard_curves_1.0s.csv'
     #filename = 'data/hazard_curves_1.0s.csv'
     obs_filename = 'data/City_MMI_all_mentions.csv'
@@ -329,7 +329,7 @@ if __name__ == "__main__":
         if city=='Jakarta':
             time = time_jkt
             # Add figure part label
-            if period == '0.0':
+            if period == 0.0:
                 ax.text(-0.1, 1.05, 'a)', fontsize=18, transform=ax.transAxes) 
             else:
                 ax.text(-0.1, 1.05, 'b)', fontsize=18, transform=ax.transAxes)
@@ -346,6 +346,6 @@ if __name__ == "__main__":
                          '2.5 and 97.5 percentiles of \n number of exceedances \n from the hazard curve',
                          'Number of observed exceedances'), 'lower right',
                bbox_to_anchor=(0.85, 0.19))
-    pyplot.savefig('mmi_2017_hazmap_and_observations_%.1f.png' % period)
+    pyplot.savefig('mmi_2010_hazmap_and_observations_%.1f.png' % period)
         
 
