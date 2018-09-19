@@ -219,6 +219,8 @@ def plot_mmi_hazmap_and_obs(median, percentile1, percentile2, mmi_obs, city,
     x_values = numpy.arange(0,14)
     if ax is None:
         pyplot.clf()
+    # Change 0 values to a small number for plotting purposes
+#    median[median==0] = 0.01
     a, = pyplot.semilogy(x_values, median, color='k')
     b, = pyplot.semilogy(x_values, percentile1, color='b', linestyle='--')
     pyplot.semilogy(x_values, percentile2, color='b', linestyle='--')
@@ -231,15 +233,15 @@ def plot_mmi_hazmap_and_obs(median, percentile1, percentile2, mmi_obs, city,
     pyplot.ylim(0.8, 1000)
     ax.set_title(city)
     ax.set_xlabel('MMI')
-    ax.set_ylabel('Number of occurences in %i years' % years)
+    ax.set_ylabel('Number of exceedances in %i years' % years)
     return a,b,c
 #    pyplot.savefig('mmi_hazmap_and_observations_%s.png' % city)
 
 if __name__ == "__main__":
     filename = 'data/2017_hazard_curves_PGA.csv'
     filename2 = 'data/hazard_curves_PGA.csv'
-#    filename2 = 'data/2017_hazard_curves_1.0s.csv'
-#    filename = 'data/hazard_curves_1.0s.csv'
+    #filename2 = 'data/2017_hazard_curves_1.0s.csv'
+    #filename = 'data/hazard_curves_1.0s.csv'
     obs_filename = 'data/City_MMI_all_mentions.csv'
     period = 0.0
     site_class = 'C'
@@ -323,11 +325,16 @@ if __name__ == "__main__":
     pyplot.subplots_adjust(hspace=0.4, wspace = 0.2)
     i = 1
     for city in cities:
+        ax = pyplot.subplot(3,2,i)
         if city=='Jakarta':
             time = time_jkt
+            # Add figure part label
+            if period == '0.0':
+                ax.text(-0.1, 1.05, 'a)', fontsize=18, transform=ax.transAxes) 
+            else:
+                ax.text(-0.1, 1.05, 'b)', fontsize=18, transform=ax.transAxes)
         else: 
             time = time_others
-        ax = pyplot.subplot(3,2,i)
         a,b,c = plot_mmi_hazmap_and_obs(haz_mmi_dict_list[0][city][0], haz_mmi_dict_list[0][city][1],
                                 haz_mmi_dict_list[0][city][2], mmi_obs_dict, city, years=time,
                                 ax=ax)
