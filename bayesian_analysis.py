@@ -37,6 +37,7 @@ plot_additions = None # Variable for storing additional info to be added to plot
 #gmpe_weights = [0.5, 0.5]                                                                                                                          
 #mmi_obs_file = 'data/1780HMMI.txt' 
 #gmpe_weights = [0.2, 0.3, 0.5]
+#num_params = 4
 #mmi_obs_file = 'data/1780HMMI.txt'
 #data_files = ['outputs/1699slab_ZhaoEtAl2006SSlab_parameter_llh.csv',
 #              'outputs/1699slab_AtkinsonBoore2003SSlab_parameter_llh.csv',
@@ -44,16 +45,19 @@ plot_additions = None # Variable for storing additional info to be added to plot
 #              'outputs/1699slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']
 #gmpe_weights = [0.3, 0.1, 0.1, 0.5]
 #mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
+#num_params = 7
 #data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',
 #              'outputs/1699megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',
 #              'outputs/1699megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']
 #gmpe_weights = [0.2, 0.3, 0.5]
 #mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
+#num_params = 4 # reduce by 3 as strike, dip and depth dependent on location on plane
 #data_files = ['outputs/1840_CampbellBozorgnia2014_parameter_llh.csv',
 #              'outputs/1840_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/1840_ChiouYoungs2014_parameter_llh.csv']
 #gmpe_weights = [0.15, 0.5, 0.35]
 #mmi_obs_file = 'data/1840HMMI.txt'
+#num_params = 7
 #data_files = ['outputs/1847_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/1847_ChiouYoungs2014_parameter_llh.csv',
 #              'outputs/1847_CampbellBozorgnia2014_parameter_llh.csv']
@@ -70,11 +74,12 @@ plot_additions = None # Variable for storing additional info to be added to plot
 #              'outputs/1867slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']                                           
 #gmpe_weights = [0.3, 0.1, 0.1, 0.5]                                                                                    
 #mmi_obs_file = 'data/1867HMMI.txt'
-#data_files = ['outputs/1867megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',                                                  
-#              'outputs/1867megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',                                                      
-#              'outputs/1867megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                
-#gmpe_weights = [0.2, 0.3, 0.5]                                                                                                    
-#mmi_obs_file = 'data/1867HMMI.txt'
+data_files = ['outputs/1867megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',                                                  
+              'outputs/1867megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',                                                      
+              'outputs/1867megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                
+gmpe_weights = [0.2, 0.3, 0.5]                                                                                                    
+mmi_obs_file = 'data/1867HMMI.txt'
+num_params = 4
 #data_files = [#'outputs/1834_BooreAtkinson2008_parameter_llh.csv',
 #              'outputs/1834_BooreEtAl2014_parameter_llh.csv',
               #'outputs/1834_ChiouYoungs2008_parameter_llh.csv',
@@ -83,21 +88,25 @@ plot_additions = None # Variable for storing additional info to be added to plot
 #              'outputs/1834_CampbellBozorgnia2014_parameter_llh.csv']
 #gmpe_weights = [0.5, 0.35, 0.15]
 #mmi_obs_file = 'data/1834HMMI.txt'
-#data_files = ['outputs/1820_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                  
-#              'outputs/1820_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                             
-#              'outputs/1820_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                      
+#num_params = 7
+#data_files = ['outputs/1820_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                
+#              'outputs/1820_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                  
+#              'outputs/1820_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                            
 #gmpe_weights = [0.2, 0.3, 0.5]                                                                                                  
 #mmi_obs_file = 'data/1820HMMI.txt' 
+#num_params=4 # Reduce as strike, dip and depth dependent on location on 2D plane
 #data_files = ['outputs/1818_AtkinsonBoore2003SInter_parameter_llh.csv',
 #              'outputs/1818_ZhaoEtAl2006SInter_parameter_llh.csv',
 #              'outputs/1818_AbrahamsonEtAl2015SInter_parameter_llh.csv']
 #gmpe_weights = [0.2, 0.3, 0.5]
 #mmi_obs_file = 'data/1818HMMI.txt'
+#num_params=7 # Force to use estimated sigma 
 #data_files = ['outputs/1815_AtkinsonBoore2003SInter_parameter_llh.csv',
 #              'outputs/1815_ZhaoEtAl2006SInter_parameter_llh.csv',
 #              'outputs/1815_AbrahamsonEtAl2015SInter_parameter_llh.csv']
 #gmpe_weights = [0.2, 0.3, 0.5]
 #mmi_obs_file = 'data/1815HMMI.txt'
+#num_params=4 
 #data_files = ['outputs/2006_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/2006_ChiouYoungs2014_parameter_llh.csv',
 #              'outputs/2006_CampbellBozorgnia2014_parameter_llh.csv']
@@ -109,20 +118,22 @@ plot_additions = None # Variable for storing additional info to be added to plot
 #              'outputs/2017slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']    
 #gmpe_weights = [0.3, 0.1, 0.1, 0.5]
 #mmi_obs_file = 'data/2017HMMI.txt'
+#num_params = 7
 #plot_additions = {'mag': 6.5, # USGS data
 #                  'longitude': 108.174,
 #                  'latitude': -7.492,
 #                  'depth': 90.0}
 
-data_files = ['outputs/2018_AtkinsonBoore2003SInter_parameter_llh.csv',
-              'outputs/2018_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                               
-              'outputs/2018_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                                
-gmpe_weights = [0.2, 0.3, 0.5]   
-mmi_obs_file = 'data/2018HMMI.txt'
-plot_additions = {'mag': 6.9, # USGS data                                                                                                              
-                  'longitude': 116.452,
-                  'latitude': -8.287,
-                  'depth': 31.0}                  
+#data_files = ['outputs/2018_AtkinsonBoore2003SInter_parameter_llh.csv',
+#              'outputs/2018_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                 
+#              'outputs/2018_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                                
+#gmpe_weights = [0.2, 0.3, 0.5]   
+#mmi_obs_file = 'data/2018HMMI.txt'
+#num_params=4
+#plot_additions = {'mag': 6.9, # USGS data                                                                                                             
+#                  'longitude': 116.452,
+#                  'latitude': -8.287,
+#                  'depth': 34.0}                  
 
 #data_files = ['outputs/1852Banda_area_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/1852Banda_area_ChiouYoungs2014_parameter_llh.csv',                             
@@ -138,7 +149,7 @@ bbox_dict = {1699: '104/110/-10.5/-5',
              1834: '105/110/-8/-5',
              1840: '108.0/114/-9/-5',
              1847: '105/110/-9/-5',
-             1867: '105.7/115/-12/-3',
+             1867: '105.7/116/-12/-3',
              1815: '112/120/-10/-5',
              1818: '112/121/-10/-5',
              1820: '113/124/-10/-4',
@@ -630,18 +641,23 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
             m.scatter(x_addition, y_addition, marker = '*', c='b',
                        edgecolor='k', s=200, zorder=10, latlon=True)
     plt.annotate('a)', xy=(0.025, 0.95),xycoords='axes fraction', fontsize=14)
-    if max_val < 0.00001:
-        loc_int = 0.000002
+    print 'max_val', max_val
+    if max_val < 0.0000001:
+        loc_int = 0.00000001
+    elif max_val < 0.000001:
+        loc_int = 0.0000001
+    elif max_val < 0.00001:
+        loc_int = 0.000001
     elif max_val < 0.0001:
-        loc_int = 0.00002
+        loc_int = 0.00001
     elif max_val < 0.001:
-        loc_int = 0.0002
+        loc_int = 0.0001
     elif max_val < 0.01:
-        loc_int = 0.002
+        loc_int = 0.001
     elif max_val < 0.1:
-        loc_int = 0.02
+        loc_int = 0.01
     else:
-        loc_int = 0.2
+        loc_int = 0.1
     ticks = np.arange(0.0, max_val*1.1, loc_int)
     cbar = m.colorbar(cs, ticks=ticks, location='bottom')#orientation='horizontal')
     cbar.ax.set_xlabel('Probability')
@@ -829,8 +845,8 @@ if __name__ == "__main__":
     min_rmse = min(parameter_space[6])
     print 'min_rmse', min_rmse
     sum_squares = parameter_space[6]**2 # Weighted sum of square*num_obs
-    if num_obs > 8:
-        sigma=np.sqrt((1./(num_obs-7))*(min_rmse**2))
+    if num_obs > num_params:
+        sigma=np.sqrt((1./(num_obs-num_params))*(min_rmse**2))
     else:
         sigma = 0.5 # Estimate sigma based on other results if not enough data
     print 'sigma', sigma
