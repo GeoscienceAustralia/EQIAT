@@ -1,0 +1,7 @@
+event_name,1834
+area_source_file,data/source_model_1834.xml
+trt,Active
+site_model_file,data/jawa_sumatra_site_model.xml
+site_file,data/1834HMMI.txt
+site_file_pts,data/jawa_sumatra_site_model.xml
+limits_filename,data/source_model_1834.xml.limits.txt

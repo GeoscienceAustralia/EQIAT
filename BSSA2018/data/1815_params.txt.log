@@ -1,0 +1,183 @@
+/short/n74/jdg547/EQIAT/gmf_calculator.py:416: VisibleDeprecationWarning: converting an array with ndim > 0 to an index will result in an error in the future
+  np.exp((-1/2)*((self.sum_squares_list[index]/self.sigma**2)))
+Generating source model
+Running for YoungsEtAl1997SInter()
+[ 0.07988729  0.16097306  0.16000701  0.16035441  0.25769177]
+[6.1564260387288252, 7.0540388400451759, 7.0463270411018835, 7.0491055677022727, 7.656863545436642]
+Results using YoungsEtAl1997SInter() GMM
+Best magnitude 7.35
+<Latitude=-8.058187, Longitude=114.784895, Depth=24.9705>
+Best dip 27.3672392596
+Best strike 95.6109608074
+Could not make shapefile, writing to text
+RMSE 0.710552899524
+Not enough data points to calculate uncertainties
+pdf_sums [  7.06625511e-44   2.78877547e-43   1.16075625e-42 ...,   7.74194287e-85
+   2.95038865e-84   1.11523982e-83]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+ind (array([], dtype=int64),)
+index []
+pdf_sums [  0.00000000e+00   0.00000000e+00   0.00000000e+00   1.09404518e-52
+   5.53438274e-27   8.60866437e-10   9.99999999e-01   3.31758508e-35
+   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00]
+ind (array([], dtype=int64),)
+index []
+pdf_sums [ 0.74282012  0.25717988  0.        ]
+95 percent confidence range on magnitude at best-fit location is 6.95 - 7.35
+gmf [ 0.00392549  0.00260859  0.00338442 ...,  0.01493466  0.06040629
+  0.03479656]
+Running for AtkinsonBoore2003SInter()
+[ 0.10964443  0.15136591  0.09487776  0.15072912  0.14976923]
+[6.5620772924891853, 6.9751997141737201, 6.3767520322599633, 6.9697985540799232, 6.9616135987375758]
+Results using AtkinsonBoore2003SInter() GMM
+Best magnitude 7.25
+<Latitude=-8.143821, Longitude=115.101347, Depth=27.2404>
+Best dip 27.5455247565
+Best strike 98.3212897425
+Could not make shapefile, writing to text
+RMSE 0.912622879263
+Not enough data points to calculate uncertainties
+pdf_sums [  4.01945749e-056   5.52699768e-055   8.41616227e-054 ...,
+   1.36342537e-154   4.49282158e-153   1.43628426e-151]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+ind (array([], dtype=int64),)
+index []
+pdf_sums [  0.00000000e+00   0.00000000e+00   0.00000000e+00   1.12586497e-79
+   2.81959744e-30   3.21186990e-07   9.99999679e-01   4.80667342e-37
+   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00]
+ind (array([], dtype=int64),)
+index []
+pdf_sums [ 0.51494574  0.48505426  0.        ]
+95 percent confidence range on magnitude at best-fit location is 6.75 - 7.25
+gmf [ 0.00087439  0.0003259   0.00063647 ...,  0.01621676  0.07204844
+  0.04185082]
+Running for ZhaoEtAl2006SInter()
+[ 0.04646557  0.09803075  0.07536791  0.09741189  0.16790211]
+[5.4621541186540012, 6.4186357304026584, 6.0818169346125206, 6.41052217934869, 7.1080325925669943]
+Results using ZhaoEtAl2006SInter() GMM
+Best magnitude 7.35
+<Latitude=-8.058187, Longitude=114.784895, Depth=24.9705>
+Best dip 27.3672392596
+Best strike 95.6109608074
+Could not make shapefile, writing to text
+RMSE 0.413310590426
+Not enough data points to calculate uncertainties
+pdf_sums [  1.31642264e-051   4.73854637e-051   1.88188875e-050 ...,
+   3.18170333e-134   4.66069801e-133   6.67387324e-132]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+ind (array([], dtype=int64),)
+index []
+pdf_sums [  0.00000000e+00   0.00000000e+00   0.00000000e+00   4.36362437e-97
+   1.53339595e-46   3.24122297e-12   1.00000000e+00   4.31978257e-48
+   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00
+   0.00000000e+00   0.00000000e+00   0.00000000e+00   0.00000000e+00]
+ind (array([], dtype=int64),)
+index []
+pdf_sums [ 0.72811417  0.27188583  0.        ]
+95 percent confidence range on magnitude at best-fit location is 6.95 - 7.35
+gmf [ 0.00056158  0.00023351  0.00041498 ...,  0.01399996  0.07777702
+  0.04017316]
+Running for AbrahamsonEtAl2015SInter()
+[ 0.01201837  0.06274986  0.04254323  0.06164862  0.13785234]
+[4.4938647198067976, 5.8470746233887843, 5.349166740612219, 5.8243908782799521, 6.8553886524208787]
+Results using AbrahamsonEtAl2015SInter() GMM
+Best magnitude 7.35
+<Latitude=-8.058187, Longitude=114.784895, Depth=24.9705>
+Best dip 27.3672392596
+Best strike 95.6109608074
+Could not make shapefile, writing to text
+RMSE 0.312200771503
+Not enough data points to calculate uncertainties
+pdf_sums [  1.52146853e-061   7.00187685e-061   3.65271354e-060 ...,
+   5.45448473e-321   7.33193418e-321   9.48606040e-321]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+[]
+ind (array([], dtype=int64),)
+index []
+pdf_sums [  0.00000000e+000   0.00000000e+000   0.00000000e+000   3.75277102e-229
+   1.89597387e-089   2.64835303e-011   1.00000000e+000   1.92059846e-069
+   0.00000000e+000   0.00000000e+000   0.00000000e+000   0.00000000e+000
+   0.00000000e+000   0.00000000e+000   0.00000000e+000   0.00000000e+000
+   0.00000000e+000   0.00000000e+000   0.00000000e+000   0.00000000e+000
+   0.00000000e+000   0.00000000e+000   0.00000000e+000   0.00000000e+000]
+ind (array([], dtype=int64),)
+index []
+pdf_sums [ 0.76477898  0.23522102  0.        ]
+95 percent confidence range on magnitude at best-fit location is 6.95 - 7.35
+gmf [  1.93827000e-05   2.70055989e-06   1.02023232e-05 ...,   8.92973598e-03
+   1.19160891e-01   4.98957932e-02]
