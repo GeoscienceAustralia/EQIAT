@@ -140,15 +140,6 @@ plot_additions = {'mag': 6.5, # USGS data
 #                  'latitude': -8.287,
 #                  'depth': 34.0}                  
 
-#data_files = ['outputs/1852Banda_area_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/1852Banda_area_ChiouYoungs2014_parameter_llh.csv',                             
-#              'outputs/1852Banda_area_CampbellBozorgnia2014_parameter_llh.csv',
-#              'outputs/1852Banda_area_AtkinsonBoore2003SInter_parameter_llh.csv',                                      
-#              'outputs/1852Banda_area_ZhaoEtAl2006SInter_parameter_llh.csv',                                             
-#              'outputs/1852Banda_area_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-#gmpe_weights = [0.2, 0.3, 0.5]  
-#mmi_obs_file = 'data/1852Banda_MMI.txt'
-
 bbox_dict = {1699: '104/110/-10.5/-5',
              1780: '104/113/-9/-5',
              1834: '105/110/-8/-5',
@@ -160,8 +151,7 @@ bbox_dict = {1699: '104/110/-10.5/-5',
              1820: '113/124/-10/-4',
              2006: '108.0/114/-9/-5',
              2017: '104/114/-10.5/-5',
-             2018: '112/118/-10/-5',
-             1852: '126/133/-8/0'}
+             2018: '112/118/-10/-5'}
 
 print 'sum(gmpe_weights)', sum(gmpe_weights)
 # Read observation data                                                                                                              
