@@ -308,39 +308,40 @@ class RuptureGmf(object):
         header = 'mag,lon,lat,depth,strike,dip,rmse,likelihood'
         np.savetxt(filename, self.parameter_space_llh, delimiter=',', header = header)
         # all ruptures within 95% uncertainty bounds 
-        self.fitted_ruptures = []
-        self.fitted_rmse = []
-        for index in indices:
-            self.fitted_ruptures.append(self.rupture_list[index])
-            self.fitted_rmse.append(self.rmse[index])
-        # Create lists for storing ranges of each parameter
-        self.fitted_mags = []
-        self.fitted_lons = []
-        self.fitted_lats = []
-        self.fitted_depths = []
-        self.fitted_strikes = []
-        self.fitted_dips = []
-        for rup in self.fitted_ruptures:
-            self.fitted_mags.append(rup.mag)
-            self.fitted_lons.append(rup.hypocenter.longitude)
-            self.fitted_lats.append(rup.hypocenter.latitude)
-            self.fitted_depths.append(rup.hypocenter.depth)
-            self.fitted_strikes.append(rup.surface.get_strike())
-            self.fitted_dips.append(rup.surface.get_dip())
-        self.min_mag = min(self.fitted_mags)
-        self.max_mag = max(self.fitted_mags)
-        self.min_lon = min(self.fitted_lons)
-        self.max_lon = max(self.fitted_lons)
-        self.min_lat = min(self.fitted_lats)
-        self.max_lat = max(self.fitted_lats)
-        self.min_depth = min(self.fitted_depths)
-        self.max_depth = max(self.fitted_depths)
-        self.min_strike = min(self.fitted_strikes)
-        self.max_strike = max(self.fitted_strikes)
-        self.min_dip = min(self.fitted_dips)
-        self.max_dip = max(self.fitted_dips)
-        print 'strikes',  np.unique(np.array(self.fitted_strikes))
-        print 'dips', np.unique(np.array(self.fitted_dips))
+        if len(self.mmi_obs) > 6:
+            self.fitted_ruptures = []
+            self.fitted_rmse = []
+            for index in indices:
+                self.fitted_ruptures.append(self.rupture_list[index])
+                self.fitted_rmse.append(self.rmse[index])
+            # Create lists for storing ranges of each parameter
+            self.fitted_mags = []
+            self.fitted_lons = []
+            self.fitted_lats = []
+            self.fitted_depths = []
+            self.fitted_strikes = []
+            self.fitted_dips = []
+            for rup in self.fitted_ruptures:
+                self.fitted_mags.append(rup.mag)
+                self.fitted_lons.append(rup.hypocenter.longitude)
+                self.fitted_lats.append(rup.hypocenter.latitude)
+                self.fitted_depths.append(rup.hypocenter.depth)
+                self.fitted_strikes.append(rup.surface.get_strike())
+                self.fitted_dips.append(rup.surface.get_dip())
+            self.min_mag = min(self.fitted_mags)
+            self.max_mag = max(self.fitted_mags)
+            self.min_lon = min(self.fitted_lons)
+            self.max_lon = max(self.fitted_lons)
+            self.min_lat = min(self.fitted_lats)
+            self.max_lat = max(self.fitted_lats)
+            self.min_depth = min(self.fitted_depths)
+            self.max_depth = max(self.fitted_depths)
+            self.min_strike = min(self.fitted_strikes)
+            self.max_strike = max(self.fitted_strikes)
+            self.min_dip = min(self.fitted_dips)
+            self.max_dip = max(self.fitted_dips)
+            print 'strikes',  np.unique(np.array(self.fitted_strikes))
+            print 'dips', np.unique(np.array(self.fitted_dips))
 
     def parameter_pdf(self, fig_comment='', limits_filename=None):
         """Calculate a pdf for parameter values based on the uncertainty model

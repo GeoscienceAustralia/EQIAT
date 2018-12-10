@@ -19,7 +19,10 @@ from scipy import interpolate
 from adjustText import adjust_text # Small package to improve label locations                                                         
 from collections import OrderedDict                     
 
+megathrust=False # Flag for plotting special cases
+slab=False
 plot_additions = None # Variable for storing additional info to be added to plots
+event_name = ''
 #data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_BooreEtAl2014_parameter_llh.csv'
 #data_files = [data_file]
 #gmpe_weights = [1.]
@@ -45,7 +48,7 @@ plot_additions = None # Variable for storing additional info to be added to plot
 #              'outputs/1699slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']
 #gmpe_weights = [0.3, 0.1, 0.1, 0.5]
 #mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
-#num_params = 7
+#num_params = 8 # Force estimation only of uncertainties
 #data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',
 #              'outputs/1699megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',
 #              'outputs/1699megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']
@@ -63,23 +66,26 @@ plot_additions = None # Variable for storing additional info to be added to plot
 #              'outputs/1847_CampbellBozorgnia2014_parameter_llh.csv']
 #gmpe_weights = [0.5, 0.35, 0.15]
 #mmi_obs_file = 'data/1847HMMI.txt'
+#num_params=7
 #data_files = ['outputs/1867_BooreEtAl2014_parameter_llh.csv',                                
 #              'outputs/1867_ChiouYoungs2014_parameter_llh.csv',                                                          
 #              'outputs/1867_CampbellBozorgnia2014_parameter_llh.csv']                                                        
 #gmpe_weights = [0.5, 0.35, 0.15]                                                                                                 
 #mmi_obs_file = 'data/1867HMMI.txt' 
+#num_params=7
 #data_files = ['outputs/1867slab_ZhaoEtAl2006SSlab_parameter_llh.csv',                                                      
 #              'outputs/1867slab_AtkinsonBoore2003SSlab_parameter_llh.csv',                                             
 #              'outputs/1867slab_AtkinsonBoore2003SSlabCascadia_parameter_llh.csv',                               
 #              'outputs/1867slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']                                           
 #gmpe_weights = [0.3, 0.1, 0.1, 0.5]                                                                                    
 #mmi_obs_file = 'data/1867HMMI.txt'
-data_files = ['outputs/1867megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',                                                  
-              'outputs/1867megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',                                                      
-              'outputs/1867megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                
-gmpe_weights = [0.2, 0.3, 0.5]                                                                                                    
-mmi_obs_file = 'data/1867HMMI.txt'
-num_params = 4
+#num_params=7
+#data_files = ['outputs/1867megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',                                                  
+#              'outputs/1867megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',                                                      
+#              'outputs/1867megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                
+#gmpe_weights = [0.2, 0.3, 0.5]                                                                                                    
+#mmi_obs_file = 'data/1867HMMI.txt'
+#num_params = 4
 #data_files = [#'outputs/1834_BooreAtkinson2008_parameter_llh.csv',
 #              'outputs/1834_BooreEtAl2014_parameter_llh.csv',
               #'outputs/1834_ChiouYoungs2008_parameter_llh.csv',
@@ -134,16 +140,21 @@ num_params = 4
 #                  'longitude': 116.452,
 #                  'latitude': -8.287,
 #                  'depth': 34.0}                  
+#1852Banda_area_ChiouYoungs2014_parameter_llh.csv
 
-#data_files = ['outputs/1852Banda_area_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/1852Banda_area_ChiouYoungs2014_parameter_llh.csv',                             
-#              'outputs/1852Banda_area_CampbellBozorgnia2014_parameter_llh.csv',
-#              'outputs/1852Banda_area_AtkinsonBoore2003SInter_parameter_llh.csv',                                      
-#              'outputs/1852Banda_area_ZhaoEtAl2006SInter_parameter_llh.csv',                                             
-#              'outputs/1852Banda_area_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-#gmpe_weights = [0.2, 0.3, 0.5]  
-#mmi_obs_file = 'data/1852Banda_MMI.txt'
-
+data_files = ['outputs/1852BandaDoughnut_BooreEtAl2014_parameter_llh.csv',
+              'outputs/1852BandaDoughnut_ChiouYoungs2014_parameter_llh.csv',                             
+#              'outputs/1852Banda_CampbellBozorgnia2014_parameter_llh.csv',
+#              'outputs_1852/1852Banda_AtkinsonBoore2003SInter_parameter_llh.csv',                                      
+#              'outputs/1852Banda_ZhaoEtAl2006SInter_parameter_llh.csv',                                             
+#              'outputs/1852Banda_area_AbrahamsonEtAl2015SInter_parameter_llh.csv',
+              'outputs/1852BandaDoughnut_ZhaoEtAl2006SInter_parameter_llh.csv',
+              'outputs/1852BandaDoughnut_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+gmpe_weights = [0.25, 0.25, 0.1, 0.4]  
+#gmpe_weights = [0.7, 0.3]
+#event_name = '1852Banda_area' # deal with area source not using naming convention
+mmi_obs_file = 'data/1852Banda_MMI.txt'
+num_params = 7
 bbox_dict = {1699: '104/110/-10.5/-5',
              1780: '104/113/-9/-5',
              1834: '105/110/-8/-5',
@@ -301,7 +312,10 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         if key == 'strike':
             if len(unique_vals) > 24:
                 bin=True
-                bins =  np.arange(0, 360, 15.)
+                if megathrust or slab:
+                    bins =  np.arange(0, 360, 5.)
+                else:
+                    bins =  np.arange(0, 360, 15.)
         if key == 'dip' or key == 'depth':
             if len(unique_vals) > 4:
                 bin=True
@@ -311,7 +325,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
                     else:
                         bins = np.arange(min(parameter_space[value]), max(parameter_space[value])+1, 1.)
                 elif key == 'depth':
-                    if max(parameter_space[value]) > 50.0:
+                    if max(parameter_space[value]) > 80.0:
                         bins = np.arange(min(parameter_space[value]), max(parameter_space[value])+20, 20.)
                     else:
                         bins = np.arange(0.0, max(parameter_space[value])+5.0, 5.)
@@ -422,10 +436,11 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
             ax.set_theta_direction(-1)
             ax.set_thetagrids(np.arange(0, 360, 15))
             # Define grids intervals for radial axis                                                                                               
-            if max(pdf_sums) < 0.11:
+            if max(pdf_sums) < 0.21:
                 r_int = 0.02
             else:
                 r_int = 0.2
+            print r_int, max(pdf_sums)
             ax.set_rgrids(np.arange(r_int, max(pdf_sums)+0.01, r_int), angle= np.deg2rad(7.5))#, weight= 'black')
             ax.set_xlabel(xlabel_dict[key])
             ax.text(-0.07, 1.02, 'c)', transform=ax.transAxes, fontsize=14)
@@ -476,12 +491,12 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
             ax.set_ylabel('Probability')
             ax.set_xlabel(xlabel_dict[key])
             if key == 'mag':
-                ax.text(0.05, 0.92, 'b)', transform=ax.transAxes, fontsize=14)
+                ax.text(-0.07, 1.02, 'b)', transform=ax.transAxes, fontsize=14)
                 ax.set_xlim((min(unique_vals)-0.4), (max(unique_vals)+0.2))
             if key == 'dip':
-                ax.text(0.05, 0.92, 'd)', transform=ax.transAxes, fontsize=14)
+                ax.text(-0.07, 1.02, 'd)', transform=ax.transAxes, fontsize=14)
             if key == 'depth':
-                ax.text(0.05, 0.92, 'e)', transform=ax.transAxes, fontsize=14)
+                ax.text(-0.07, 1.02, 'e)', transform=ax.transAxes, fontsize=14)
     # Now plot a map of location uncertainty                                                                                                       
     # First get 2D pdf                                                                                                                             
     pdf_sums = []
@@ -556,12 +571,14 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
 #    clevs = np.arange(0.0,max(pdf_sums),(max_val/50))
     cmap = plt.get_cmap('gray_r')
     # Adjust resolution to avoid memory intense interpolations                                                                                     
-    res = max((maxlon-minlon)/75., (maxlat-minlat)/75.)
+    res = max((maxlon-minlon)/50., (maxlat-minlat)/50.) #75 #30 #50
     xy = np.mgrid[minlon:maxlon:res,minlat:maxlat:res]
     xx,yy=np.meshgrid(xy[0,:,0], xy[1][0])
-    griddata = interpolate.griddata((all_lons, all_lats), pdf_sums, (xx,yy), method='nearest')
+    griddata = interpolate.griddata((all_lons, all_lats), pdf_sums, (xx,yy), method='nearest') # nearest # linears
     # now plot filled contours of pdf                                                                                                              
     cs = m.contourf(xx, yy, griddata, clevs, cmap=cmap, vmax=max_val, vmin=0.0, latlon=True)
+    for c in cs.collections: # Fix white space on contour levels for pdf images
+        c.set_edgecolor("face")
     # Mask areas outside of source model                                                                                                           
     if limits_filename is not None:
         limits_data = np.genfromtxt(limits_filename, delimiter=',')
@@ -640,7 +657,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         if x_addition is not None:
             m.scatter(x_addition, y_addition, marker = '*', c='b',
                        edgecolor='k', s=200, zorder=10, latlon=True)
-    plt.annotate('a)', xy=(0.025, 0.95),xycoords='axes fraction', fontsize=14)
+    plt.annotate('a)', xy=(-0.01, 1.01),xycoords='axes fraction', fontsize=14)
     print 'max_val', max_val
     if max_val < 0.0000001:
         loc_int = 0.00000001
@@ -664,7 +681,8 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     figname = '%s_all_parameter_pdf.png' % (fig_comment)
     figname = figname.replace('()', '')
     plt.tight_layout()
-    plt.savefig(figname, dpi=300, format='png', bbox_inches='tight')
+    plt.savefig(figname, dpi=600, format='png', bbox_inches='tight')
+#    plt.savefig(figname, dpi=600, format='pdf', bbox_inches='tight')
 
 if __name__ == "__main__":
     if not os.path.exists('figures'):
@@ -745,7 +763,10 @@ if __name__ == "__main__":
     year = data_files[0].split('/')[1][:4]
     year = int(year)
     print 'year', year
-    event_name = data_files[0].split('/')[1].split('_')[0]
+    if event_name == '1852Banda_area':
+        pass
+    else:
+        event_name = data_files[0].split('/')[1].split('_')[0]
     fig_comment = 'figures/' + event_name + '_all_gmpes'
     # Get limits_filename from params.txt
     param_filename = 'data/' + event_name + '_params.txt'

@@ -231,19 +231,20 @@ def plot_mmi_hazmap_and_obs(median, percentile1, percentile2, mmi_obs, city,
     pyplot.plot(xx,yy,linestyle = ':', color='0.3')
     pyplot.xlim(2.9,10)
     pyplot.ylim(0.8, 1000)
-    ax.set_title(city)
+    ax.text(8.0, 550, city, fontsize=14)
+#ax.set_title(city)
     ax.set_xlabel('MMI')
     ax.set_ylabel('Number of exceedances in %i years' % years)
     return a,b,c
 #    pyplot.savefig('mmi_hazmap_and_observations_%s.png' % city)
 
 if __name__ == "__main__":
-    filename2 = 'data/2017_hazard_curves_PGA.csv'
-    filename = 'data/hazard_curves_PGA.csv'
-    #filename2 = 'data/2017_hazard_curves_1.0s.csv'
-    #filename = 'data/hazard_curves_1.0s.csv'
+#    filename = 'data/2017_hazard_curves_PGA.csv'
+#    filename2 = 'data/hazard_curves_PGA.csv'
+    filename2 = 'data/2017_hazard_curves_1.0s.csv'
+    filename = 'data/hazard_curves_1.0s.csv'
     obs_filename = 'data/City_MMI_all_mentions.csv'
-    period = 0.0
+    period = 1.0
     site_class = 'C'
     cities = ['Jakarta', 'Bandung', 'Semarang', 'Yogyakarta', 'Surabaya']
 #    cities = ['Semarang', 'Yogyakarta', 'Surabaya']

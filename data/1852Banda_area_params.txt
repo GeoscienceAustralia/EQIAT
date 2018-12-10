@@ -1,6 +1,6 @@
 event_name,1852Banda_area
 area_source_file,data/source_model_1852.xml
-trt,Subduction Intraslab
+trt,Active
 site_model_file,data/1852Banda_EasternIndonesia_site_model.xml
 site_file,data/1852Banda_MMI.txt
 site_file_pts,data/1852Banda_EasternIndonesia_sites.csv
