@@ -15,7 +15,10 @@ import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from matplotlib.patches import PathPatch, Polygon
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import ogr, osr
+from shapely.wkt import loads
 from scipy import interpolate
+from scipy.stats import norm
 from adjustText import adjust_text # Small package to improve label locations                                                         
 from collections import OrderedDict                     
 
@@ -142,17 +145,17 @@ event_name = ''
 #                  'depth': 34.0}                  
 #1852Banda_area_ChiouYoungs2014_parameter_llh.csv
 
-data_files = ['outputs/1852BandaDoughnut_BooreEtAl2014_parameter_llh.csv',
-              'outputs/1852BandaDoughnut_ChiouYoungs2014_parameter_llh.csv',                             
+data_files = ['outputs/1852BandaDetachmentGA_BooreEtAl2014_parameter_llh.csv',
+              'outputs/1852BandaDetachmentGA_ChiouYoungs2014_parameter_llh.csv',                             
 #              'outputs/1852Banda_CampbellBozorgnia2014_parameter_llh.csv',
 #              'outputs_1852/1852Banda_AtkinsonBoore2003SInter_parameter_llh.csv',                                      
 #              'outputs/1852Banda_ZhaoEtAl2006SInter_parameter_llh.csv',                                             
 #              'outputs/1852Banda_area_AbrahamsonEtAl2015SInter_parameter_llh.csv',
-              'outputs/1852BandaDoughnut_ZhaoEtAl2006SInter_parameter_llh.csv',
-              'outputs/1852BandaDoughnut_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+              'outputs/1852BandaDetachmentGA_ZhaoEtAl2006SInter_parameter_llh.csv',
+              'outputs/1852BandaDetachmentGA_AbrahamsonEtAl2015SInter_parameter_llh.csv']
 gmpe_weights = [0.25, 0.25, 0.1, 0.4]  
 #gmpe_weights = [0.7, 0.3]
-#event_name = '1852Banda_area' # deal with area source not using naming convention
+event_name = '1852BandaDetachment' # deal with area source not using naming convention
 mmi_obs_file = 'data/1852Banda_MMI.txt'
 num_params = 7
 bbox_dict = {1699: '104/110/-10.5/-5',
@@ -207,8 +210,9 @@ def write_roman(num):
 
     return "".join([a for a in roman_num(num)])
 
-def update_weights_gmpe(parameter_space, prior_pdfs):
-    """Update weights in a Bayesian sense                                                                           Includ GMPE uncertainty
+def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
+    """Update weights in a Bayesian sense                                    
+    Include GMPE uncertainty
     """
     prior_weights = []
     llhs = parameter_space[7]
@@ -226,6 +230,11 @@ def update_weights_gmpe(parameter_space, prior_pdfs):
         i6 = np.where(prior_pdfs[0][6]==combo[8])
 #        print 'i0', i0
  #       print 'i6', i6
+        if lonlat_prior_array:
+            intersection = np.intersect1d(i1,i2)
+            print 'intersection', intersection
+            i1 = intersection[0]
+            i2 = i1
         try:
             prior_weight = prior_pdfs[1][0][i0] * prior_pdfs[1][1][i1] * \
                 prior_pdfs[1][2][i2] * prior_pdfs[1][3][i3] * \
@@ -313,7 +322,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
             if len(unique_vals) > 24:
                 bin=True
                 if megathrust or slab:
-                    bins =  np.arange(0, 360, 5.)
+                   bins =  np.arange(0, 360, 5.)
                 else:
                     bins =  np.arange(0, 360, 15.)
         if key == 'dip' or key == 'depth':
@@ -684,86 +693,102 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     plt.savefig(figname, dpi=600, format='png', bbox_inches='tight')
 #    plt.savefig(figname, dpi=600, format='pdf', bbox_inches='tight')
 
+def gaussian_location_prior(shapefile, sigma, lons, lats):
+    """Based on the location in shapefile and sigma, a Gaussian
+    prior distribution is applied such that points located closest
+    to the shapefile edge are given the highest weight
+    :param shapefile: polygon where point closest to the edge have
+    the highest weight.
+    :param sigma: standard deviation of the gaussian distirbution (in geographic
+    coordinates)
+    :param lons: array of longitudes for search points
+    :param lats: array of latitudes for search points
+
+    returns
+    :lon_priors: prior distribution of longitudes
+    :lat_priors: prior distribution of latitudes
+    """
+
+    # Load coastline polygon shapefile
+    file = ogr.Open(shapefile, 1)
+    layer = file.GetLayer()
+
+    # Create point geometry
+    pts = []
+    for i, lon in enumerate(lons):
+#        for lat in lats:
+        pt = ogr.Geometry(ogr.wkbPoint)
+        pt.AddPoint(lon, lats[i])
+        pts.append(pt)
+
+    polygon = layer.GetFeature(0)#.GetGeometryRef()
+
+    # Reproject point to shapefile's srs
+ #   src = osr.SpatialReference()
+    geo_ref = layer.GetSpatialRef()
+#    src.ImportFromEPSG(int(4326))
+    pt_geo_ref = osr.SpatialReference()
+    pt_geo_ref.ImportFromEPSG(4326)#
+
+    trans_pts = []
+    transform = osr.CoordinateTransformation(pt_geo_ref, geo_ref)
+    for pt in pts:
+        pt.Transform(transform)
+        trans_pts.append(pt)
+    # Assume both in WGS84 for now
+  #  trans_pts = pts
+    shapely_poly = loads(polygon.GetGeometryRef().ExportToWkt())
+#    print shapely_poly, type(shapely_poly)
+    dist = polygon.GetGeometryRef().Distance(pt)
+#    print 'Count', polygon.GetGeometryCount()
+#    print 'dist', dist
+    distances = []
+    # Check for intersection and distance from the closest edge
+    for pt in trans_pts:
+#        print pt, type(pt), type(polygon)
+#        dist = polygon.GetGeometryRef().Distance(pt)
+#        print 'dist', dist
+#        distances.append(dist)
+#        print polygon.exterior.distance(pt)
+#        print 'intersect', pt.Intersection(polygon.GetGeometryRef())
+        if pt.Intersection(polygon.GetGeometryRef()).ExportToWkt() == 'GEOMETRYCOLLECTION EMPTY':
+#            print 'Outside polygon'
+            dist = polygon.GetGeometryRef().Distance(pt)
+            distances.append(dist)
+        else:
+#            print shapely_poly, type(shapely_poly)
+#            print pt.x, pt.y
+            shapely_pt = loads(pt.ExportToWkt())
+            dist = shapely_poly.exterior.distance(shapely_pt)
+            distances.append(dist)
+ #           print 'Exterior dist', dist
+ #           print 'Inside polygon, calculating exterior distance'
+ #           sys.exit()
+#            d = polygon.exterior.distance(pt)
+#            distances.append(d)
+#        if pt.Intersection(polygon).ExportToWkt() == 'GEOMETRYCOLLECTION EMPTY' and pt.Distance(polygon) > 100:
+#            distances.append([x, y])
+#            stat = True
+#        else:
+#            stat = False
+    print distances
+    # calculate prior probabilities based on distance from shapefile boundary
+    prior_probs = norm(0, sigma).pdf(distances)
+    print prior_probs
+    prior_probs_normalised = prior_probs/sum(prior_probs)
+    print prior_probs_normalised, 'prior_probs_normalised'
+    
+    return prior_probs_normalised
+
 if __name__ == "__main__":
     if not os.path.exists('figures'):
         os.makedirs('figures')
-#    parameter_space = np.genfromtxt(data_file, delimiter=',', skip_header=1)
-#    fig_comment = 'figures/' + data_file.split('/')[1][:-4]
-#    print fig_comment
-#    parameter_space = parameter_space.T
-    # Set up prior pdfs - set-up using basic assumptions and limits of data
-    # magnitude - based on Gutenberg-Richter assuming b value = 1, and that
-    # CDF from mmin to mmax = 1
-#    mags = np.unique(parameter_space[0])
-#    mmax = max(mags)
-#    mmin = min(mags)
- #   b=1.
- #   a = np.log10(1./(np.power(10,-1*b*mmin) - np.power(10, -1*b*mmax)))
- #   print a
- #   # Now we need to generate an incremental pdf 
- #   reversed_mag_priors = []
- #   reversed_mags = list(reversed(mags))
- #   for i, mag in enumerate(reversed_mags):
- #       if i == 0:
- #           prior = np.power(10, a - b*mag)
- #       else:
- #           prior = np.power(10, a - b*mag) - np.power(10, a - b*reversed_mags[i-1])
- #       reversed_mag_priors.append(prior)
- #   mag_priors = np.array(list(reversed(reversed_mag_priors)))
- #   print mags
- #   print mag_priors, sum(mag_priors)
 
-    # longitude, latitude, strike, depth and dip - uniform across parameter space
-#    lon_priors = np.ones(len(np.unique(parameter_space[1]))) * \
-#        (1./len(np.unique(parameter_space[1])))
-#    lat_priors = np.ones(len(np.unique(parameter_space[2]))) * \
-#        (1./len(np.unique(parameter_space[2])))
-#    depth_priors = np.ones(len(np.unique(parameter_space[3]))) * \
-#        (1./len(np.unique(parameter_space[3])))
-#    strike_priors = np.ones(len(np.unique(parameter_space[4]))) * \
-#        (1./len(np.unique(parameter_space[4])))
-#    dip_priors = np.ones(len(np.unique(parameter_space[5]))) * \
-#        (1./len(np.unique(parameter_space[5])))##
-
-#    priors = np.array([[np.unique(parameter_space[0]), np.unique(parameter_space[1]),
-#                       np.unique(parameter_space[2]), np.unique(parameter_space[3]),
-#                       np.unique(parameter_space[4]), np.unique(parameter_space[5])],
-#                      [mag_priors, lon_priors, lat_priors,
-#                       depth_priors, strike_priors, dip_priors]])
-
-    # Get number of observations for re-calculating likelihoods across all files
-#    event = data_file.split('/')[1][:4]
-#    hmmi_file  = 'data/' + event + 'HMMI.txt'
-#    with open(hmmi_file) as f:
-#        for obs_count, l in enumerate(f):
-#            pass
-#    num_obs = obs_count + 1
-#    print 'num_obs', num_obs # Re-calculate sigma and then the likelihoods
-#    min_rmse = min(parameter_space[6])
-#    print 'min_rmse', min_rmse
-#    sum_squares = parameter_space[6]**2 # Weighted sum of square*num_obs    
-#    if num_obs > 6:
-#        sigma=np.sqrt((1./(num_obs-6))*(min_rmse**2))
-#    else: 
-#        sigma = 0.3 # Estimate sigma if not enough observations
-#    print 'sigma', sigma
-#    print sum_squares, num_obs
-#    print sum_squares/sigma**2
-#    likelihoods = np.power((1/(sigma*np.sqrt(2*np.pi))), num_obs) * \
-#                np.exp((-1/2)*(sum_squares/sigma**2))
-#    print min(likelihoods), max(likelihoods)
-#    print min(parameter_space[7]), max(parameter_space[7])
-#    parameter_space[7] = likelihoods
-#    posterior_probs = update_weights(parameter_space, priors)
-#    print parameter_space
-#    parameter_space[7] = posterior_probs
-#    parameter_pdf(parameter_space, fig_comment = fig_comment)
-
-    # Now combine for different GMPEs
+    # Combine for different GMPEs
     year = data_files[0].split('/')[1][:4]
     year = int(year)
     print 'year', year
-    if event_name == '1852Banda_area':
+    if event_name == '1852Banda_area' or event_name == '1852BandaDetachment':
         pass
     else:
         event_name = data_files[0].split('/')[1].split('_')[0]
@@ -848,19 +873,35 @@ if __name__ == "__main__":
 
     # Special cases of priors to limit extent of subduction zone megathrust
     # or slab considered
+    lonlat_prior_array=False
     if event_name == '1867slab':
         lon_index = np.intersect1d((np.where(np.unique(parameter_space[1]) > 108.0)),
                                    (np.where(np.unique(parameter_space[1]) < 113.0)))
         lon_priors = np.zeros(len(np.unique(parameter_space[1])))
         lon_priors[lon_index] = 1./len(lon_index)
         print 'Updated longitude priors', lon_priors
-    priors = np.array([[np.unique(parameter_space[0]), np.unique(parameter_space[1]),
-                        np.unique(parameter_space[2]), np.unique(parameter_space[3]),
-                        np.unique(parameter_space[4]), np.unique(parameter_space[5]),
-                        gmpe_inds],
-                       [mag_priors, lon_priors, lat_priors,
-                        depth_priors, strike_priors, dip_priors,
-                        np.array(gmpe_weights)]])
+    if event_name == '1852BandaDetachment':
+        lonlat_priors = gaussian_location_prior('data/ETA_buffer_15min_inner_boundary.shp', 0.25, 
+                                parameter_space[1], parameter_space[2]) 
+                                #np.unique(parameter_space[1]),
+                                 #np.unique(parameter_space[2]))
+        lonlat_prior_array=True # lat, lons pts already in pairs
+    if lonlat_prior_array:
+        priors = np.array([[np.unique(parameter_space[0]), parameter_space[1],
+                            parameter_space[2], np.unique(parameter_space[3]),
+                            np.unique(parameter_space[4]), np.unique(parameter_space[5]),
+                            gmpe_inds],
+                           [mag_priors, lonlat_priors, lonlat_priors,
+                            depth_priors, strike_priors, dip_priors,
+                            np.array(gmpe_weights)]])
+    else:
+        priors = np.array([[np.unique(parameter_space[0]), np.unique(parameter_space[1]),
+                            np.unique(parameter_space[2]), np.unique(parameter_space[3]),
+                            np.unique(parameter_space[4]), np.unique(parameter_space[5]),
+                            gmpe_inds],
+                           [mag_priors, lon_priors, lat_priors,
+                            depth_priors, strike_priors, dip_priors,
+                            np.array(gmpe_weights)]])
 
         # Re-calculate sigma and then the likelihoods                                                                                               
     min_rmse = min(parameter_space[6])
@@ -887,7 +928,8 @@ if __name__ == "__main__":
     #priors[1][6] = gmpe_weights
     print 'priors', priors
     print 'parameter_space', parameter_space
-    posterior_probs = update_weights_gmpe(parameter_space, priors)
+    posterior_probs = update_weights_gmpe(parameter_space, priors,
+                                          lonlat_prior_array)
     parameter_space[7] = posterior_probs
     # Write posterior best-fit to file
     posterior_filename = fig_comment + '_best_posterior.txt'

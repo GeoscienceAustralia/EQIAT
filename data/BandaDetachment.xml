@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='utf-8'?>
+<nrml xmlns:gml="http://www.opengis.net/gml" xmlns="http://openquake.org/xmlns/nrml/0.4">
+  <sourceModel name="BandaDetachment">
+  <complexFaultSource id="0" name="BandaDetachment" tectonicRegion="Active">
+
+      <complexFaultGeometry>
+        <faultTopEdge>
+          <gml:LineString>
+            <gml:posList>
+               128.7200056484 -2.9805953548 1.0
+               130.0815292691 -3.5398424391 1.0
+               130.5666277098 -3.8738682708 1.0
+               131.1076715211 -4.0346333246 1.0
+               131.2942999201 -4.1904166326 1.0
+               131.5262840770 -4.4787337879 1.0
+               131.9132253810 -5.1175157251 1.0
+               131.9468922389 -5.8501647531 1.0
+               131.7838404367 -6.3910779037 1.0
+               131.0779781983 -7.2578990027 1.0
+               128.9162210310 -8.0258163796 1.0
+               128.1847646147 -8.1257215714 1.0
+            </gml:posList>
+          </gml:LineString>
+        </faultTopEdge>
+
+        <intermediateEdge>
+          <gml:LineString>
+            <gml:posList>
+               128.6425574695 -3.1623785917 4.0
+               130.0048747755 -3.7873361076 4.0
+               131.2380295093 -4.5921526010 4.0
+               131.7021516523 -5.1730800801 4.0
+               131.8262499091 -5.7920131403 4.0
+               131.4882493328 -6.4251582556 4.0
+               131.0662833748 -6.7268702166 4.0
+               130.5845416178 -6.8571995805 4.0
+               129.7513677347 -7.3793549640 4.0
+               129.0371821583 -7.6456615009 4.0
+               128.1663619016 -7.7184717348 4.0
+            </gml:posList>
+          </gml:LineString>
+        </intermediateEdge>
+
+        <faultBottomEdge>
+          <gml:LineString>
+            <gml:posList>
+               128.2805273889 -4.8697303295 7.0
+               129.0760996647 -5.1021447022 7.0
+               130.9579106293 -5.2996226465 7.0
+               131.1496879776 -5.4913999948 7.0
+               131.1918134128 -5.8388776337 7.0
+               130.7789497948 -6.0460181027 7.0
+               128.7319476128 -5.5803819690 7.0
+               128.2805273889 -5.4954613329 7.0
+               128.0793995664 -5.3747846393 7.0
+            </gml:posList>
+          </gml:LineString>
+        </faultBottomEdge>
+      </complexFaultGeometry>
+
+      <magScaleRel>StrasserInterface</magScaleRel>
+
+      <ruptAspectRatio>1.5</ruptAspectRatio>
+
+      <truncGutenbergRichterMFD aValue="1.0" bValue="1.0" minMag="7.0" maxMag="9.0" />
+
+      <rake>-90</rake>
+    </complexFaultSource>
+  </sourceModel>
+</nrml>
