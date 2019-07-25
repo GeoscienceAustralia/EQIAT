@@ -1,0 +1,7 @@
+event_name,1852Banda_doughnut
+area_source_file,data/source_model_1852_doughnut.xml
+trt,Mixed
+site_model_file,data/1852Banda_EasternIndonesia_site_model.xml
+site_file,data/1852Banda_MMI.txt
+site_file_pts,data/1852Banda_EasternIndonesia_sites.csv
+limits_filename,data/source_model_1852_doughnut.xml.limits.txt
