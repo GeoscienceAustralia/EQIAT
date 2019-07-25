@@ -1,6 +1,6 @@
 #PBS -P n74
-#PBS -q express
-#PBS -l walltime=24:00:00
+#PBS -q normal
+#PBS -l walltime=18:00:00
 #PBS -l ncpus=1
 #PBS -l mem=128GB
 #PBS -l wd
@@ -27,16 +27,20 @@ export PYTHONPATH=.:/short/n74/src/lib/python/:${PYTHONPATH}
 #python estimate_magnitude.py -param_file data/1699slab_params.txt >& data/1699slab_params.txt.log
 #python estimate_magnitude.py -param_file data/1699megathrust_params.txt >& data/1699megathrust_params.txt.log 
 #python estimate_magnitude.py -param_file data/1867slab_params.txt >& data/1867slab_params.txt.log
-python estimate_magnitude.py -param_file data/1867megathrust_params.txt >& data/1867megathrust_params.txt.log
+#python estimate_magnitude.py -param_file data/1867megathrust_params.txt >& data/1867megathrust_params.txt.log
 #python estimate_magnitude.py -param_file data/1867_params.txt >& data/1867_params.txt.log
 #python estimate_magnitude.py -param_file data/1847_params.txt >& data/1847_params.txt.log
 #python estimate_magnitude.py -param_file data/1840_params.txt >& data/1840_params.txt.log
 #python estimate_magnitude.py -param_file data/1834_params.txt >& data/1834_params.txt.log
 #python estimate_magnitude.py -param_file data/1780megathrust_params.txt >& data/1780megathrust_params.txt.log
 #python estimate_magnitude.py -param_file data/1780_params.txt >& data/1780_params.txt.log
-#python estimate_magnitude.py -param_file data/1852Banda_area_params.txt >& data/1852Banda_area_params.txt.log
+python estimate_magnitude.py -param_file data/1852Banda_domain_ryan_mmi_params.txt >& data/1852Banda_domain_ryan_mmi_params.txt.log
+#python estimate_magnitude.py -param_file data/1852Banda_area_params.txt >& data/1852_area_params.txt.log
 #python estimate_magnitude.py -param_file data/1699megathrust_params.txt >& data/1699megathrust_params.txt.log
 #python estimate_magnitude.py -param_file data/1820_M8.4_params.txt >& data/1820_M8.4_params.txt.log
 #python estimate_magnitude.py -param_file data/1820_params.txt >& data/1820_params.txt.log
 #python estimate_magnitude.py -param_file data/1815_params.txt >& data/1815_params.txt.log
 #python estimate_magnitude.py -param_file data/1818_params.txt >& data/1818_params.txt.log
+#python estimate_magnitude.py -param_file data/2006_params.txt >& data/2006_params.txt.log
+#python estimate_magnitude.py -param_file data/2017slab_params.txt >& data/2017slab_params.txt.log
+#python estimate_magnitude.py -param_file data/2018_params.txt >& data/2018_params.txt.log

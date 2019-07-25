@@ -3,7 +3,7 @@
 #PBS -q normal
 #PBS -l walltime=48:00:00
 #PBS -lmem=128GB
-#PBS -lncpus=16
+#PBS -lncpus=4
 #PBS -l wd
 
 module load intel-cc/12.1.9.293
@@ -29,7 +29,7 @@ export PYTHONPATH=.:/short/n74/src/lib/python/:${PYTHONPATH}
 counter=0
 one=1
 # List all subdirectories at the level of individual tsunami runs
-all_param_files=$(ls data/*params*.txt)
+all_param_files=$(ls data/*1852*mmi_params.txt)
 
 #mybasedir=$(pwd)
 

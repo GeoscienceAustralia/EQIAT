@@ -145,18 +145,49 @@ event_name = ''
 #                  'depth': 34.0}                  
 #1852Banda_area_ChiouYoungs2014_parameter_llh.csv
 
-data_files = ['outputs/1852BandaDetachmentGA_BooreEtAl2014_parameter_llh.csv',
-              'outputs/1852BandaDetachmentGA_ChiouYoungs2014_parameter_llh.csv',                             
+##data_files = ['outputs/1852BandaDetachmentGA_BooreEtAl2014_parameter_llh.csv',
+##              'outputs/1852BandaDetachmentGA_ChiouYoungs2014_parameter_llh.csv',                             
 #              'outputs/1852Banda_CampbellBozorgnia2014_parameter_llh.csv',
 #              'outputs_1852/1852Banda_AtkinsonBoore2003SInter_parameter_llh.csv',                                      
 #              'outputs/1852Banda_ZhaoEtAl2006SInter_parameter_llh.csv',                                             
 #              'outputs/1852Banda_area_AbrahamsonEtAl2015SInter_parameter_llh.csv',
-              'outputs/1852BandaDetachmentGA_ZhaoEtAl2006SInter_parameter_llh.csv',
-              'outputs/1852BandaDetachmentGA_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-gmpe_weights = [0.25, 0.25, 0.1, 0.4]  
-#gmpe_weights = [0.7, 0.3]
-event_name = '1852BandaDetachment' # deal with area source not using naming convention
-mmi_obs_file = 'data/1852Banda_MMI.txt'
+##              'outputs/1852BandaDetachmentGA_ZhaoEtAl2006SInter_parameter_llh.csv',
+##              'outputs/1852BandaDetachmentGA_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+
+#data_files = ['outputs/1852Banda_domain_ryan_mmi_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/1852Banda_domain_ryan_mmi_ChiouYoungs2014_parameter_llh.csv',
+#              'outputs/1852Banda_domain_ryan_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
+#              'outputs/1852Banda_domain_ryan_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#data_files = ['outputs/1852Banda_domain_FH_mmi_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/1852Banda_domain_FH_mmi_ChiouYoungs2014_parameter_llh.csv',
+#              'outputs/1852Banda_domain_FH_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
+#              'outputs/1852Banda_domain_FH_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#data_files = ['outputs/1852Banda_exclude_20min_FH_mmi_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/1852Banda_exclude_20min_FH_mmi_ChiouYoungs2014_parameter_llh.csv',
+#              'outputs/1852Banda_exclude_20min_FH_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
+#              'outputs/1852Banda_exclude_20min_FH_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#data_files = ['outputs/1852Banda_exclude_20min_ryan_mmi_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/1852Banda_exclude_20min_ryan_mmi_ChiouYoungs2014_parameter_llh.csv',
+#              'outputs/1852Banda_exclude_20min_ryan_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
+#              'outputs/1852Banda_exclude_20min_ryan_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#data_files = ['outputs/1852Banda_exclude_15min_FH_mmi_BooreEtAl2014_parameter_llh.csv',                                                                 
+#              'outputs/1852Banda_exclude_15min_FH_mmi_ChiouYoungs2014_parameter_llh.csv',                                                         
+#             'outputs/1852Banda_exclude_15min_FH_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',                                                            
+#              'outputs/1852Banda_exclude_15min_FH_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                       
+data_files = ['outputs/1852Banda_exclude_15min_ryan_mmi_BooreEtAl2014_parameter_llh.csv',
+              'outputs/1852Banda_exclude_15min_ryan_mmi_ChiouYoungs2014_parameter_llh.csv',
+              'outputs/1852Banda_exclude_15min_ryan_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
+              'outputs/1852Banda_exclude_15min_ryan_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#data_files = ['outputs/1852Banda_doughnut_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/1852Banda_doughnut_ChiouYoungs2014_parameter_llh.csv',
+#              'outputs/1852Banda_doughnut_ZhaoEtAl2006SInter_parameter_llh.csv',
+#              'outputs/1852Banda_doughnut_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+gmpe_weights = [0.125, 0.125, 0.2, 0.55]  
+#gmpe_weights = [1.0]
+#event_name = '1852BandaDetachment' # deal with area source not using naming convention
+event_name = '1852Banda_exclude_15min_ryan_mmi'
+mag_prior_type='GR' #'uniform'
+mmi_obs_file = 'data/1852Banda_MMI_equal_weight.txt'
 num_params = 7
 bbox_dict = {1699: '104/110/-10.5/-5',
              1780: '104/113/-9/-5',
@@ -170,7 +201,7 @@ bbox_dict = {1699: '104/110/-10.5/-5',
              2006: '108.0/114/-9/-5',
              2017: '104/114/-10.5/-5',
              2018: '112/118/-10/-5',
-             1852: '126/133/-8/0'}
+             1852: '126/134/-8.5/0'}
 
 print 'sum(gmpe_weights)', sum(gmpe_weights)
 # Read observation data                                                                                                              
@@ -216,7 +247,7 @@ def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
     """
     prior_weights = []
     llhs = parameter_space[7]
-    print llhs, sum(llhs)
+    #print llhs, sum(llhs)
     print max(llhs), min(llhs)
     parameter_space = parameter_space.T
     for combo in parameter_space:
@@ -232,7 +263,7 @@ def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
  #       print 'i6', i6
         if lonlat_prior_array:
             intersection = np.intersect1d(i1,i2)
-            print 'intersection', intersection
+            #print 'intersection', intersection
             i1 = intersection[0]
             i2 = i1
         try:
@@ -259,11 +290,11 @@ def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
         prior_weights.append(prior_weight)
 #    print prior_weights                                                                                         
     prior_weights = np.array(prior_weights).flatten()
-    print 'priors', prior_weights, sum(prior_weights)
-    print max(prior_weights), min(prior_weights)
+#    print 'priors', prior_weights, sum(prior_weights)
+#    print max(prior_weights), min(prior_weights)
     posterior_probs = llhs*prior_weights/sum(llhs*prior_weights)
-    print 'updates', posterior_probs, max(posterior_probs), min(posterior_probs)
-    print 'sum', sum(posterior_probs)
+#    print 'updates', posterior_probs, max(posterior_probs), min(posterior_probs)
+#    print 'sum', sum(posterior_probs)
     return posterior_probs
 
 def update_weights(parameter_space, prior_pdfs):
@@ -271,8 +302,8 @@ def update_weights(parameter_space, prior_pdfs):
     """
     prior_weights = []
     llhs = parameter_space[7]
-    print llhs, sum(llhs)
-    print max(llhs), min(llhs)
+#    print llhs, sum(llhs)
+#    print max(llhs), min(llhs)
     parameter_space = parameter_space.T
     for combo in parameter_space:
 #        print combo
@@ -289,11 +320,11 @@ def update_weights(parameter_space, prior_pdfs):
         prior_weights.append(prior_weight)
 #    print prior_weights
     prior_weights = np.array(prior_weights).flatten()
-    print 'priors', prior_weights, sum(prior_weights)
-    print max(prior_weights), min(prior_weights)
+#    print 'priors', prior_weights, sum(prior_weights)
+#    print max(prior_weights), min(prior_weights)
     posterior_probs = llhs*prior_weights/sum(llhs*prior_weights)#prior_weights)#denominator
-    print 'updates', posterior_probs, max(posterior_probs), min(posterior_probs)
-    print 'sum', sum(posterior_probs)
+#    print 'updates', posterior_probs, max(posterior_probs), min(posterior_probs)
+#    print 'sum', sum(posterior_probs)
     return posterior_probs
 
 def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename=None,
@@ -449,7 +480,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
                 r_int = 0.02
             else:
                 r_int = 0.2
-            print r_int, max(pdf_sums)
+#            print r_int, max(pdf_sums)
             ax.set_rgrids(np.arange(r_int, max(pdf_sums)+0.01, r_int), angle= np.deg2rad(7.5))#, weight= 'black')
             ax.set_xlabel(xlabel_dict[key])
             ax.text(-0.07, 1.02, 'c)', transform=ax.transAxes, fontsize=14)
@@ -575,12 +606,12 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
                     fontsize=10, dashes=[2, 2], color='0.5',
                     linewidth=0.5)
     max_val = max(pdf_sums)*1.1
-    print 'pdf_sums', pdf_sums
+#    print 'pdf_sums', pdf_sums
     clevs = np.arange(0.0,max_val,(max_val/50))
 #    clevs = np.arange(0.0,max(pdf_sums),(max_val/50))
     cmap = plt.get_cmap('gray_r')
     # Adjust resolution to avoid memory intense interpolations                                                                                     
-    res = max((maxlon-minlon)/50., (maxlat-minlat)/50.) #75 #30 #50
+    res = max((maxlon-minlon)/75., (maxlat-minlat)/75.) #75 #30 #50
     xy = np.mgrid[minlon:maxlon:res,minlat:maxlat:res]
     xx,yy=np.meshgrid(xy[0,:,0], xy[1][0])
     griddata = interpolate.griddata((all_lons, all_lats), pdf_sums, (xx,yy), method='nearest') # nearest # linears
@@ -667,7 +698,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
             m.scatter(x_addition, y_addition, marker = '*', c='b',
                        edgecolor='k', s=200, zorder=10, latlon=True)
     plt.annotate('a)', xy=(-0.01, 1.01),xycoords='axes fraction', fontsize=14)
-    print 'max_val', max_val
+#    print 'max_val', max_val
     if max_val < 0.0000001:
         loc_int = 0.00000001
     elif max_val < 0.000001:
@@ -738,45 +769,26 @@ def gaussian_location_prior(shapefile, sigma, lons, lats):
     # Assume both in WGS84 for now
   #  trans_pts = pts
     shapely_poly = loads(polygon.GetGeometryRef().ExportToWkt())
-#    print shapely_poly, type(shapely_poly)
     dist = polygon.GetGeometryRef().Distance(pt)
-#    print 'Count', polygon.GetGeometryCount()
-#    print 'dist', dist
+
     distances = []
     # Check for intersection and distance from the closest edge
     for pt in trans_pts:
-#        print pt, type(pt), type(polygon)
-#        dist = polygon.GetGeometryRef().Distance(pt)
-#        print 'dist', dist
-#        distances.append(dist)
-#        print polygon.exterior.distance(pt)
-#        print 'intersect', pt.Intersection(polygon.GetGeometryRef())
         if pt.Intersection(polygon.GetGeometryRef()).ExportToWkt() == 'GEOMETRYCOLLECTION EMPTY':
-#            print 'Outside polygon'
+            # outside polygon
             dist = polygon.GetGeometryRef().Distance(pt)
             distances.append(dist)
         else:
-#            print shapely_poly, type(shapely_poly)
-#            print pt.x, pt.y
+            # within polygon
             shapely_pt = loads(pt.ExportToWkt())
             dist = shapely_poly.exterior.distance(shapely_pt)
             distances.append(dist)
- #           print 'Exterior dist', dist
- #           print 'Inside polygon, calculating exterior distance'
- #           sys.exit()
-#            d = polygon.exterior.distance(pt)
-#            distances.append(d)
-#        if pt.Intersection(polygon).ExportToWkt() == 'GEOMETRYCOLLECTION EMPTY' and pt.Distance(polygon) > 100:
-#            distances.append([x, y])
-#            stat = True
-#        else:
-#            stat = False
-    print distances
+#    print distances
     # calculate prior probabilities based on distance from shapefile boundary
     prior_probs = norm(0, sigma).pdf(distances)
-    print prior_probs
+#    print prior_probs
     prior_probs_normalised = prior_probs/sum(prior_probs)
-    print prior_probs_normalised, 'prior_probs_normalised'
+#    print prior_probs_normalised, 'prior_probs_normalised'
     
     return prior_probs_normalised
 
@@ -788,7 +800,11 @@ if __name__ == "__main__":
     year = data_files[0].split('/')[1][:4]
     year = int(year)
     print 'year', year
-    if event_name == '1852Banda_area' or event_name == '1852BandaDetachment':
+    if event_name == '1852Banda_area' or event_name == '1852BandaDetachment' \
+            or event_name == '1852Banda_doughnut' or event_name =='1852Banda_domain_ryan_mmi'\
+            or event_name == '1852Banda_domain_FH_mmi' or event_name =='1852Banda_exclude_20min_ryan_mmi'\
+            or event_name =='1852Banda_exclude_20min_FH_mmi' or event_name =='1852Banda_exclude_15min_ryan_mmi'\
+            or event_name =='1852Banda_exclude_15min_FH_mmi':
         pass
     else:
         event_name = data_files[0].split('/')[1].split('_')[0]
@@ -818,8 +834,8 @@ if __name__ == "__main__":
             parameter_space = np.genfromtxt(filename, delimiter=',', skip_header=1)
             parameter_space = parameter_space.T
             gmm_ids = np.array([np.ones(len(parameter_space[7]))*i])
-            print parameter_space
-            print gmm_ids
+#            print parameter_space
+#            print gmm_ids
             parameter_space = np.concatenate([parameter_space, gmm_ids])
             parameter_space = parameter_space.T
         else:
@@ -836,16 +852,16 @@ if __name__ == "__main__":
     mags = np.unique(parameter_space[0])
     # Hack to avoid help get intcremental rate on max mag by adding a bin
     mags = list(mags)
-    print mags
+#    print mags
     mags.append(max(mags)+0.1)
-    print mags
+#    print mags
     mags = np.array(mags)
-    print mags
+#    print mags
     mmax = max(mags)
     mmin = min(mags)
     b=1.0
     a = np.log10(1./(np.power(10,-1*b*mmin) - np.power(10, -1*b*mmax)))
-    print a
+#    print a
     # Now we need to generate an incremental pdf                                                                                    
     reversed_mag_priors = []
     reversed_mags = list(reversed(mags))
@@ -857,8 +873,12 @@ if __name__ == "__main__":
             prior = np.power(10, a - b*mag) - np.power(10, a - b*reversed_mags[i-1])
             reversed_mag_priors.append(prior)
     mag_priors = np.array(list(reversed(reversed_mag_priors)))
-    print 'mags',mags
-    print 'mag_priors', mag_priors, sum(mag_priors)
+
+    if mag_prior_type=='uniform':
+        mag_priors = np.ones(len(np.unique(parameter_space[0]))) * \
+            (1./len(np.unique(parameter_space[0])))
+#    print 'mags',mags
+#    print 'mag_priors', mag_priors, sum(mag_priors)
         # longitude, latitude, strike, depth and dip - uniform across parameter space                             
     lon_priors = np.ones(len(np.unique(parameter_space[1]))) * \
         (1./len(np.unique(parameter_space[1])))
@@ -879,9 +899,10 @@ if __name__ == "__main__":
                                    (np.where(np.unique(parameter_space[1]) < 113.0)))
         lon_priors = np.zeros(len(np.unique(parameter_space[1])))
         lon_priors[lon_index] = 1./len(lon_index)
-        print 'Updated longitude priors', lon_priors
-    if event_name == '1852BandaDetachment':
-        lonlat_priors = gaussian_location_prior('data/ETA_buffer_15min_inner_boundary.shp', 0.25, 
+#        print 'Updated longitude priors', lon_priors
+    if event_name == '1852BandaDetachment' or event_name == '1852Banda_area':# \
+           # or event_name == '1852Banda_doughnut':
+        lonlat_priors = gaussian_location_prior('data/ETA_buffer_15min_midline.shp', 0.25, 
                                 parameter_space[1], parameter_space[2]) 
                                 #np.unique(parameter_space[1]),
                                  #np.unique(parameter_space[2]))
@@ -926,8 +947,8 @@ if __name__ == "__main__":
 #    print priors
 #priors[0][6] = gmpe_inds
     #priors[1][6] = gmpe_weights
-    print 'priors', priors
-    print 'parameter_space', parameter_space
+#    print 'priors', priors
+#    print 'parameter_space', parameter_space
     posterior_probs = update_weights_gmpe(parameter_space, priors,
                                           lonlat_prior_array)
     parameter_space[7] = posterior_probs

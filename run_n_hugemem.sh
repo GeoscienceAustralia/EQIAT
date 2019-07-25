@@ -3,7 +3,7 @@
 #PBS -q hugemem
 #PBS -l walltime=32:00:00
 #PBS -lmem=1024GB
-#PBS -lncpus=21
+#PBS -lncpus=7
 #PBS -l wd
 
 module load intel-cc/12.1.9.293
@@ -23,13 +23,13 @@ export LD_LIBRARY_PATH=/short/n74/jdg547/spatialindex-src-1.8.5/lib:$LD_LIBRARY_
 export PYTHONPATH=.:/home/547/jdg547/.local/lib/python2.7/site-packages:${PYTHONPATH}
 export PYTHONPATH=.:/short/w84/NSHA18/sandpit/jdg547/oq-hazardlib:${PYTHONPATH}
 export PYTHONPATH=.:/short/w84/NSHA18/sandpit/jdg547/oq-engine:${PYTHONPATH}
-
+export PYTHONPATH=.:/short/n74/src/lib/python/:${PYTHONPATH}
 
 # Script to submit several single cpu jobs at once
 counter=0
 one=1
 # List all subdirectories at the level of individual tsunami runs
-all_param_files=$(ls data/*params*.txt)
+all_param_files=$(ls data/*1852*mmi_params.txt)
 
 #mybasedir=$(pwd)
 

@@ -45,8 +45,11 @@ try:
     limits_filename = f_in.readline().rstrip().split(',')[1]
 except:
     limits_filename = None
-if event_name == '1852Banda_area':
-    disc = 25
+if event_name == '1852Banda_area' or event_name == '1852Banda_domain_ryan_mmi' or \
+        event_name == '1852Banda_domain_FH_mmi' or event_name == '1852Banda_exclude_20min_ryan_mmi' or\
+        event_name == '1852Banda_exclude_20min_FH_mmi' or event_name == '1852Banda_exclude_15min_FH_mmi' or \
+        event_name == '1852Banda_exclude_15min_ryan_mmi':
+    disc = 10
 else:
     disc = 5
 # Area or fault source model is used to define the parameter space to be searched
@@ -56,8 +59,9 @@ if trt == 'Active':
 #    gsim_list = [ChiouYoungs2008(), ChiouYoungs2014(), BooreAtkinson2008(), BooreEtAl2014(), CampbellBozorgnia2008(), CampbellBozorgnia2014() ]
     gsim_list = [ChiouYoungs2014(), BooreEtAl2014(), CampbellBozorgnia2014()]
 if trt == 'Subduction Interface':
-    gsim_list = [YoungsEtAl1997SInter(), AtkinsonBoore2003SInter(), ZhaoEtAl2006SInter(), AbrahamsonEtAl2015SInter()]
-
+    gsim_list = [AbrahamsonEtAl2015SInter(), ZhaoEtAl2006SInter(), YoungsEtAl1997SInter(), AtkinsonBoore2003SInter()]
+if trt == 'Mixed':
+    gsim_list = [AbrahamsonEtAl2015SInter(), BooreEtAl2014(), ChiouYoungs2014(), ZhaoEtAl2006SInter()]
 def build_site_col(sites_data, site_model_file, filename=None):
     """Interpolate vs30 values to sites of interest
     """
