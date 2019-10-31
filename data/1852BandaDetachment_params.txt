@@ -1,0 +1,7 @@
+event_name,1852BandaDetachmentGA
+area_source_file,data/BandaDetachmentGA.xml
+trt,Active
+site_model_file,data/1852Banda_EasternIndonesia_site_model.xml
+site_file,data/1852Banda_MMI.txt
+site_file_pts,data/1852Banda_EasternIndonesia_sites.csv
+limits_filename,data/BandaDetachment.xml.limits.txt

@@ -154,10 +154,10 @@ event_name = ''
 ##              'outputs/1852BandaDetachmentGA_ZhaoEtAl2006SInter_parameter_llh.csv',
 ##              'outputs/1852BandaDetachmentGA_AbrahamsonEtAl2015SInter_parameter_llh.csv']
 
-#data_files = ['outputs/1852Banda_domain_ryan_mmi_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/1852Banda_domain_ryan_mmi_ChiouYoungs2014_parameter_llh.csv',
-#              'outputs/1852Banda_domain_ryan_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
-#              'outputs/1852Banda_domain_ryan_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+data_files = ['outputs/1852Banda_domain_ryan_mmi_BooreEtAl2014_parameter_llh.csv',
+              'outputs/1852Banda_domain_ryan_mmi_ChiouYoungs2014_parameter_llh.csv',
+              'outputs/1852Banda_domain_ryan_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
+              'outputs/1852Banda_domain_ryan_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
 #data_files = ['outputs/1852Banda_domain_FH_mmi_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/1852Banda_domain_FH_mmi_ChiouYoungs2014_parameter_llh.csv',
 #              'outputs/1852Banda_domain_FH_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
@@ -174,21 +174,24 @@ event_name = ''
 #              'outputs/1852Banda_exclude_15min_FH_mmi_ChiouYoungs2014_parameter_llh.csv',                                                         
 #             'outputs/1852Banda_exclude_15min_FH_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',                                                            
 #              'outputs/1852Banda_exclude_15min_FH_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                       
-data_files = ['outputs/1852Banda_exclude_15min_ryan_mmi_BooreEtAl2014_parameter_llh.csv',
-              'outputs/1852Banda_exclude_15min_ryan_mmi_ChiouYoungs2014_parameter_llh.csv',
-              'outputs/1852Banda_exclude_15min_ryan_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
-              'outputs/1852Banda_exclude_15min_ryan_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#data_files = ['outputs/1852Banda_exclude_15min_ryan_mmi_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/1852Banda_exclude_15min_ryan_mmi_ChiouYoungs2014_parameter_llh.csv',
+#              'outputs/1852Banda_exclude_15min_ryan_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
+#              'outputs/1852Banda_exclude_15min_ryan_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
 #data_files = ['outputs/1852Banda_doughnut_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/1852Banda_doughnut_ChiouYoungs2014_parameter_llh.csv',
 #              'outputs/1852Banda_doughnut_ZhaoEtAl2006SInter_parameter_llh.csv',
 #              'outputs/1852Banda_doughnut_AbrahamsonEtAl2015SInter_parameter_llh.csv']
 gmpe_weights = [0.125, 0.125, 0.2, 0.55]  
-#gmpe_weights = [1.0]
+#gmpe_weights = [0.25, 0.75]
+#gmpe_weights = [1.0] 
 #event_name = '1852BandaDetachment' # deal with area source not using naming convention
-event_name = '1852Banda_exclude_15min_ryan_mmi'
-mag_prior_type='GR' #'uniform'
-mmi_obs_file = 'data/1852Banda_MMI_equal_weight.txt'
+event_name = '1852Banda_domain_ryan_mmi'
+mag_prior_type = 'GR' #'GR' #'uniform'
+mmi_obs_file = 'data/1852Banda_MMI_weight_rev.txt'
 num_params = 7
+set_sigma=True
+
 bbox_dict = {1699: '104/110/-10.5/-5',
              1780: '104/113/-9/-5',
              1834: '105/110/-8/-5',
@@ -262,6 +265,7 @@ def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
 #        print 'i0', i0
  #       print 'i6', i6
         if lonlat_prior_array:
+            print 'lonlat_prior_array is true'
             intersection = np.intersect1d(i1,i2)
             #print 'intersection', intersection
             i1 = intersection[0]
@@ -271,6 +275,7 @@ def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
                 prior_pdfs[1][2][i2] * prior_pdfs[1][3][i3] * \
                 prior_pdfs[1][4][i4] * prior_pdfs[1][5][i5] * \
                 prior_pdfs[1][6][i6]
+#            print 'prior_weight', prior_weight
         except IndexError:
             print combo
             print i0,i1,i2,i3,i4,i5,i6
@@ -344,6 +349,8 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     fig = plt.figure(figsize=(16,8))#, tight_layout=True)                                                 
     gs = plt.GridSpec(2,4)
     for key, value in parameter_dict.iteritems():
+        if key=='longitude' or key=='latitude':
+            continue # Do later
         unique_vals = np.unique(parameter_space[value])
         pdf_sums = []
         bin=False
@@ -542,25 +549,47 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     pdf_sums = []
     all_lons = []
     all_lats = []
-    for i, lon in enumerate(parameter_space[parameter_dict['longitude']]):
-        if lon in all_lons:
-            continue
-        else:
-            lat = parameter_space[parameter_dict['latitude']][i]
-#               lat = self.parameter_pdf_values['latitude'][i]                                                                                         
-            index = np.intersect1d(np.argwhere(parameter_space[parameter_dict['longitude']]==lon), \
-                                       np.argwhere(parameter_space[parameter_dict['latitude']]==lat))
-            pdf_sum = np.sum(parameter_space[7][index])#uncert_fun.pdf(rmse[index]))
-            pdf_sums.append(pdf_sum)
-            all_lons.append(lon)
-            all_lats.append(lat)
-    # Normalise pdf sums                                                                                                                           
+##    for i, lon in enumerate(parameter_space[parameter_dict['longitude']]):
+#        # Get each unique longitude value
+##        if lon in all_lons:
+##            continue
+##        else:
+            # Get each unique latitude value and find intersection
+###            lat = parameter_space[parameter_dict['latitude']][i]
+            #               lat = self.parameter_pdf_values['latitude'][i]                                         
+##            for j, lat in enumerate(parameter_space[parameter_dict['latitude']]):
+##                index = np.intersect1d(np.argwhere(parameter_space[parameter_dict['longitude']]==lon), \
+##                                           np.argwhere(parameter_space[parameter_dict['latitude']]==lat))
+##                pdf_sum = np.sum(parameter_space[7][index])#uncert_fun.pdf(rmse[index]))
+##                pdf_sums.append(pdf_sum)
+##                all_lons.append(lon)
+##                all_lats.append(lat)
+    # Try a different way
+    # Need to get numpy 1.13 or above and use unique along axis=1
+    lon_lat_pairs = []
+    for ll,la in zip(parameter_space[parameter_dict['longitude']], 
+                     parameter_space[parameter_dict['latitude']]):
+        if [ll, la] not in lon_lat_pairs:
+            lon_lat_pairs.append([ll, la])
+    for lon_lat_pair in lon_lat_pairs:
+        index = np.intersect1d(np.argwhere(parameter_space[parameter_dict['longitude']]==lon_lat_pair[0]), \
+                                   np.argwhere(parameter_space[parameter_dict['latitude']]==lon_lat_pair[1]))
+        pdf_sum = np.sum(parameter_space[7][index])#uncert_fun.pdf(rmse[index]))                                                       
+        pdf_sums.append(pdf_sum)
+        all_lons.append(lon_lat_pair[0])
+        all_lats.append(lon_lat_pair[1])
+    # Normalise pdf sums                                                                                                                   
+        
     pdf_sums = np.array(pdf_sums)
 #    pdf_sums = pdf_sums/np.sum(pdf_sums)
     parameter_pdf_sums['lon_lat'] = pdf_sums
     all_lons = np.array(all_lons)
     all_lats = np.array(all_lats)
-    # Get best fit value                                                                                                                           
+    # Dump data for testing
+    data_dump = np.vstack((all_lons, all_lats, pdf_sums)).T
+    np.savetxt('data_dump.csv', data_dump, delimiter=',', header='lon,lat,pdf_sum')
+    # Get best fit value                                                                                                                   
+    
     index = np.argmin(parameter_space[6])
     best_fit_lon =  parameter_space[parameter_dict['longitude']][index]
     best_fit_lat =  parameter_space[parameter_dict['latitude']][index]
@@ -611,10 +640,10 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
 #    clevs = np.arange(0.0,max(pdf_sums),(max_val/50))
     cmap = plt.get_cmap('gray_r')
     # Adjust resolution to avoid memory intense interpolations                                                                                     
-    res = max((maxlon-minlon)/75., (maxlat-minlat)/75.) #75 #30 #50
+    res = max((maxlon-minlon)/50., (maxlat-minlat)/50.) #75 #30 #50
     xy = np.mgrid[minlon:maxlon:res,minlat:maxlat:res]
     xx,yy=np.meshgrid(xy[0,:,0], xy[1][0])
-    griddata = interpolate.griddata((all_lons, all_lats), pdf_sums, (xx,yy), method='nearest') # nearest # linears
+    griddata = interpolate.griddata((all_lons, all_lats), pdf_sums, (xx,yy), method='nearest') # nearest # linear
     # now plot filled contours of pdf                                                                                                              
     cs = m.contourf(xx, yy, griddata, clevs, cmap=cmap, vmax=max_val, vmin=0.0, latlon=True)
     for c in cs.collections: # Fix white space on contour levels for pdf images
@@ -808,7 +837,7 @@ if __name__ == "__main__":
         pass
     else:
         event_name = data_files[0].split('/')[1].split('_')[0]
-    fig_comment = 'figures/' + event_name + '_all_gmpes'
+    fig_comment = 'figures/' + event_name + '_all_gmpes_mag_pr_' + mag_prior_type
     # Get limits_filename from params.txt
     param_filename = 'data/' + event_name + '_params.txt'
     f_in = open(param_filename)
@@ -877,8 +906,8 @@ if __name__ == "__main__":
     if mag_prior_type=='uniform':
         mag_priors = np.ones(len(np.unique(parameter_space[0]))) * \
             (1./len(np.unique(parameter_space[0])))
-#    print 'mags',mags
-#    print 'mag_priors', mag_priors, sum(mag_priors)
+    print 'mags',mags
+    print 'mag_priors', mag_priors, sum(mag_priors)
         # longitude, latitude, strike, depth and dip - uniform across parameter space                             
     lon_priors = np.ones(len(np.unique(parameter_space[1]))) * \
         (1./len(np.unique(parameter_space[1])))
@@ -900,14 +929,15 @@ if __name__ == "__main__":
         lon_priors = np.zeros(len(np.unique(parameter_space[1])))
         lon_priors[lon_index] = 1./len(lon_index)
 #        print 'Updated longitude priors', lon_priors
-    if event_name == '1852BandaDetachment' or event_name == '1852Banda_area':# \
-           # or event_name == '1852Banda_doughnut':
-        lonlat_priors = gaussian_location_prior('data/ETA_buffer_15min_midline.shp', 0.25, 
-                                parameter_space[1], parameter_space[2]) 
+##    if event_name == '1852BandaDetachment' or event_name == '1852Banda_area':# \
+##           # or event_name == '1852Banda_doughnut':
+##        lonlat_priors = gaussian_location_prior('data/ETA_buffer_15min_midline.shp', 0.25, 
+ ##                               parameter_space[1], parameter_space[2]) 
                                 #np.unique(parameter_space[1]),
                                  #np.unique(parameter_space[2]))
-        lonlat_prior_array=True # lat, lons pts already in pairs
+##        lonlat_prior_array=True # lat, lons pts already in pairs
     if lonlat_prior_array:
+        print 'lonlat_prior_array is True'
         priors = np.array([[np.unique(parameter_space[0]), parameter_space[1],
                             parameter_space[2], np.unique(parameter_space[3]),
                             np.unique(parameter_space[4]), np.unique(parameter_space[5]),
@@ -916,6 +946,7 @@ if __name__ == "__main__":
                             depth_priors, strike_priors, dip_priors,
                             np.array(gmpe_weights)]])
     else:
+        print 'lonlat_prior_array is False'
         priors = np.array([[np.unique(parameter_space[0]), np.unique(parameter_space[1]),
                             np.unique(parameter_space[2]), np.unique(parameter_space[3]),
                             np.unique(parameter_space[4]), np.unique(parameter_space[5]),
@@ -933,7 +964,9 @@ if __name__ == "__main__":
     else:
         sigma = 0.5 # Estimate sigma based on other results if not enough data
     print 'sigma', sigma
-#    sigma = 1.0
+    if set_sigma == True:
+        sigma = 0.2
+    print 'sigma', sigma
 #    print 'updated sigma', sigma
     print sum_squares, num_obs
     print sum_squares/sigma**2
@@ -942,6 +975,9 @@ if __name__ == "__main__":
     print min(likelihoods), max(likelihoods)
     print min(parameter_space[7]), max(parameter_space[7])
     parameter_space[7] = likelihoods
+    # dump likelihoods
+    out_array =np.vstack((parameter_space[1],parameter_space[2],parameter_space[7]))
+    np.savetxt('test_latlon_likelihoods.csv', out_array.T, delimiter=',', header='lon,lat,likelihoods')
 #    print priors
 #    priors = np.concatenate([priors, [gmpe_inds, gmpe_weights]], axis=1)
 #    print priors
@@ -966,6 +1002,9 @@ if __name__ == "__main__":
     line+=s
     f_out.write(line)
     f_out.close()
+    # Dump some results for spatial location
+    out_array =np.vstack((parameter_space[1],parameter_space[2],parameter_space[7]))
+    np.savetxt('test_latlon_posterior_probs.csv', out_array.T, delimiter=',', header='lon,lat,posterior_prob')
     bbox = bbox_dict[year]
     localities_file = 'data/localities%s.txt' % year 
     parameter_pdf(parameter_space, fig_comment = fig_comment, mmi_obs = mmi_obs,

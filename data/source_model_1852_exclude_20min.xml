@@ -198,7 +198,31 @@
 		<nodalPlane probability="0.01" strike="300.0" dip="60.0" rake="-90.0" />
 		<nodalPlane probability="0.01" strike="315.0" dip="60.0" rake="-90.0" />
 		<nodalPlane probability="0.01" strike="330.0" dip="60.0" rake="-90.0" />
-		<nodalPlane probability="0.29" strike="345.0" dip="60.0" rake="-90.0" />
+		<nodalPlane probability="0.01" strike="345.0" dip="60.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="0.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="15.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="30.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="45.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="60.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="75.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="90.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="105.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="120.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="135.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="150.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="165.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="180.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="195.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="210.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="225.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="240.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="255.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="270.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="285.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="300.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="315.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="330.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.05" strike="345.0" dip="10.0" rake="-90.0" />
             </nodalPlaneDist>
             <hypoDepthDist>
 		<hypoDepth probability="0.5" depth="10.0" />

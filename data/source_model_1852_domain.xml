@@ -10,26 +10,10 @@
                     <gml:exterior>
                         <gml:LinearRing>
                             <gml:posList>
-			      126.320459011351 -3.48886499869378 
-			      128.716134686742 -3.10594962434856 
-			      130.051429325484 -3.23358808246363 
-			      130.605256959894 -3.1614106654797 
-			      131.727087873386 -3.05437559946484 
-			      133.301300835953 -4.32342414790772 
-			      133.713671239094 -5.11870992539395 
-			      133.016568890927 -6.37545782068083 
-			      132.535470087262 -7.06274182591584 
-			      131.75982099564 -8.08384949083642 
-			      130.94489853229 -8.65331338088829 
-			      130.08088435428 -8.87913526832265 
-			      129.680111035616 -8.01643791111099 
-			      128.421584398784 -8.03475777617678 
-			      127.449568448523 -7.79911754581049 
-			      126.556099241718 -7.06274182591584 
-			      126.378126183509 -6.19449981302023 
-			      126.251956446479 -4.84449987113476 
-			      126.239814606566 -4.07949990406632 
-			      126.320459011351 -3.48886499869378
+			      127.0 -3.5
+			      133.5 -3.5
+			      133.5 -8.0
+			      127.0 -8.0
                             </gml:posList>
                         </gml:LinearRing>
                     </gml:exterior>
@@ -112,7 +96,31 @@
 		<nodalPlane probability="0.01" strike="300.0" dip="60.0" rake="-90.0" />
 		<nodalPlane probability="0.01" strike="315.0" dip="60.0" rake="-90.0" />
 		<nodalPlane probability="0.01" strike="330.0" dip="60.0" rake="-90.0" />
-		<nodalPlane probability="0.29" strike="345.0" dip="60.0" rake="-90.0" />
+		<nodalPlane probability="0.01" strike="345.0" dip="60.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="0.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="15.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="30.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="45.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="60.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="75.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="90.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="105.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="120.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="135.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="150.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="165.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="180.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="195.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="210.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="225.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="240.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="255.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="270.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="285.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="300.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="315.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.01" strike="330.0" dip="10.0" rake="-90.0" />
+                <nodalPlane probability="0.05" strike="345.0" dip="10.0" rake="-90.0" />
             </nodalPlaneDist>
             <hypoDepthDist>
 		<hypoDepth probability="0.5" depth="10.0" />

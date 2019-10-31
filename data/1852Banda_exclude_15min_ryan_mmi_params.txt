@@ -2,6 +2,6 @@ event_name,1852Banda_exclude_15min_ryan_mmi
 area_source_file,data/source_model_1852_exclude_15min.xml
 trt,Mixed
 site_model_file,data/1852Banda_EasternIndonesia_site_model.xml
-site_file,data/1852Banda_MMI_equal_weight.txt
+site_file,data/1852Banda_MMI_weight_rev.txt
 site_file_pts,data/1852Banda_EasternIndonesia_sites.csv
 limits_filename,data/source_model_1852_exclude_15min.xml.limits.txt
