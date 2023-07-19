@@ -6,6 +6,7 @@
 #PBS -l wd
 
 #New
+module load intel-mkl/2020.3.304
 module load geos/3.8.0
 module load hdf5/1.10.7
 module load openmpi/4.1.4
