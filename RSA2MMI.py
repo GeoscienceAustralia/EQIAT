@@ -44,7 +44,7 @@ def read_response_spectra_file(infile, defined_period = 1.0):
     header3 = f_in.readline()
     header4 = f_in.readline()
     periods = f_in.readline().split(' ')
-    print periods
+    print(periods)
     period_list = []
     for period in periods:
         period_list.append(float(period))
@@ -83,7 +83,7 @@ def rsa2mmi(data,period = 1.0,include_uncertainty='n'):
         logy15 = 1.69
         sigma1 = 1.01
     elif period == 2.0:
-        print 'doing period ',period
+        print('doing period ',period)
         C1 = 3.72
         C2 = 1.29
         C3 = 1.99
@@ -91,7 +91,7 @@ def rsa2mmi(data,period = 1.0,include_uncertainty='n'):
         logy15 = 1.00
         sigma1 = 0.86
     elif period == 0.3:
-        print 'doing period ',period
+        print('doing period ',period)
         C1 = 2.40
         C2 = 1.36
         C3 = -1.83
@@ -99,7 +99,7 @@ def rsa2mmi(data,period = 1.0,include_uncertainty='n'):
         logy15 = 1.92
         sigma1 = 0.88
     else:
-        print 'period ',period,' not implemented yet!'
+        print('period ',period,' not implemented yet!')
         return 0    
        
     for data_point in data:
@@ -118,7 +118,7 @@ def rsa2mmi(data,period = 1.0,include_uncertainty='n'):
     if include_uncertainty=='y':
         uncertainties = normal(0,sigma1,len(MMI_list))
 
-        MMI_list=map(add, MMI_list, uncertainties)
+        MMI_list=list(map(add, MMI_list, uncertainties))
 #        for i in range(len(MMI_list)):
 #            if MMI_list[i]>9:
 #                MMI_list[i]=9
@@ -140,7 +140,7 @@ def rsa2mmi9(data,period = 1.0,include_uncertainty='n'):
         logy15 = 1.50
         sigma1 = 0.84
     elif period == 0.0:
-        print 'doing period ',period
+        print('doing period ',period)
         C1 = 2.65
         C2 = 1.39
         C3 = -1.91
@@ -148,7 +148,7 @@ def rsa2mmi9(data,period = 1.0,include_uncertainty='n'):
         logy15 = 1.69
         sigma1 = 1.01
     elif period == 2.0:
-        print 'doing period ',period
+        print('doing period ',period)
         C1 = 3.72
         C2 = 1.29
         C3 = 1.99
@@ -156,7 +156,7 @@ def rsa2mmi9(data,period = 1.0,include_uncertainty='n'):
         logy15 = 1.00
         sigma1 = 0.86
     elif period == 0.3:
-        print 'doing period ',period
+        print('doing period ',period)
         C1 = 2.40
         C2 = 1.36
         C3 = -1.83
@@ -164,7 +164,7 @@ def rsa2mmi9(data,period = 1.0,include_uncertainty='n'):
         logy15 = 1.92
         sigma1 = 0.88
     else:
-        print 'period ',period,' not implemented yet!'
+        print('period ',period,' not implemented yet!')
         return 0
      
     for data_point in data:
@@ -184,7 +184,7 @@ def rsa2mmi9(data,period = 1.0,include_uncertainty='n'):
     # model as double counting of uncertainty may occur.
     if include_uncertainty=='y':
         uncertainties = normal(0,sigma1,len(MMI_list))
-        MMI_list=map(add,MMI_list, uncertainties)
+        MMI_list=list(map(add,MMI_list, uncertainties))
         for i in range(len(MMI_list)):
             if MMI_list[i]>9:
                 MMI_list[i]=9
@@ -219,8 +219,8 @@ def write_data(outfile,coords,MMI):
         f_out.write(str(coords[0][i])+',')
         f_out.write(str(coords[1][i])+',')
         f_out.write(str(MMI[i])+'\n')
-    print 'number of sites',len(coords[0])
-    print 'number of sites for MMI',len(MMI)
+    print('number of sites',len(coords[0]))
+    print('number of sites for MMI',len(MMI))
     f_out.close()
 
 # Reformat EQRM output into ArcGIS friendly format
@@ -259,7 +259,7 @@ def EQRM2GIS(coords,response_file,outfile):
 if __name__=="__main__":
 
     if len(sys.argv)<2:
-        print 'Usage: python RSA2MMI.py <site_loc>_locations.txt <input period = 1.0> <include uncertainty = n (y)> <return period = motion_0>'
+        print('Usage: python RSA2MMI.py <site_loc>_locations.txt <input period = 1.0> <include uncertainty = n (y)> <return period = motion_0>')
         sys.exit(-1)
 
     location_file = sys.argv[1]
@@ -267,13 +267,13 @@ if __name__=="__main__":
     try:
         input_period = float(sys.argv[2])
     except:
-        print '\nResponse spectral period not specfied, defaulting to 1.0 sec\n'
+        print('\nResponse spectral period not specfied, defaulting to 1.0 sec\n')
         input_period = 1.0
     
     try:
         include_uncertainty = sys.argv[3]
     except:
-        print '\nOption to include uncertainty in conversion not specified, defaulting to no uncertainty\n'
+        print('\nOption to include uncertainty in conversion not specified, defaulting to no uncertainty\n')
         include_uncertainty = 'n'
 
     try:
@@ -303,7 +303,7 @@ if __name__=="__main__":
         write_data(MMI9outfile, coords, MMI9)
         EQRM2GIS(coords,soil_response_file, soiloutfile)
     except IOError:
-        print 'No soil file calculated'
+        print('No soil file calculated')
             
     EQRM2GIS(coords,rock_response_file,rockoutfile)
     

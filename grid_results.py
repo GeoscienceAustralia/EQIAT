@@ -18,8 +18,8 @@ def grid_results(infile, resolution = 0.01, clip_shp = None,
    # if not overwrite:
     if os.path.isfile(outfile):
         if not overwrite:
-            print 'Not creating file %s as already exists' % outfile
-            print 'To re-create file (e.g if inputs changed) set overwrite=True)'
+            print('Not creating file %s as already exists' % outfile)
+            print('To re-create file (e.g if inputs changed) set overwrite=True)')
             return
         else:
             try:
@@ -39,11 +39,11 @@ def grid_results(infile, resolution = 0.01, clip_shp = None,
     xsize = len(xi)
     ysize = len(yi)
 
-    print 'Interpolating results'
+    print('Interpolating results')
     gridded_results = griddata((data[:,0],data[:,1]),data[:,2],(XI,YI),method='linear')
     #print gridded_results
     #outfile = infile.rstrip('().csv') + '_gridded.tif'
-    print 'Writing gridded data to %s' % outfile
+    print('Writing gridded data to %s' % outfile)
     driver = gdal.GetDriverByName('GTiff')
     ds = driver.Create(outfile, xsize, ysize, 1, gdal.GDT_Float32)
     srs = osr.SpatialReference()
@@ -67,14 +67,14 @@ def grid_results(infile, resolution = 0.01, clip_shp = None,
                '-dstalpha',
                outfile,
                clipfile]
-        print cmd
+        print(cmd)
         call(cmd, shell=False)
     if contour is True:
         cmd = 'gdal_contour -i 1 -off 0.5 %s %s.shp' % (outfile,  outfile.rstrip('.tif'))
-        print cmd
+        print(cmd)
         call(cmd, shell=True)
         cmd = 'gdal_contour -i 1 -off 0.5 %s %s.shp' % (clipfile, clipfile.rstrip('.tif'))
-        print cmd
+        print(cmd)
         call(cmd, shell=True)
    # outfile = infile.rstrip('.csv') + '_gridded.csv'
    # np.savetxt(outfile, gridded_results)

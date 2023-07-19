@@ -10,7 +10,10 @@ from openquake.hazardlib.nrml import NAMESPACE
 from openquake.hazardlib.sourcewriter import obj_to_node
 from openquake.baselib.node import Node
 from openquake.hazardlib import geo, site, imt
-from openquake.risklib import valid
+from openquake.hazardlib.site import SiteCollection, Site
+#from openquake.risklib import valid
+from openquake.hazardlib import valid
+
 MAX_SITE_MODEL_DISTANCE = 5  # km, given by Graeme Weatherill
 
 @obj_to_node.add('Site')
@@ -49,19 +52,36 @@ def get_site_model(site_model_file):
     :param oqparam:
         an :class:`openquake.commonlib.oqvalidation.OqParam` instance
     """
+#    print(site_model_file)
     for node in nrml.read(site_model_file).siteModel:
-        yield valid.site_param(**node.attrib)
+#        print(node, type(node))
+#        print(node.attrib)
+#        yield valid.site_param(**node.attrib) # Orginal
+#        new = valid.site_param(node.attrib)
+#        print(new)
+#        print(valid.site_param(node.attrib))
+        yield valid.site_param(node.attrib)
 
 def read_site_col(site_model_file):
     """Directly read a site colection from nrml
     """
     sitecol = []
-    for param in sorted(get_site_model(site_model_file)):
-        pt = geo.Point(param.lon, param.lat, 0.)
+    for param in get_site_model(site_model_file):
+#        print(param)
+#        pt = geo.Point(param.lon, param.lat, 0.)
+        pt = geo.Point(param['lon'], param['lat'], 0.)
+#        print(pt)
+#        sitecol.append(site.Site(
+#                pt, param.vs30, param.measured,
+#                param.z1pt0, param.z2pt5, param.backarc))
         sitecol.append(site.Site(
-                pt, param.vs30, param.measured,
-                param.z1pt0, param.z2pt5, param.backarc))
+            pt, float(param['vs30']),
+            float(param['z1pt0']), float(param['z2pt5']),
+            vs30measured = param['vs30measured']))#, param['backarc']))
     return site.SiteCollection(sitecol)
+
+def yield_site_mod(site_mod):
+    yield from site_mod
 
 def get_site_collection(site_model_file, sites, site_model_params=None,
                         filename=None):
@@ -79,10 +99,30 @@ def get_site_collection(site_model_file, sites, site_model_params=None,
         path to output nrml file where new site model will be written,
         if this parameter is specified.
     """
+    
     if site_model_params is None:
         # read the parameters directly from their file
-        site_model_params = geo.geodetic.GeographicObjects(
-            get_site_model(site_model_file))
+        site_mod_read = read_site_col(site_model_file)
+        print(site_mod_read) # Type is <siteCollection>
+        #### Try associate function
+##        target_sites = SiteCollection(sites)
+##        print('target_sites', target_sites)
+##        print(sites, type(sites))
+##        assoc_dist = 100.0
+ ##       site_model = site_mod_read.assoc(sites, assoc_dist, ignore=())
+##        print('site model', site_model)
+##        sys.exit()
+        ####
+#        site_mod = get_site_model_v2(site_model_file)
+#        site_mod = list(yield_site_mod(site_mod))
+#        print('Here')
+#        print(site_mod)
+        site_model_params = geo.utils._GeographicObjects(
+            site_mod_read)
+        print(site_model_params)
+#        site_model_params = geo.utils._GeographicObjects(
+#            site_mod)
+#    site_model_params = site_mod_read #Test!
     sitecol = []
     for pt in sites:
         # NB: the mesh, when read from the datastore, is a 32 bit array;
@@ -94,20 +134,21 @@ def get_site_collection(site_model_file, sites, site_model_params=None,
         if dist >= MAX_SITE_MODEL_DISTANCE:
             #logging.warn('The site parameter associated to %s came from a '
             #             'distance of %d km!' % (pt, dist))
-            print 'WARNING:The site parameter associated to %s came from a ' \
-                'distance of %d km!' % (pt, dist)
-        sitecol.append(
-            site.Site(pt, param.vs30, param.measured,
-                      param.z1pt0, param.z2pt5, param.backarc))
+            print('WARNING:The site parameter associated to %s came from a ' \
+                'distance of %d km!' % (pt, dist))
+#        sitecol.append(
+#            site.Site(pt, param.vs30, param.measured,
+#                      param.z1pt0, param.z2pt5, param.backarc))
+#        print(param)
+        sitecol.append(                                                                                                                                              
+            site.Site(pt, param[4],                                                                                                                        
+                      param[6], param[7], backarc = 0)) ## FIXME -currentl backarc is hardcoded 
     if filename is not None:
         name = filename.split('/')[-1][:-4]
         site_nodes = list(map(obj_to_node, sitecol))#sorted(sitecol)))
-        #print site_nodes
         site_model = Node("siteModel", nodes=site_nodes)
-        #site_model = site_nodes
-        #print site_model
         with open(filename, 'wb') as f:
             nrml.write(site_model, f, '%s', xmlns = NAMESPACE)
-        #    nrml.write([site_model], f, '%s', xmlns = NAMESPACE)
     return site.SiteCollection(sitecol)
+
 

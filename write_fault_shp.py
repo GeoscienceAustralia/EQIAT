@@ -1,7 +1,8 @@
 """Write a fault or rupture geometry to shapefile
 """
 
-import gdal, osr, ogr
+#import gdal, osr, ogr
+from osgeo import ogr
 import os 
 from numpy import mean
 
@@ -58,17 +59,17 @@ def fault2shp(corner_lons, corner_lats, output_shp, corner_depths=None, vertice_
     corner_depths = list(corner_depths)
     min_dep = min(corner_depths)
     min_dep_index = corner_depths.index(min(corner_depths))
-    print min_dep_index
+    print(min_dep_index)
     line.AddPoint(corner_lons[min_dep_index],corner_lats[min_dep_index])
     corner_depths[min_dep_index] = 1e10
     min_dep_2 = min(corner_depths)
     min_dep_index_2 = corner_depths.index(min(corner_depths))
-    print min_dep_index_2
+    print(min_dep_index_2)
     line.AddPoint(corner_lons[min_dep_index_2],corner_lats[min_dep_index_2])
     corner_depths[min_dep_index] = min_dep
-    print min_dep, min_dep_2
+    print(min_dep, min_dep_2)
     mean_upper_depth = mean([min_dep, min_dep_2])
-    print mean_upper_depth
+    print(mean_upper_depth)
     drv = ogr.GetDriverByName('ESRI Shapefile') 
     output_shp = output_shp.rstrip('.shp') + '_upper_edge.shp'
     # Remove output shapefile if it already exists

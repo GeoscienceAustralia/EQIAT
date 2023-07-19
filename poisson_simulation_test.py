@@ -147,7 +147,7 @@ def plot_mmi_samples(mmi_sample_list, mmi_cumulative_list):
     """
     pyplot.clf()
     x_values = numpy.arange(0,14)
-    print x_values
+    print(x_values)
     for i in range(len(mmi_sample_list)):
         pyplot.plot(x_values, mmi_sample_list[i])
     pyplot.savefig('mmi_incremental_occurrences.png')
@@ -252,7 +252,7 @@ if __name__ == "__main__":
     time_others = 69
     time_jkt = 196 # complmeteness for Jakarta
     mmi_obs_dict = read_mmi_obs(obs_filename)
-    print mmi_obs_dict                                                                                      
+    print(mmi_obs_dict)                                                                                      
     data = numpy.genfromtxt(filename, delimiter= ',', skip_header=1)
     data2 = numpy.genfromtxt(filename2, delimiter= ',', skip_header=1)
     data_list = [data, data2]
@@ -260,7 +260,7 @@ if __name__ == "__main__":
     haz_mmi_dict = {}
 #    city = 'Jakarta'
     for city in cities:
-        print 'Doing city %s' % city
+        print('Doing city %s' % city)
         if city == 'Jakarta':
             time = time_jkt
             site_class = 'D'
@@ -313,9 +313,9 @@ if __name__ == "__main__":
             median[median == 0] = 0.0000001
             percentile_2_5[percentile_2_5 == 0] = 0.0000001
             percentile_97_5[percentile_97_5 == 0] = 0.0000001
-            print percentile_97_5
-            print percentile_2_5
-            print 'median', median
+            print(percentile_97_5)
+            print(percentile_2_5)
+            print('median', median)
             # Don't always need to do this, it takes a long time
             #    plot_mmi_samples(mmi_sample_database, mmi_sample_cumulative_database)
             haz_mmi_dict[city]=[median, percentile_97_5, percentile_2_5]

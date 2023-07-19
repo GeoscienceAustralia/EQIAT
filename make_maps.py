@@ -22,9 +22,9 @@ for filename in filelist:
     if split[3] != 'mmi':
         continue
     event = split[4][0:4]
-    print event
+    print(event)
     gmm = split[5][:-6]
-    print gmm
+    print(gmm)
     bbox = bbox_dict[int(event)]
     mmi_obs_file = 'data/' + event + 'HMMI.txt'
     rupture_prefix = 'rupture_scenario_' + split[4] + '_' + gmm
@@ -33,9 +33,9 @@ for filename in filelist:
     if len(rupture_filenames) > 0:
         rf = [ x for x in rupture_filenames if 'upper_edge' not in x ]
         rupture_filename = rf[0]
-    print rupture_filename    
+    print(rupture_filename)    
     filename = quote(filename) # Deal with nasty () in filename
     cmd = 'python plot_maps.py %s %s %s %s' %(
         mmi_obs_file, filename, bbox, rupture_filename)
-    print cmd
+    print(cmd)
     os.system(cmd)

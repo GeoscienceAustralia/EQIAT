@@ -36,7 +36,7 @@ def build_site_col(sites_data, site_model_file, filename=None):
 proc = pypar.size()                # Number of processors as specified by mpirun                     
 myid = pypar.rank()                # Id of of this process (myid in [0, proc-1])                     
 node = pypar.get_processor_name()  # Host name on which current process is running                   
-print 'I am proc %d of %d on node %s' % (myid, proc, node)
+print('I am proc %d of %d on node %s' % (myid, proc, node))
 #nruns = 320 # currently hard coded - need to improve this                                            
 t0 = pypar.time()
 
@@ -53,7 +53,7 @@ sites_data = np.genfromtxt(locations_file, delimiter=',')
 #print sites_data
 # Split sources
 list_length = len(sites_data) / (proc)
-print list_length
+print(list_length)
 if (len(sites_data) % proc) > 0:
     list_length +=1
 pt_list = list(chunks(sites_data, list_length))
@@ -63,7 +63,7 @@ for i in range(0, len(pt_list), 1):
     if i % proc == myid:
         run = "%03d" % i
         # Apply geometrical filtering                                                                        
-        print 'Building site model for run %s' % run
+        print('Building site model for run %s' % run)
         tmp_outfile = outfile[:-4] + '_' + str(run) + '.xml'
         build_site_col(pt_list[i], sites_file, filename=tmp_outfile)
 pypar.barrier()
@@ -96,10 +96,10 @@ if myid == 0:
     h = ss / 3600
     m = (ss % 3600) / 60
     s = (ss % 3600) % 60
-    print "--------------------------------------------------------"
-    print 'P0: Total time (%i seconds): %s:%s:%s (hh:mm:ss)' % (ss,
+    print("--------------------------------------------------------")
+    print('P0: Total time (%i seconds): %s:%s:%s (hh:mm:ss)' % (ss,
                                                                 string.zfill(h, 2),
                                                                 string.zfill(m, 2),
-                                                                string.zfill(s,2))
-    print "--------------------------------------------------------"
+                                                                string.zfill(s,2)))
+    print("--------------------------------------------------------")
 pypar.finalize()

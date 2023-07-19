@@ -206,7 +206,7 @@ bbox_dict = {1699: '104/110/-10.5/-5',
              2018: '112/118/-10/-5',
              1852: '126/134/-8.5/0'}
 
-print 'sum(gmpe_weights)', sum(gmpe_weights)
+print('sum(gmpe_weights)', sum(gmpe_weights))
 # Read observation data                                                                                                              
 mmi_obs = np.genfromtxt(mmi_obs_file)
 
@@ -233,7 +233,7 @@ def write_roman(num):
     roman[1] = "I"
 
     def roman_num(num):
-        for r in roman.keys():
+        for r in list(roman.keys()):
             x, y = divmod(num, r)
             yield roman[r] * x
             num -= (r * x)
@@ -251,7 +251,7 @@ def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
     prior_weights = []
     llhs = parameter_space[7]
     #print llhs, sum(llhs)
-    print max(llhs), min(llhs)
+    print(max(llhs), min(llhs))
     parameter_space = parameter_space.T
     for combo in parameter_space:
 #        print combo                                                                                             
@@ -265,7 +265,7 @@ def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
 #        print 'i0', i0
  #       print 'i6', i6
         if lonlat_prior_array:
-            print 'lonlat_prior_array is true'
+            print('lonlat_prior_array is true')
             intersection = np.intersect1d(i1,i2)
             #print 'intersection', intersection
             i1 = intersection[0]
@@ -277,20 +277,20 @@ def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
                 prior_pdfs[1][6][i6]
 #            print 'prior_weight', prior_weight
         except IndexError:
-            print combo
-            print i0,i1,i2,i3,i4,i5,i6
-            print len(prior_pdfs[1][0]), len(prior_pdfs[1][1])
-            print len(prior_pdfs[1][2]), len(prior_pdfs[1][3])
-            print len(prior_pdfs[1][4]), len(prior_pdfs[1][5])
-            print len(prior_pdfs[1][6])
-            print (prior_pdfs[1][0])
-            print (prior_pdfs[1][1])
-            print (prior_pdfs[1][2])
-            print (prior_pdfs[1][3])
-            print (prior_pdfs[1][4])
-            print (prior_pdfs[1][5])
-            print (prior_pdfs[1][6])
-            print 'Error in indexing of priors, check priors are defined for full parameter space'
+            print(combo)
+            print(i0,i1,i2,i3,i4,i5,i6)
+            print(len(prior_pdfs[1][0]), len(prior_pdfs[1][1]))
+            print(len(prior_pdfs[1][2]), len(prior_pdfs[1][3]))
+            print(len(prior_pdfs[1][4]), len(prior_pdfs[1][5]))
+            print(len(prior_pdfs[1][6]))
+            print((prior_pdfs[1][0]))
+            print((prior_pdfs[1][1]))
+            print((prior_pdfs[1][2]))
+            print((prior_pdfs[1][3]))
+            print((prior_pdfs[1][4]))
+            print((prior_pdfs[1][5]))
+            print((prior_pdfs[1][6]))
+            print('Error in indexing of priors, check priors are defined for full parameter space')
             sys.exit()
         prior_weights.append(prior_weight)
 #    print prior_weights                                                                                         
@@ -348,7 +348,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     plt.clf()
     fig = plt.figure(figsize=(16,8))#, tight_layout=True)                                                 
     gs = plt.GridSpec(2,4)
-    for key, value in parameter_dict.iteritems():
+    for key, value in parameter_dict.items():
         if key=='longitude' or key=='latitude':
             continue # Do later
         unique_vals = np.unique(parameter_space[value])
@@ -443,8 +443,8 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         sorted_values = unique_vals_flat[sorted_probs_args]
         sum_probs = sum(sorted_probs)
         prob_limit = 0.95*sum_probs
-        print 'Sum probs, should be 1', sum_probs
-        print prob_limit
+        print('Sum probs, should be 1', sum_probs)
+        print(prob_limit)
         prob_sum = 0.0
         for pi, prob_val in enumerate(sorted_probs):
             if prob_sum > prob_limit:
@@ -455,8 +455,8 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         values_in_bounds = sorted_values[0:prob_index]
         min_bound = min(values_in_bounds)
         max_bound = max(values_in_bounds)
-        print 'min_bound', min_bound
-        print 'max_bound', max_bound
+        print('min_bound', min_bound)
+        print('max_bound', max_bound)
 
         # Get plot additions to plot on top
 #        if plot_additions is not None:
@@ -658,7 +658,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         clippath =  poly.get_path()
         ax = plt.gca()
         patch = PathPatch(clippath, transform=ax.transData, facecolor='none', linewidth=0.4, linestyle='--')
-        print 'Adding patch'
+        print('Adding patch')
         ax.add_patch(patch)
         for contour in cs.collections:
             contour.set_clip_path(patch)
@@ -828,7 +828,7 @@ if __name__ == "__main__":
     # Combine for different GMPEs
     year = data_files[0].split('/')[1][:4]
     year = int(year)
-    print 'year', year
+    print('year', year)
     if event_name == '1852Banda_area' or event_name == '1852BandaDetachment' \
             or event_name == '1852Banda_doughnut' or event_name =='1852Banda_domain_ryan_mmi'\
             or event_name == '1852Banda_domain_FH_mmi' or event_name =='1852Banda_exclude_20min_ryan_mmi'\
@@ -854,7 +854,7 @@ if __name__ == "__main__":
         for obs_count, l in enumerate(f):                                                                                                                
             pass                                                                                                                                          
     num_obs = obs_count + 1                                                                                                                               
-    print 'num_obs', num_obs 
+    print('num_obs', num_obs) 
     # Here we add a dimension to the parameter space that contains an index
     # for which gmpe was used
     for i, filename in enumerate(data_files):
@@ -906,8 +906,8 @@ if __name__ == "__main__":
     if mag_prior_type=='uniform':
         mag_priors = np.ones(len(np.unique(parameter_space[0]))) * \
             (1./len(np.unique(parameter_space[0])))
-    print 'mags',mags
-    print 'mag_priors', mag_priors, sum(mag_priors)
+    print('mags',mags)
+    print('mag_priors', mag_priors, sum(mag_priors))
         # longitude, latitude, strike, depth and dip - uniform across parameter space                             
     lon_priors = np.ones(len(np.unique(parameter_space[1]))) * \
         (1./len(np.unique(parameter_space[1])))
@@ -937,7 +937,7 @@ if __name__ == "__main__":
                                  #np.unique(parameter_space[2]))
 ##        lonlat_prior_array=True # lat, lons pts already in pairs
     if lonlat_prior_array:
-        print 'lonlat_prior_array is True'
+        print('lonlat_prior_array is True')
         priors = np.array([[np.unique(parameter_space[0]), parameter_space[1],
                             parameter_space[2], np.unique(parameter_space[3]),
                             np.unique(parameter_space[4]), np.unique(parameter_space[5]),
@@ -946,7 +946,7 @@ if __name__ == "__main__":
                             depth_priors, strike_priors, dip_priors,
                             np.array(gmpe_weights)]])
     else:
-        print 'lonlat_prior_array is False'
+        print('lonlat_prior_array is False')
         priors = np.array([[np.unique(parameter_space[0]), np.unique(parameter_space[1]),
                             np.unique(parameter_space[2]), np.unique(parameter_space[3]),
                             np.unique(parameter_space[4]), np.unique(parameter_space[5]),
@@ -957,23 +957,23 @@ if __name__ == "__main__":
 
         # Re-calculate sigma and then the likelihoods                                                                                               
     min_rmse = min(parameter_space[6])
-    print 'min_rmse', min_rmse
+    print('min_rmse', min_rmse)
     sum_squares = parameter_space[6]**2 # Weighted sum of square*num_obs
     if num_obs > num_params:
         sigma=np.sqrt((1./(num_obs-num_params))*(min_rmse**2))
     else:
         sigma = 0.5 # Estimate sigma based on other results if not enough data
-    print 'sigma', sigma
+    print('sigma', sigma)
     if set_sigma == True:
         sigma = 0.2
-    print 'sigma', sigma
+    print('sigma', sigma)
 #    print 'updated sigma', sigma
-    print sum_squares, num_obs
-    print sum_squares/sigma**2
+    print(sum_squares, num_obs)
+    print(sum_squares/sigma**2)
     likelihoods = np.power((1/(sigma*np.sqrt(2*np.pi))), num_obs) * \
                 np.exp((-1/2)*(sum_squares/sigma**2))
-    print min(likelihoods), max(likelihoods)
-    print min(parameter_space[7]), max(parameter_space[7])
+    print(min(likelihoods), max(likelihoods))
+    print(min(parameter_space[7]), max(parameter_space[7]))
     parameter_space[7] = likelihoods
     # dump likelihoods
     out_array =np.vstack((parameter_space[1],parameter_space[2],parameter_space[7]))

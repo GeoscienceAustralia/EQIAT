@@ -45,7 +45,7 @@ def write_roman(num):
     roman[1] = "I"
 
     def roman_num(num):
-        for r in roman.keys():
+        for r in list(roman.keys()):
             x, y = divmod(num, r)
             yield roman[r] * x
             num -= (r * x)
@@ -122,7 +122,7 @@ cmap = plt.get_cmap('jet')
 #m.imshow(data, cmap=cmap, vmin=0, vmax=9, zorder=0, latlon=True)
 
 data = np.genfromtxt(infile, delimiter=',')
-print data[:,0]
+print(data[:,0])
 minlon = np.min(data[:,0])
 maxlon = np.max(data[:,0])
 minlat = np.min(data[:,1])
@@ -144,7 +144,7 @@ csm = m.contour(xx, yy, maskdata, clevs, latlon=True, colors='k')
 # Now plot fault shapefile, if it exists
 # Note that we need to remove . from shapefile names for them to work with this
 if shpfile is not None:
-    print shpfile[:-4]
+    print(shpfile[:-4])
     m.readshapefile(shpfile[:-4],'rupture', drawbounds=True)
     patches   = []
     for info, shape in zip(m.rupture_info, m.rupture):
@@ -168,7 +168,7 @@ adjust_text(texts, only_move='xy',
                             color='k', lw=0.5))
 filename_parts = infile.rstrip('().csv').split('_')
 year = filename_parts[4][:4]
-print 'year', year
+print('year', year)
 # Some string splitting to get the GMM name
 gmm = filename_parts[5]
 a=re.sub('([a-z])([1-9])', r'\1 \2', gmm)

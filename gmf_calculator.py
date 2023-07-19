@@ -10,7 +10,8 @@ import os, sys
 import numpy as np
 from scipy.stats import norm, chi2
 from scipy import interpolate
-from mpl_toolkits.basemap import Basemap, maskoceans
+# Need to update to cartopy
+#from mpl_toolkits.basemap import Basemap, maskoceans
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -18,9 +19,10 @@ from matplotlib.path import Path
 from matplotlib.patches import PathPatch, Polygon
 from collections import defaultdict
 from openquake.hazardlib.calc.gmf import GmfComputer
-from openquake.hazardlib.nrml import SourceModelParser
+from openquake.hazardlib import nrml #import SourceModelParser
 from openquake.hazardlib.sourceconverter import SourceConverter, \
-    area_to_point_sources, SourceGroup
+    SourceGroup #area_to_point_sources,
+from openquake.hazardlib.contexts import ContextMaker
 from RSA2MMI import rsa2mmi8
 
 
@@ -39,19 +41,34 @@ def get_pt_sources(area_source_file, discretisation=50.):
     """
     converter = SourceConverter(50, 10, width_of_mfd_bin=0.1,
                                 area_source_discretization=discretisation)
-    parser = SourceModelParser(converter)
-    try:
-        sources = parser.parse_sources(area_source_file)
-    except AttributeError: # Handle version 2.1 and above
-        sources = []
-        groups = parser.parse_src_groups(area_source_file)
-        for group in groups:
-            for source in group:
-                sources.append(source)
+    source_models=nrml.read_source_models([pt_source_file], converter)
+    source_list = []
+    pts = []
+    for source in source_models:
+        source_list.append(source)
+        print('source list', source_list)
+    for sourcegroup in source_list:
+        for source in sourcegroup:
+            for pt in source:
+                pts.append(pt)
+    sm = pts
+#    parser = SourceModelParser(converter)
+#    try:
+#        sources = parser.parse_sources(area_source_file)
+#    except AttributeError: # Handle version 2.1 and above
+#        sources = []
+#        groups = parser.parse_src_groups(area_source_file)
+#        for group in groups:
+#            for source in group:
+#                sources.append(source)
     name = 'test_point_model'
     new_pt_sources = {}
-    for source in sources:
-        pt_sources = area_to_point_sources(source)
+#    for source in sources:
+    for source in sm:
+        pt_sources = []
+        for pt in source:
+            pt_sources.append(pt)
+#        pt_sources = area_to_point_sources(source)
         for pt in pt_sources:
             pt.source_id = pt.source_id.replace(':','')
             pt.name = pt.name.replace(':','_')
@@ -75,18 +92,34 @@ def get_sources(source_model_file, discretisation=50.):
     :returns sources
         Source for the source model
     """
+#    converter = SourceConverter(50, 10, width_of_mfd_bin=0.1,
+#                                area_source_discretization=discretisation)
+#    parser = SourceModelParser(converter)
+#    try:
+#        sources = parser.parse_sources(source_model_file)
+#    except AttributeError: # Handle version 2.1 and above
+#        sources = []
+#        groups = parser.parse_src_groups(source_model_file)
+#        for group in groups:
+#            for source in group:
+#                sources.append(source)
+    name = 'test_point_model'
     converter = SourceConverter(50, 10, width_of_mfd_bin=0.1,
                                 area_source_discretization=discretisation)
-    parser = SourceModelParser(converter)
-    try:
-        sources = parser.parse_sources(source_model_file)
-    except AttributeError: # Handle version 2.1 and above
-        sources = []
-        groups = parser.parse_src_groups(source_model_file)
-        for group in groups:
-            for source in group:
+    source_models=nrml.read_source_models([source_model_file], converter)
+    source_list = []
+#    pts = []
+    sources = []
+    for source in source_models:
+        source_list.append(source)
+        print('source list', source_list)
+    for sourcegroup in source_list:
+        for allsources in sourcegroup:
+            for source in allsources:
                 sources.append(source)
-#    name = 'test_point_model'
+#            for pt in source:
+#                pts.append(pt)
+#    sm = pts
     new_sources = {}
     for source in sources:
         #pt_sources = area_to_point_sources(source)
@@ -104,7 +137,7 @@ class RuptureGmf(object):
     ground motion fields for later analysis
     """
 
-    def __init__(self, sources, gsim, sitecol, imts = ['SA(1.0)']):
+    def __init__(self, sources, gsim, sitecol, trt, imts = ['SA(1.0)']):
         """
         :params sources:
             Source objects derived from original area source model
@@ -114,10 +147,18 @@ class RuptureGmf(object):
         self.sources = sources
         self.gsim  = gsim
         self.imts = imts
+        self.trt = trt
         self.sitecol = sitecol
         self.rupture_list = [] # list for storing ruptures
         self.gmf_list = [] # list for storing associated gmfs
         self.mmi_list = []
+        # Need to add this in somehow
+        self.cmaker = ContextMaker(trt, [gsim],
+                          dict(truncation_level=0,
+                               maximum_distance={'Active Shallow Crust': ((1,10000.0), (10, 10000.0)),
+                                                 'Subduction Interface': ((1,10000.0), (10, 10000.0)),
+                                                 'Subduction Interslab': ((1,10000.0), (10, 10000.0))},
+                               imtls={str(imt): [1] for imt in imts}))
     
     def calculate_from_pts(self):
         """Generates ruptures for each pt source and calculates ground motion
@@ -132,9 +173,15 @@ class RuptureGmf(object):
             ruptures = pt.iter_ruptures()
             for rupture in ruptures:
                 computer = GmfComputer(rupture, self.sitecol,
-                                       self.imts, [self.gsim],
-                                       truncation_level=0)
-                gmf = computer.compute(self.gsim, 1)
+                                       self.cmaker)
+                                     #self.imts, [self.gsim])
+#                computer = GmfComputer(rupture, self.sitecol,
+#                                       self.imts, [self.gsim])#,
+                                       #truncation_level=0)
+                mean_stds_all = computer.cmaker.get_mean_stds([computer.ctx])
+                mean_stds = mean_stds_all[:, 0]
+                gmf = computer.compute(self.gsim, 1, mean_stds)
+                gmf = gmf[0]
                 gmf = gmf.flatten()
                 self.rupture_list.append(rupture)
                 self.gmf_list.append(gmf)
@@ -151,12 +198,13 @@ class RuptureGmf(object):
             #        rupture_hypocenter = []
             ruptures = source.iter_ruptures()
             for rupture in ruptures:
-                #print type(rupture)
-                #print 'Calculating rupture', rupture.hypocenter
+#                print('Calculating rupture', rupture.hypocenter)
                 computer = GmfComputer(rupture, self.sitecol,
-                                       self.imts, [self.gsim],
-                                       truncation_level=0)
-                gmf = computer.compute(self.gsim, 1)
+                                       self.cmaker)
+                mean_stds_all = computer.cmaker.get_mean_stds([computer.ctx])
+                mean_stds = mean_stds_all[:, 0]
+                gmf = computer.compute(self.gsim, 1, mean_stds)
+                gmf = gmf[0]
                 gmf = gmf.flatten()
                 self.rupture_list.append(rupture)
                 self.gmf_list.append(gmf)
@@ -167,12 +215,13 @@ class RuptureGmf(object):
         """
         if rup_sitecol is None:
             rup_sitecol = self.sitecol
-        computer = GmfComputer(rupture, rup_sitecol,
-                               self.imts, [self.gsim],
-                               truncation_level=0)
-        gmf = computer.compute(self.gsim, 1)
+        computer = GmfComputer(rupture, self.sitecol,
+                                       self.cmaker)  
+        mean_stds_all = computer.cmaker.get_mean_stds([computer.ctx])
+        mean_stds = mean_stds_all[:, 0]
+        gmf = computer.compute(self.gsim, 1, mean_stds)
+        gmf = gmf[0]
         gmf = gmf.flatten()
-        print 'gmf', gmf
         self.rupture_scenario = rupture
         self.rupture_gmf = gmf
         self.rupture_gmf_mmi = rsa2mmi8(gmf, period = 1.0)
@@ -258,7 +307,7 @@ class RuptureGmf(object):
         (i.e. using a different GMPE).
         """
         if len(self.mmi_obs) <= 6:
-            print 'Not enough data points to calculate uncertainties'
+            print('Not enough data points to calculate uncertainties')
             #indices = np.where(self.rmse < 1e24)[0]
             # Hacky estimate of sigma
             self.sigma = 0.3
@@ -271,13 +320,13 @@ class RuptureGmf(object):
                 index = np.argmin(self.rmse)
                 self.sigma=np.sqrt((1./(len(self.mmi_obs)-6))*self.sum_squares_list[index])
 #                self.sigma=(1./(len(self.mmi_obs)-6))*np.power(min_rmse,2)
-                print 'sigma', self.sigma
+                print('sigma', self.sigma)
                 self.uncert_fun = norm(min_rmse,self.sigma)
             else:
                 index = np.argmin(self.rmse)
                 self.sigma=np.sqrt((1./(len(self.mmi_obs)-6))*self.sum_squares_list[index])
                 #self.sigma=(1./(len(self.mmi_obs)-6))*np.power(min(self.rmse),2)
-                print 'sigma', self.sigma
+                print('sigma', self.sigma)
                 self.uncert_fun = norm(min(self.rmse),self.sigma)
                 #self.log_lik = (-1/2)*self.sum_squares_list[index]/(self.sigma**2) - \
                   #  len(self.mmi_obs)*np.log(self.sigma*np.sqrt(2*np.pi))
@@ -285,11 +334,11 @@ class RuptureGmf(object):
                 self.max_lik = np.power((1/(self.sigma*np.sqrt(2*np.pi))), len(self.mmi_obs)) * \
                     np.exp((-1/2)*((self.sum_squares_list[index]/self.sigma**2)))
 #                self.max_lik = np.power(10, self.log_lik)
-                print 'Maxmium likelihood = ', self.max_lik
+                print('Maxmium likelihood = ', self.max_lik)
                 #df = len(self.mmi_obs)-6
                 #chi_bv = chi2(df).ppf(0.95)/df
                 #self.uncert_fun = min(self.rmse)+ chi2(df).ppf(0.95)/df
-            print self.uncert_fun.ppf(0.975)
+            print(self.uncert_fun.ppf(0.975))
             indices = np.where(self.rmse < self.uncert_fun.ppf(0.975))[0]
         # Dump all data to a file
         try:
@@ -340,8 +389,8 @@ class RuptureGmf(object):
             self.max_strike = max(self.fitted_strikes)
             self.min_dip = min(self.fitted_dips)
             self.max_dip = max(self.fitted_dips)
-            print 'strikes',  np.unique(np.array(self.fitted_strikes))
-            print 'dips', np.unique(np.array(self.fitted_dips))
+            print('strikes',  np.unique(np.array(self.fitted_strikes)))
+            print('dips', np.unique(np.array(self.fitted_dips)))
 
     def parameter_pdf(self, fig_comment='', limits_filename=None):
         """Calculate a pdf for parameter values based on the uncertainty model
@@ -361,7 +410,7 @@ class RuptureGmf(object):
         plt.clf()
         fig = plt.figure(figsize=(16,8))#, tight_layout=True)
         gs = plt.GridSpec(2,4)
-        for key, value in self.parameter_dict.iteritems():
+        for key, value in self.parameter_dict.items():
             unique_vals = np.unique(self.parameter_space[value])
             pdf_sums = []
             bin=False
@@ -391,7 +440,7 @@ class RuptureGmf(object):
                         ind = np.where(self.parameter_space[value] >= edge)
                     pdf_sum = 0
                     if len(ind) < 1:
-                        print ind
+                        print(ind)
                     else:
                         for index in ind:
                             #                        print index
@@ -400,8 +449,8 @@ class RuptureGmf(object):
                                     np.exp((-1/2)*((self.sum_squares_list[index]/self.sigma**2)))
                                 pdf_sum += likelihood
                             except TypeError:
-                                print 'ind', ind
-                                print 'index',index
+                                print('ind', ind)
+                                print('index',index)
                     pdf_sums.append(pdf_sum)                              
                     unique_vals.append(edge)# + bin_width)
             else: # Use raw values
@@ -420,7 +469,7 @@ class RuptureGmf(object):
             # Normalise pdf sums
             pdf_sums = np.array(pdf_sums)
             pdf_sums = pdf_sums/np.sum(pdf_sums)
-            print 'pdf_sums', pdf_sums
+            print('pdf_sums', pdf_sums)
             self.parameter_pdf_sums[key] = pdf_sums
             self.parameter_pdf_values[key] = unique_vals
             
@@ -556,7 +605,7 @@ class RuptureGmf(object):
                         fontsize=10, dashes=[2, 2], color='0.5',
                         linewidth=0.5)
         max_val = max(pdf_sums)*1.1
-        print 'pdf_sums', pdf_sums
+        print('pdf_sums', pdf_sums)
         clevs = np.arange(0.0,max_val,(max_val/50))
         cmap = plt.get_cmap('gray_r')
         # Adjust resolution to avoid memory intense interpolations
@@ -576,7 +625,7 @@ class RuptureGmf(object):
             clippath =  poly.get_path()
             ax = plt.gca()
             patch = PathPatch(clippath, transform=ax.transData, facecolor='none', linewidth=0.4)
-            print 'Adding patch'
+            print('Adding patch')
             ax.add_patch(patch)
             for contour in cs.collections:
                 contour.set_clip_path(patch)
@@ -692,7 +741,7 @@ class RuptureGmf(object):
         except AttributeError:
             pass
         except ValueError:
-            print 'only one best fit locations, cannnot plot locations uncertainty'
+            print('only one best fit locations, cannnot plot locations uncertainty')
             pass
 #        CS2=plt.contourf(xx, yy, rmse_grid, 8,vmax=np.max(rmse_grid), vmin=np.min(rmse_grid))
         try:
@@ -700,7 +749,7 @@ class RuptureGmf(object):
             cbar = plt.colorbar(CS2)
             cbar.ax.set_ylabel('RMSE')
         except ValueError:
-            print 'only one best fit locations, cannnot plot locations uncertainty'
+            print('only one best fit locations, cannnot plot locations uncertainty')
             pass
 #        CS2=plt.contourf(xs, ys, rmse_subset, 8,vmax=max(self.rmse), vmin=min(self.rmse)) 
             # add patch to mask no data area
@@ -708,7 +757,7 @@ class RuptureGmf(object):
             ax = plt.gca()
             ax.add_patch(patch)
         except:
-            print 'No limits file'
+            print('No limits file')
             pass   
 
         try:
@@ -717,7 +766,7 @@ class RuptureGmf(object):
             figname = figname.replace('()', '')
             plt.savefig(figname)
         except ValueError:
-            print 'only one best fit locations, cannnot plot locations uncertainty'
+            print('only one best fit locations, cannnot plot locations uncertainty')
             pass
         
                                         
