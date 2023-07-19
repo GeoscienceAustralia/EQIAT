@@ -21,7 +21,7 @@ export PYTHONPATH=.::/home/547/jdg547/modelling/oq-engine/:${PYTHONPATH}
 export PYTHONPATH=.::/scratch/w84/jdg547/:${PYTHONPATH}
 
 #python estimate_magnitude.py -param_file data/1699slab_params.txt >& data/1699slab_params.txt.log
-#python estimate_magnitude.py -param_file data/1699megathrust_params.txt >& data/1699megathrust_params.txt.log 
+python3 estimate_magnitude.py -param_file data/1699megathrust_params.txt >& data/1699megathrust_params.txt.log 
 #python estimate_magnitude.py -param_file data/1867slab_params.txt >& data/1867slab_params.txt.log
 #python estimate_magnitude.py -param_file data/1867megathrust_params.txt >& data/1867megathrust_params.txt.log
 #python estimate_magnitude.py -param_file data/1867_params.txt >& data/1867_params.txt.log
@@ -30,7 +30,7 @@ export PYTHONPATH=.::/scratch/w84/jdg547/:${PYTHONPATH}
 #python estimate_magnitude.py -param_file data/1834_params.txt >& data/1834_params.txt.log
 #python estimate_magnitude.py -param_file data/1780megathrust_params.txt >& data/1780megathrust_params.txt.log
 #python estimate_magnitude.py -param_file data/1780_params.txt >& data/1780_params.txt.log
-python3 estimate_magnitude.py -param_file data/1852Banda_domain_ryan_mmi_params.txt >& data/1852Banda_domain_ryan_mmi_params.txt.log
+#python3 estimate_magnitude.py -param_file data/1852Banda_domain_ryan_mmi_params.txt >& data/1852Banda_domain_ryan_mmi_params.txt.log
 #python estimate_magnitude.py -param_file data/1852Banda_area_params.txt >& data/1852_area_params.txt.log
 #python estimate_magnitude.py -param_file data/1699megathrust_params.txt >& data/1699megathrust_params.txt.log
 #python estimate_magnitude.py -param_file data/1820_M8.4_params.txt >& data/1820_M8.4_params.txt.log
