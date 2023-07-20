@@ -198,6 +198,7 @@ class RuptureGmf(object):
             #        rupture_hypocenter = []
             ruptures = source.iter_ruptures()
             for rupture in ruptures:
+                rupture.seed = 1 # Hard coded, need to check this
 #                print('Calculating rupture', rupture.hypocenter)
                 computer = GmfComputer(rupture, self.sitecol,
                                        self.cmaker)
