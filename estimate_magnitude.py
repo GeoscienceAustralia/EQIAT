@@ -52,7 +52,7 @@ if event_name == '1852Banda_area' or event_name == '1852Banda_domain_ryan_mmi' o
         event_name == '1852Banda_exclude_15min_ryan_mmi':
     disc = 10
 else:
-    disc = 5
+    disc = 5 # Area source discretisation in km
 # Area or fault source model is used to define the parameter space to be searched
 if trt == 'Subduction Intraslab':
     gsim_list = [ZhaoEtAl2006SSlab(), AtkinsonBoore2003SSlab(), AtkinsonBoore2003SSlabCascadia(), AbrahamsonEtAl2015SSlab()]
@@ -63,6 +63,7 @@ if trt == 'Subduction Interface':
     gsim_list = [AbrahamsonEtAl2015SInter(), ZhaoEtAl2006SInter(), YoungsEtAl1997SInter(), AtkinsonBoore2003SInter()]
 if trt == 'Mixed':
     gsim_list = [AbrahamsonEtAl2015SInter(), BooreEtAl2014(), ChiouYoungs2014(), ZhaoEtAl2006SInter()]
+    
 def build_site_col(sites_data, site_model_file, filename=None):
     """Interpolate vs30 values to sites of interest
     """
@@ -95,6 +96,7 @@ elif site_file_pts.endswith('.xml'):
 else:
     msg = 'Invalid site model file %s ' % site_file_pts
     raise ValueError(msg)
+site_col_scenario._set('backarc', 0) # Hard code back-arc parameter to 'forearc' for now
 
 """
 class SiteModel(object):

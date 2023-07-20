@@ -216,7 +216,7 @@ class RuptureGmf(object):
         """
         if rup_sitecol is None:
             rup_sitecol = self.sitecol
-        computer = GmfComputer(rupture, self.sitecol,
+        computer = GmfComputer(rupture, rup_sitecol,
                                        self.cmaker)  
         mean_stds_all = computer.cmaker.get_mean_stds([computer.ctx])
         mean_stds = mean_stds_all[:, 0]
