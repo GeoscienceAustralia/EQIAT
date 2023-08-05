@@ -8,14 +8,15 @@ July 2018
 
 import sys, os
 import numpy as np
-from mpl_toolkits.basemap import Basemap, maskoceans
+#from mpl_toolkits.basemap import Basemap, maskoceans
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from matplotlib.patches import PathPatch, Polygon
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-import ogr, osr
+import ogr
+from osgeo import osr
 from shapely.wkt import loads
 from scipy import interpolate
 from scipy.stats import norm
@@ -52,12 +53,12 @@ event_name = ''
 #gmpe_weights = [0.3, 0.1, 0.1, 0.5]
 #mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
 #num_params = 8 # Force estimation only of uncertainties
-#data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',
-#              'outputs/1699megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',
-#              'outputs/1699megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-#gmpe_weights = [0.2, 0.3, 0.5]
-#mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
-#num_params = 4 # reduce by 3 as strike, dip and depth dependent on location on plane
+data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',
+              'outputs/1699megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',
+              'outputs/1699megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+gmpe_weights = [0.2, 0.3, 0.5]
+mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
+num_params = 4 # reduce by 3 as strike, dip and depth dependent on location on plane
 #data_files = ['outputs/1840_CampbellBozorgnia2014_parameter_llh.csv',
 #              'outputs/1840_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/1840_ChiouYoungs2014_parameter_llh.csv']
@@ -154,10 +155,10 @@ event_name = ''
 ##              'outputs/1852BandaDetachmentGA_ZhaoEtAl2006SInter_parameter_llh.csv',
 ##              'outputs/1852BandaDetachmentGA_AbrahamsonEtAl2015SInter_parameter_llh.csv']
 
-data_files = ['outputs/1852Banda_domain_ryan_mmi_BooreEtAl2014_parameter_llh.csv',
-              'outputs/1852Banda_domain_ryan_mmi_ChiouYoungs2014_parameter_llh.csv',
-              'outputs/1852Banda_domain_ryan_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
-              'outputs/1852Banda_domain_ryan_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
+#data_files = ['outputs/1852Banda_domain_ryan_mmi_BooreEtAl2014_parameter_llh.csv',
+#              'outputs/1852Banda_domain_ryan_mmi_ChiouYoungs2014_parameter_llh.csv',
+#              'outputs/1852Banda_domain_ryan_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
+#              'outputs/1852Banda_domain_ryan_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
 #data_files = ['outputs/1852Banda_domain_FH_mmi_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/1852Banda_domain_FH_mmi_ChiouYoungs2014_parameter_llh.csv',
 #              'outputs/1852Banda_domain_FH_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
@@ -182,11 +183,11 @@ data_files = ['outputs/1852Banda_domain_ryan_mmi_BooreEtAl2014_parameter_llh.csv
 #              'outputs/1852Banda_doughnut_ChiouYoungs2014_parameter_llh.csv',
 #              'outputs/1852Banda_doughnut_ZhaoEtAl2006SInter_parameter_llh.csv',
 #              'outputs/1852Banda_doughnut_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-gmpe_weights = [0.125, 0.125, 0.2, 0.55]  
+#gmpe_weights = [0.125, 0.125, 0.2, 0.55]  
 #gmpe_weights = [0.25, 0.75]
 #gmpe_weights = [1.0] 
 #event_name = '1852BandaDetachment' # deal with area source not using naming convention
-event_name = '1852Banda_domain_ryan_mmi'
+#event_name = '1852Banda_domain_ryan_mmi'
 mag_prior_type = 'GR' #'GR' #'uniform'
 mmi_obs_file = 'data/1852Banda_MMI_weight_rev.txt'
 num_params = 7
@@ -512,6 +513,10 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
 #            lby = [0, ymax]
 #            ubx = [self.max_dip, self.max_dip]
 #            uby = [0, ymax]
+        print('width', width, type(width))
+        print('unique_vals', unique_vals)
+        pdf_sums = pdf_sums.flatten()
+        print('pdf_sums', pdf_sums)
         if key == 'mag' or key == 'dip' or key == 'depth' :
             ax.bar(unique_vals, pdf_sums, width, align='center', color='0.5')
             ax.scatter(best_fit_x, best_fit_y, marker = '*', c='#696969',
@@ -610,6 +615,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         maxlat = max(parameter_pdf_values['latitude'])
     lat_0 = minlat + (maxlat-minlat)/2.
     lon_0 = minlon + (maxlon-minlon)/2.
+    """
     m = Basemap(projection='tmerc',
                 lat_0=lat_0, lon_0=lon_0,
                 llcrnrlon=minlon,
@@ -634,6 +640,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     m.drawmeridians(np.arange(0.,360.,gridspace), labels=[0,0,1,0],
                     fontsize=10, dashes=[2, 2], color='0.5',
                     linewidth=0.5)
+    """
     max_val = max(pdf_sums)*1.1
 #    print 'pdf_sums', pdf_sums
     clevs = np.arange(0.0,max_val,(max_val/50))
@@ -644,6 +651,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     xy = np.mgrid[minlon:maxlon:res,minlat:maxlat:res]
     xx,yy=np.meshgrid(xy[0,:,0], xy[1][0])
     griddata = interpolate.griddata((all_lons, all_lats), pdf_sums, (xx,yy), method='nearest') # nearest # linear
+    """
     # now plot filled contours of pdf                                                                                                              
     cs = m.contourf(xx, yy, griddata, clevs, cmap=cmap, vmax=max_val, vmin=0.0, latlon=True)
     for c in cs.collections: # Fix white space on contour levels for pdf images
@@ -747,11 +755,13 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     ticks = np.arange(0.0, max_val*1.1, loc_int)
     cbar = m.colorbar(cs, ticks=ticks, location='bottom')#orientation='horizontal')
     cbar.ax.set_xlabel('Probability')
+    """
     figname = '%s_all_parameter_pdf.png' % (fig_comment)
     figname = figname.replace('()', '')
     plt.tight_layout()
     plt.savefig(figname, dpi=600, format='png', bbox_inches='tight')
 #    plt.savefig(figname, dpi=600, format='pdf', bbox_inches='tight')
+    
 
 def gaussian_location_prior(shapefile, sigma, lons, lats):
     """Based on the location in shapefile and sigma, a Gaussian
