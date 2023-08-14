@@ -705,17 +705,12 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
             for label, x, y in zip(mmi_labels, mmi_obs[:,0], mmi_obs[:,1]):
 #                x,y =  m(x,y)
                 texts.append(plt.text(x,y,label, fontsize=10, transform=proj))
-#        if len(texts) > 0:
-#            print('Adjusting texts')
-#            adjust_text(texts, only_move='xy',
-#                        arrowprops=dict(arrowstyle="-",
-#                                        color='k', lw=0.5))
-        # Divide the axes to make the colorbar locatable to right of maps
-        #divider = make_axes_locatable(ax)
-        #cax = divider.append_axes("right", size="5%", pad=0.05)
-       # plt.colorbar(im, cax=cax)
-        #fig.add_axes(cax)
-#        cbar1 = m.colorbar(sp, ticks=sp_ticks, location='right', pad = 0.2)
+        if len(texts) > 0:
+            print('Adjusting texts')
+            print(texts)
+            adjust_text(texts, only_move = {"text": "xy"},# only_move='xy',
+                        arrowprops=dict(arrowstyle="-",
+                                        color='k', lw=0.5))
         print('set colour bar')
         cbar1 = fig.colorbar(sp, ticks=sp_ticks, location='right', pad = 0.2)
         cbar1.ax.set_ylabel('MMI')
@@ -726,7 +721,6 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
               edgecolor='k', s=100, zorder=10, transform=proj)#latlon=True)
     ax.scatter(best_fit_lon_posterior, best_fit_lat_posterior, marker = '*', facecolor='none',
                edgecolor='k', s=500, zorder=9, transform=proj), #latlon=True)
-    #m.text(0.05, 0.95, 'c)', transform=ax.transAxes, fontsize=14)
     print('Plot additions')
     if plot_additions is not None:
         try:
