@@ -28,32 +28,7 @@ megathrust=False # Flag for plotting special cases
 slab=False
 plot_additions = None # Variable for storing additional info to be added to plots
 event_name = ''
-#data_file = 'outputs/1847_ChiouYoungs2008_parameter_llh.csv' #'outputs/1847_BooreEtAl2014_parameter_llh.csv'
-#data_files = [data_file]
-#gmpe_weights = [1.]
-#mmi_obs_file = 'data/1847HMMI.txt'
-#data_files = ['outputs/1847_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/1847_CampbellBozorgnia2014_parameter_llh.csv',
-#              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
-#data_files = ['outputs/1847_ChiouYoungs2008_parameter_llh.csv',
-#              'outputs/1847_ChiouYoungs2014_parameter_llh.csv']
-#data_files = ['outputs/1780megathrust_inc_sq_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                 
-#              'outputs/1780megathrust_inc_sq_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                       
-#              'outputs/1780megathrust_inc_sq_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                 
-#data_files = ['outputs/1780_BooreEtAl2014_parameter_llh.csv',                                                                                             
-#              'outputs/1780_ChiouYoungs2014_parameter_llh.csv']                                                                                           
-#gmpe_weights = [0.5, 0.5]                                                                                                                          
-#mmi_obs_file = 'data/1780HMMI.txt' 
-#gmpe_weights = [0.2, 0.3, 0.5]
-#num_params = 4
-#mmi_obs_file = 'data/1780HMMI.txt'
-#data_files = ['outputs/1699slab_ZhaoEtAl2006SSlab_parameter_llh.csv',
-#              'outputs/1699slab_AtkinsonBoore2003SSlab_parameter_llh.csv',
-#              'outputs/1699slab_AtkinsonBoore2003SSlabCascadia_parameter_llh.csv',
-#              'outputs/1699slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']
-#gmpe_weights = [0.3, 0.1, 0.1, 0.5]
-#mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
-#num_params = 8 # Force estimation only of uncertainties
+
 data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv']#,
 #              'outputs/1699megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',
 #              'outputs/1699megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']
@@ -76,122 +51,14 @@ num_params = 4 # reduce by 3 as strike, dip and depth dependent on location on p
 #              'outputs/1867_ChiouYoungs2014_parameter_llh.csv',                                                          
 #              'outputs/1867_CampbellBozorgnia2014_parameter_llh.csv']                                                        
 #gmpe_weights = [0.5, 0.35, 0.15]                                                                                                 
-#mmi_obs_file = 'data/1867HMMI.txt' 
-#num_params=7
-#data_files = ['outputs/1867slab_ZhaoEtAl2006SSlab_parameter_llh.csv',                                                      
-#              'outputs/1867slab_AtkinsonBoore2003SSlab_parameter_llh.csv',                                             
-#              'outputs/1867slab_AtkinsonBoore2003SSlabCascadia_parameter_llh.csv',                               
-#              'outputs/1867slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']                                           
-#gmpe_weights = [0.3, 0.1, 0.1, 0.5]                                                                                    
-#mmi_obs_file = 'data/1867HMMI.txt'
-#num_params=7
-#data_files = ['outputs/1867megathrust_AtkinsonBoore2003SInter_parameter_llh.csv',                                                  
-#              'outputs/1867megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',                                                      
-#              'outputs/1867megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                
-#gmpe_weights = [0.2, 0.3, 0.5]                                                                                                    
-#mmi_obs_file = 'data/1867HMMI.txt'
-#num_params = 4
-#data_files = [#'outputs/1834_BooreAtkinson2008_parameter_llh.csv',
-#              'outputs/1834_BooreEtAl2014_parameter_llh.csv',
-              #'outputs/1834_ChiouYoungs2008_parameter_llh.csv',
-              #'outputs/1834_CampbellBozorgnia2008_parameter_llh.csv',
-#              'outputs/1834_ChiouYoungs2014_parameter_llh.csv',
-#              'outputs/1834_CampbellBozorgnia2014_parameter_llh.csv']
-#gmpe_weights = [0.5, 0.35, 0.15]
-#mmi_obs_file = 'data/1834HMMI.txt'
-#num_params = 7
-#data_files = ['outputs/1820_AtkinsonBoore2003SInter_parameter_llh.csv',                                                                
-#              'outputs/1820_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                  
-#              'outputs/1820_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                            
-#gmpe_weights = [0.2, 0.3, 0.5]                                                                                                  
-#mmi_obs_file = 'data/1820HMMI.txt' 
-#num_params=4 # Reduce as strike, dip and depth dependent on location on 2D plane
-#data_files = ['outputs/1818_AtkinsonBoore2003SInter_parameter_llh.csv',
-#              'outputs/1818_ZhaoEtAl2006SInter_parameter_llh.csv',
-#              'outputs/1818_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-#gmpe_weights = [0.2, 0.3, 0.5]
-#mmi_obs_file = 'data/1818HMMI.txt'
-#num_params=7 # Force to use estimated sigma 
-#data_files = ['outputs/1815_AtkinsonBoore2003SInter_parameter_llh.csv',
-#              'outputs/1815_ZhaoEtAl2006SInter_parameter_llh.csv',
-#              'outputs/1815_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-#gmpe_weights = [0.2, 0.3, 0.5]
-#mmi_obs_file = 'data/1815HMMI.txt'
-#num_params=4 
-#data_files = ['outputs/2006_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/2006_ChiouYoungs2014_parameter_llh.csv',
-#              'outputs/2006_CampbellBozorgnia2014_parameter_llh.csv']
-#gmpe_weights = [0.5, 0.35, 0.15]
-#mmi_obs_file = 'data/2006HMMI.txt'
-#data_files = ['outputs/2017slab_ZhaoEtAl2006SSlab_parameter_llh.csv',                                                  
-#              'outputs/2017slab_AtkinsonBoore2003SSlab_parameter_llh.csv',                                             
-#              'outputs/2017slab_AtkinsonBoore2003SSlabCascadia_parameter_llh.csv',                     
-#              'outputs/2017slab_AbrahamsonEtAl2015SSlab_parameter_llh.csv']    
-#gmpe_weights = [0.3, 0.1, 0.1, 0.5]
-#mmi_obs_file = 'data/2017HMMI.txt'
-#num_params = 7
+
 #plot_additions = {'mag': 6.5, # USGS data
 #                  'longitude': 108.174,
 #                  'latitude': -7.492,
 #                  'depth': 90.0}
 
-#data_files = ['outputs/2018_AtkinsonBoore2003SInter_parameter_llh.csv',
-#              'outputs/2018_ZhaoEtAl2006SInter_parameter_llh.csv',                                                                 
-#              'outputs/2018_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                                                
-#gmpe_weights = [0.2, 0.3, 0.5]   
-#mmi_obs_file = 'data/2018HMMI.txt'
-#num_params=4
-#plot_additions = {'mag': 6.9, # USGS data                                                                                                             
-#                  'longitude': 116.452,
-#                  'latitude': -8.287,
-#                  'depth': 34.0}                  
-#1852Banda_area_ChiouYoungs2014_parameter_llh.csv
 
-##data_files = ['outputs/1852BandaDetachmentGA_BooreEtAl2014_parameter_llh.csv',
-##              'outputs/1852BandaDetachmentGA_ChiouYoungs2014_parameter_llh.csv',                             
-#              'outputs/1852Banda_CampbellBozorgnia2014_parameter_llh.csv',
-#              'outputs_1852/1852Banda_AtkinsonBoore2003SInter_parameter_llh.csv',                                      
-#              'outputs/1852Banda_ZhaoEtAl2006SInter_parameter_llh.csv',                                             
-#              'outputs/1852Banda_area_AbrahamsonEtAl2015SInter_parameter_llh.csv',
-##              'outputs/1852BandaDetachmentGA_ZhaoEtAl2006SInter_parameter_llh.csv',
-##              'outputs/1852BandaDetachmentGA_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-
-#data_files = ['outputs/1852Banda_domain_ryan_mmi_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/1852Banda_domain_ryan_mmi_ChiouYoungs2014_parameter_llh.csv',
-#              'outputs/1852Banda_domain_ryan_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
-#              'outputs/1852Banda_domain_ryan_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-#data_files = ['outputs/1852Banda_domain_FH_mmi_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/1852Banda_domain_FH_mmi_ChiouYoungs2014_parameter_llh.csv',
-#              'outputs/1852Banda_domain_FH_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
-#              'outputs/1852Banda_domain_FH_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-#data_files = ['outputs/1852Banda_exclude_20min_FH_mmi_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/1852Banda_exclude_20min_FH_mmi_ChiouYoungs2014_parameter_llh.csv',
-#              'outputs/1852Banda_exclude_20min_FH_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
-#              'outputs/1852Banda_exclude_20min_FH_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-#data_files = ['outputs/1852Banda_exclude_20min_ryan_mmi_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/1852Banda_exclude_20min_ryan_mmi_ChiouYoungs2014_parameter_llh.csv',
-#              'outputs/1852Banda_exclude_20min_ryan_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
-#              'outputs/1852Banda_exclude_20min_ryan_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-#data_files = ['outputs/1852Banda_exclude_15min_FH_mmi_BooreEtAl2014_parameter_llh.csv',                                                                 
-#              'outputs/1852Banda_exclude_15min_FH_mmi_ChiouYoungs2014_parameter_llh.csv',                                                         
-#             'outputs/1852Banda_exclude_15min_FH_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',                                                            
-#              'outputs/1852Banda_exclude_15min_FH_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']                                                       
-#data_files = ['outputs/1852Banda_exclude_15min_ryan_mmi_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/1852Banda_exclude_15min_ryan_mmi_ChiouYoungs2014_parameter_llh.csv',
-#              'outputs/1852Banda_exclude_15min_ryan_mmi_ZhaoEtAl2006SInter_parameter_llh.csv',
-#              'outputs/1852Banda_exclude_15min_ryan_mmi_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-#data_files = ['outputs/1852Banda_doughnut_BooreEtAl2014_parameter_llh.csv',
-#              'outputs/1852Banda_doughnut_ChiouYoungs2014_parameter_llh.csv',
-#              'outputs/1852Banda_doughnut_ZhaoEtAl2006SInter_parameter_llh.csv',
-#              'outputs/1852Banda_doughnut_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-#gmpe_weights = [0.125, 0.125, 0.2, 0.55]  
-#gmpe_weights = [0.25, 0.75]
-#gmpe_weights = [1.0] 
-#event_name = '1852BandaDetachment' # deal with area source not using naming convention
-#event_name = '1852Banda_domain_ryan_mmi'
 mag_prior_type = 'GR' #'GR' #'uniform'
-#mmi_obs_file = 'data/1852Banda_MMI_weight_rev.txt'
-#num_params = 7
 set_sigma=True
 
 bbox_dict = {1699: '104/110/-10.5/-5',
@@ -573,7 +440,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     # Dump data for testing
     data_dump = np.vstack((all_lons, all_lats, pdf_sums)).T
     np.savetxt('data_dump.csv', data_dump, delimiter=',', header='lon,lat,pdf_sum')
-    # Get best fit value                                                                                                                   
+    # Get best fit value                                                                                                 
     index = np.argmin(parameter_space[6])
     best_fit_lon =  parameter_space[parameter_dict['longitude']][index]
     best_fit_lat =  parameter_space[parameter_dict['latitude']][index]
@@ -581,10 +448,10 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     best_fit_lon_posterior =  parameter_space[parameter_dict['longitude']][index_posterior]
     best_fit_lat_posterior =  parameter_space[parameter_dict['latitude']][index_posterior]
     proj=ccrs.PlateCarree()
-#    proj=ccrs.TransverseMercator()
     ax =  fig.add_subplot(gs[:,0:2], projection=proj)
-    bbox = bbox.split('/')
+#    bbox = bbox.split('/')
     if bbox is not None:
+        bbox = bbox.split('/')
         minlon = float(bbox[0])
         maxlon = float(bbox[1])
         minlat = float(bbox[2])
@@ -596,25 +463,12 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         maxlat = max(parameter_pdf_values['latitude'])
     lat_0 = minlat + (maxlat-minlat)/2.
     lon_0 = minlon + (maxlon-minlon)/2.
-    # First cut with cartopy
-    ax.coastlines(linewidth=0.5,color='k')#, crs=proj)
-    ax.add_feature(cf.BORDERS, color='0.2')#, crs=proj)
+
+    ax.coastlines(linewidth=0.5,color='k')
+    ax.add_feature(cf.BORDERS, color='0.2')
     print('minlon, maxlon, minlat, maxlat')
     print(minlon, maxlon, minlat, maxlat)
     ax.set_extent([minlon, maxlon, minlat, maxlat], crs=proj)
-    plt.savefig('test.png')
-    """
-    m = Basemap(projection='tmerc',
-                lat_0=lat_0, lon_0=lon_0,
-                llcrnrlon=minlon,
-                llcrnrlat=minlat,
-                urcrnrlon=maxlon,
-                urcrnrlat=maxlat,
-                resolution='i')
-    m.drawcoastlines(linewidth=0.5,color='k')
-    m.drawcountries(color='0.2')
-    m.drawstates(color='0.2')
-    """
     
     if maxlon-minlon < 2:
         gridspace = 0.5
@@ -630,11 +484,9 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     gl.ylabels_right = False
 
     max_val = max(pdf_sums)*1.1
-#    print 'pdf_sums', pdf_sums
     clevs = np.arange(0.0,max_val,(max_val/50))
-#    clevs = np.arange(0.0,max(pdf_sums),(max_val/50))
     cmap = plt.get_cmap('gray_r')
-    # Adjust resolution to avoid memory intense interpolations                                                                                     
+    # Adjust resolution to avoid memory intense interpolations                                                       
     res = max((maxlon-minlon)/50., (maxlat-minlat)/50.) #75 #30 #50
     xy = np.mgrid[minlon:maxlon:res,minlat:maxlat:res]
     xx,yy=np.meshgrid(xy[0,:,0], xy[1][0])
@@ -645,16 +497,15 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
 #    for c in cs.collections: # Fix white space on contour levels for pdf images
 #        c.set_edgecolor("face")
     print('Contours plotted')
-    # Mask areas outside of source model                                                                                                           
+    # Mask areas outside of source model                                                                                
     if limits_filename is not None:
         limits_data = np.genfromtxt(limits_filename, delimiter=',')
         limits_x = limits_data[:,0]
         limits_y = limits_data[:,1]
 #        limits_x, limits_y = ax.transAxes.transform(limits_x, limits_y)
-##        limits_x, limits_y = m(limits_x, limits_y) # Convert to map coordinates                                                                    
+##        limits_x, limits_y = m(limits_x, limits_y) # Convert to map coordinates                                     
         poly = Polygon(np.c_[limits_x, limits_y], closed=True)
         clippath =  poly.get_path()
-        #ax = plt.gca()
         patch = PathPatch(clippath, transform=ax.transData, facecolor='none', linewidth=0.4, linestyle='--')
         print('Adding patch')
         ax.add_patch(patch)
@@ -681,9 +532,6 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         for label, x, y in zip(loc_name, loc_lon, loc_lat):
             #x,y =  m(x,y)
             texts.append(plt.text(x,y,label, transform=proj, fontsize=14, color='0.4', zorder=20))
-#        adjust_text(texts, only_move='xy',
-#                    arrowprops=dict(arrowstyle="-",
-#                                    color='k', lw=0.5))
 
     # Now add historical points on top
     print('Adding historical points to plot')
@@ -701,14 +549,12 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         # Label only if there aren't too many to avoid plots being too busy
         print('plotted')
         if len(mmi_obs[:,2]) < 20:
- #           texts = []
             for label, x, y in zip(mmi_labels, mmi_obs[:,0], mmi_obs[:,1]):
-#                x,y =  m(x,y)
                 texts.append(plt.text(x,y,label, fontsize=10, transform=proj))
         if len(texts) > 0:
             print('Adjusting texts')
             print(texts)
-            adjust_text(texts, only_move = {"text": "xy"},# only_move='xy',
+            adjust_text(texts, only_move = {"text": "xy"},
                         arrowprops=dict(arrowstyle="-",
                                         color='k', lw=0.5))
         print('set colour bar')
@@ -720,7 +566,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     ax.scatter(best_fit_lon, best_fit_lat, marker = '*', facecolor='none', #c='#696969',
               edgecolor='k', s=100, zorder=10, transform=proj)#latlon=True)
     ax.scatter(best_fit_lon_posterior, best_fit_lat_posterior, marker = '*', facecolor='none',
-               edgecolor='k', s=500, zorder=9, transform=proj), #latlon=True)
+               edgecolor='k', s=500, zorder=9, transform=proj)
     print('Plot additions')
     if plot_additions is not None:
         try:
@@ -733,7 +579,6 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
                        edgecolor='k', s=200, zorder=10, transform=proj)#latlon=True)
     print('Add annotation')
     plt.annotate('a)', xy=(-0.01, 1.01),xycoords='axes fraction', fontsize=14)
-#    print 'max_val', max_val
     if max_val < 0.0000001:
         loc_int = 0.00000001
     elif max_val < 0.000001:
@@ -794,9 +639,7 @@ def gaussian_location_prior(shapefile, sigma, lons, lats):
     polygon = layer.GetFeature(0)#.GetGeometryRef()
 
     # Reproject point to shapefile's srs
- #   src = osr.SpatialReference()
     geo_ref = layer.GetSpatialRef()
-#    src.ImportFromEPSG(int(4326))
     pt_geo_ref = osr.SpatialReference()
     pt_geo_ref.ImportFromEPSG(4326)#
 
@@ -806,7 +649,6 @@ def gaussian_location_prior(shapefile, sigma, lons, lats):
         pt.Transform(transform)
         trans_pts.append(pt)
     # Assume both in WGS84 for now
-  #  trans_pts = pts
     shapely_poly = loads(polygon.GetGeometryRef().ExportToWkt())
     dist = polygon.GetGeometryRef().Distance(pt)
 
@@ -822,12 +664,10 @@ def gaussian_location_prior(shapefile, sigma, lons, lats):
             shapely_pt = loads(pt.ExportToWkt())
             dist = shapely_poly.exterior.distance(shapely_pt)
             distances.append(dist)
-#    print distances
     # calculate prior probabilities based on distance from shapefile boundary
     prior_probs = norm(0, sigma).pdf(distances)
-#    print prior_probs
     prior_probs_normalised = prior_probs/sum(prior_probs)
-#    print prior_probs_normalised, 'prior_probs_normalised'
+
     
     return prior_probs_normalised
 
@@ -860,10 +700,10 @@ if __name__ == "__main__":
     # Count number of data points
     event = data_files[0].split('/')[1][:4]    
     #hmmi_file  = 'data/' + event + 'HMMI.txt'
-    with open(mmi_obs_file) as f:                                                                                                                             
-        for obs_count, l in enumerate(f):                                                                                                                
-            pass                                                                                                                                          
-    num_obs = obs_count + 1                                                                                                                               
+    with open(mmi_obs_file) as f:                                                                                       
+        for obs_count, l in enumerate(f):                                                      
+            pass                                                                                                         
+    num_obs = obs_count + 1                                                                              
     print('num_obs', num_obs) 
     # Here we add a dimension to the parameter space that contains an index
     # for which gmpe was used
@@ -885,22 +725,18 @@ if __name__ == "__main__":
             tmp_ps = tmp_ps.T
             parameter_space = np.concatenate([parameter_space, tmp_ps])
     parameter_space = parameter_space.T
-    # Set up prior pdfs - set-up using basic assumptions and limits of data                                                   
-    # magnitude - based on Gutenberg-Richter assuming b value = 1, and that                                                        
-    # CDF from mmin to mmax = 1                                                                                                    
+    # Set up prior pdfs - set-up using basic assumptions and limits of data
+    # magnitude - based on Gutenberg-Richter assuming b value = 1, and that
+    # CDF from mmin to mmax = 1                                                                                         
     mags = np.unique(parameter_space[0])
     # Hack to avoid help get intcremental rate on max mag by adding a bin
     mags = list(mags)
-#    print mags
     mags.append(max(mags)+0.1)
-#    print mags
     mags = np.array(mags)
-#    print mags
     mmax = max(mags)
     mmin = min(mags)
     b=1.0
     a = np.log10(1./(np.power(10,-1*b*mmin) - np.power(10, -1*b*mmax)))
-#    print a
     # Now we need to generate an incremental pdf                                                                                    
     reversed_mag_priors = []
     reversed_mags = list(reversed(mags))
@@ -977,7 +813,6 @@ if __name__ == "__main__":
     if set_sigma == True:
         sigma = 0.2
     print('sigma', sigma)
-#    print 'updated sigma', sigma
     print(sum_squares, num_obs)
     print(sum_squares/sigma**2)
     likelihoods = np.power((1/(sigma*np.sqrt(2*np.pi))), num_obs) * \
@@ -988,13 +823,6 @@ if __name__ == "__main__":
     # dump likelihoods
     out_array =np.vstack((parameter_space[1],parameter_space[2],parameter_space[7]))
     np.savetxt('test_latlon_likelihoods.csv', out_array.T, delimiter=',', header='lon,lat,likelihoods')
-#    print priors
-#    priors = np.concatenate([priors, [gmpe_inds, gmpe_weights]], axis=1)
-#    print priors
-#priors[0][6] = gmpe_inds
-    #priors[1][6] = gmpe_weights
-#    print 'priors', priors
-#    print 'parameter_space', parameter_space
     posterior_probs = update_weights_gmpe(parameter_space, priors,
                                           lonlat_prior_array)
     parameter_space[7] = posterior_probs
