@@ -157,7 +157,8 @@ class RuptureGmf(object):
                           dict(truncation_level=0,
                                maximum_distance={'Active Shallow Crust': ((1,10000.0), (10, 10000.0)),
                                                  'Subduction Interface': ((1,10000.0), (10, 10000.0)),
-                                                 'Subduction Interslab': ((1,10000.0), (10, 10000.0))},
+                                                 'Subduction Intraslab': ((1,10000.0), (10, 10000.0)),
+                                                 'Non_cratonic': ((1,10000.0), (10, 10000.0))},
                                imtls={str(imt): [1] for imt in imts}))
     
     def calculate_from_pts(self):

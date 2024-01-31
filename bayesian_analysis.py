@@ -29,12 +29,21 @@ slab=False
 plot_additions = None # Variable for storing additional info to be added to plots
 event_name = ''
 
-data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv']#,
+#data_files = ['outputs/1896slab_ZhaoEtAl2006SSlab_parameter_llh.csv',
+#              'outputs/1896slab_AtkinsonBoore2003SSlab_parameter_llh.csv']
+#gmpe_weights = [0.5, 0.5]
+
+data_files = ['outputs/1918Qld_Allen2012_SS14_parameter_llh.csv']
+gmpe_weights = [1.0]
+mmi_obs_file = 'data/1918Qld.txt'
+num_params=7
+
+#data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv']#,
 #              'outputs/1699megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',
 #              'outputs/1699megathrust_AbrahamsonEtAl2015SInter_parameter_llh.csv']
-gmpe_weights = [1.0]#[0.2, 0.3, 0.5]
-mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
-num_params = 4 # reduce by 3 as strike, dip and depth dependent on location on plane
+#gmpe_weights = [1.0]#[0.2, 0.3, 0.5]
+#mmi_obs_file = 'data/1699HMMI_weighted_mod.txt'
+#num_params = 4 # reduce by 3 as strike, dip and depth dependent on location on plane
 #data_files = ['outputs/1840_CampbellBozorgnia2014_parameter_llh.csv',
 #              'outputs/1840_BooreEtAl2014_parameter_llh.csv',
 #              'outputs/1840_ChiouYoungs2014_parameter_llh.csv']
@@ -73,7 +82,9 @@ bbox_dict = {1699: '104/110/-10.5/-5',
              2006: '108.0/114/-9/-5',
              2017: '104/114/-10.5/-5',
              2018: '112/118/-10/-5',
-             1852: '126/134/-8.5/0'}
+             1852: '126/134/-8.5/0',
+             1896: '96/109/-7.5/0',
+             1918: '146/153/-30/-21'}
 
 print('sum(gmpe_weights)', sum(gmpe_weights))
 # Read observation data                                                                                                              
@@ -165,7 +176,8 @@ def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
 #    print prior_weights                                                                                         
     prior_weights = np.array(prior_weights).flatten()
 #    print 'priors', prior_weights, sum(prior_weights)
-#    print max(prior_weights), min(prior_weights)
+    print(max(prior_weights), min(prior_weights))
+    print(max(llhs), min(llhs))
     posterior_probs = llhs*prior_weights/sum(llhs*prior_weights)
 #    print 'updates', posterior_probs, max(posterior_probs), min(posterior_probs)
 #    print 'sum', sum(posterior_probs)
@@ -336,16 +348,23 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
 #                y_index = (np.abs(unique_vals - best_fit_x)).argmin()
 #            best_fit_y = pdf_sums[y_index]
 
-        # Now plot the results                                                                                                                     
+        # Now plot the results
+        print('unique_vals', unique_vals)
+        print('unique_vals[1]', unique_vals[1])
         try:
             width = unique_vals[1] - unique_vals[0] # Scale width by discretisation                                                                
         except IndexError: # if only one value                                                                                                     
             width = 1.0
+        print('width', width, type(width))
+        print('np.deg2rad(unique_vals)', np.deg2rad(unique_vals))
+        print('pdf_sums.shape', pdf_sums.shape)
+        pdf_sums = pdf_sums.flatten()
+        print('pdf_sums.shape', pdf_sums.shape)
         if key=='strike':
             # Plot as rose diagram                                                                                                                 
             ax = fig.add_subplot(gs[0,3],projection='polar')
             ax.bar(np.deg2rad(unique_vals), pdf_sums, width=np.deg2rad(width), bottom=0.0,
-                   align='center', color='0.5', edgecolor='k')
+                   align='center', color='0.5', edgecolor='k', linewidth=0.5)
             ax.scatter(np.deg2rad(best_fit_x), best_fit_y, marker = '*', c='#696969', edgecolor='k', s=100,zorder=10 )
             ax.scatter(np.deg2rad(best_fit_x_posterior), best_fit_y_posterior, marker = '*', c='w', edgecolor='k', s=500,zorder=9 )
             ax.set_theta_zero_location('N')

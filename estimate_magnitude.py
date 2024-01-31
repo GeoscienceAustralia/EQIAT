@@ -26,6 +26,8 @@ from openquake.hazardlib.gsim.youngs_1997 import YoungsEtAl1997SInter, YoungsEtA
 from openquake.hazardlib.gsim.atkinson_boore_2003 import AtkinsonBoore2003SSlab, \
     AtkinsonBoore2003SSlabCascadia, AtkinsonBoore2003SInter
 from openquake.hazardlib.gsim.zhao_2006 import ZhaoEtAl2006SSlab, ZhaoEtAl2006SInter
+from openquake.hazardlib.gsim.allen_2012 import Allen2012_SS14
+from openquake.hazardlib.gsim.somerville_2009 import SomervilleEtAl2009NonCratonic
 from openquake.hazardlib.geo.point import Point
 from openquake.hazardlib.geo.surface.simple_fault import SimpleFaultSurface
 from openquake.hazardlib.geo.surface.complex_fault import ComplexFaultSurface
@@ -52,7 +54,7 @@ if event_name == '1852Banda_area' or event_name == '1852Banda_domain_ryan_mmi' o
         event_name == '1852Banda_exclude_15min_ryan_mmi':
     disc = 10
 else:
-    disc = 5 # Area source discretisation in km
+    disc = 10 # Area source discretisation in km
 # Area or fault source model is used to define the parameter space to be searched
 if trt == 'Subduction Intraslab':
     gsim_list = [ZhaoEtAl2006SSlab(), AtkinsonBoore2003SSlab(), AtkinsonBoore2003SSlabCascadia(), AbrahamsonEtAl2015SSlab()]
@@ -63,12 +65,15 @@ if trt == 'Subduction Interface':
     gsim_list = [AbrahamsonEtAl2015SInter(), ZhaoEtAl2006SInter(), YoungsEtAl1997SInter(), AtkinsonBoore2003SInter()]
 if trt == 'Mixed':
     gsim_list = [AbrahamsonEtAl2015SInter(), BooreEtAl2014(), ChiouYoungs2014(), ZhaoEtAl2006SInter()]
+if trt == 'Non_cratonic':
+    gsim_list = [Allen2012_SS14(), SomervilleEtAl2009NonCratonic()]
     
 def build_site_col(sites_data, site_model_file, filename=None):
     """Interpolate vs30 values to sites of interest
     """
 #    sites_data = np.genfromtxt(site_file)
     site_points = []
+    print('sites_data', sites_data)
     for i in range(len(sites_data[:,0])):
         site_pt = Point(sites_data[i,0], sites_data[i,1])
         site_points.append(site_pt)
@@ -78,8 +83,10 @@ def build_site_col(sites_data, site_model_file, filename=None):
 # Background site class model
 #Using inferred vs30, z1.0 and z2.5 values                                                               
 #Build sites for observations
-sites_data = np.genfromtxt(site_file)
-sitecol = build_site_col(sites_data, site_model_file)
+print('site_file', site_file)
+sites_data = np.genfromtxt(site_file)#, delimiter=',', skip_header=1)
+print('sites_data', sites_data)
+sitecol = build_site_col(sites_data, site_model_file, filename=site_file_pts) #site_model_file)
 print('Sitecol', sitecol, type(sitecol))
 # Yield to list from generator
 ##def yield_sites():
