@@ -19,10 +19,12 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import ogr
 from osgeo import osr
 from shapely.wkt import loads
+from shapely.geometry import LineString, mapping
 from scipy import interpolate
 from scipy.stats import norm
 from adjustText import adjust_text # Small package to improve label locations                                                         
 from collections import OrderedDict                     
+import fiona
 
 megathrust=False # Flag for plotting special cases
 slab=False
@@ -32,7 +34,7 @@ event_name = ''
 #data_files = ['outputs/1896slab_ZhaoEtAl2006SSlab_parameter_llh.csv',
 #              'outputs/1896slab_AtkinsonBoore2003SSlab_parameter_llh.csv']
 #gmpe_weights = [0.5, 0.5]
-
+#data_files = ['outputs/1918Qld_SomervilleEtAl2009NonCratonic_parameter_llh.csv']
 data_files = ['outputs/1918Qld_Allen2012_SS14_parameter_llh.csv']
 gmpe_weights = [1.0]
 mmi_obs_file = 'data/1918Qld.txt'
@@ -84,7 +86,7 @@ bbox_dict = {1699: '104/110/-10.5/-5',
              2018: '112/118/-10/-5',
              1852: '126/134/-8.5/0',
              1896: '96/109/-7.5/0',
-             1918: '146/153/-30/-21'}
+             1918: '146/154/-30/-21'}
 
 print('sum(gmpe_weights)', sum(gmpe_weights))
 # Read observation data                                                                                                              
@@ -511,10 +513,35 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     xx,yy=np.meshgrid(xy[0,:,0], xy[1][0])
     griddata = interpolate.griddata((all_lons, all_lats), pdf_sums, (xx,yy), method='nearest') # nearest # linear
     # now plot filled contours of pdf
-#    cs = ax.contourf(xx, yy, griddata, transform=proj) # minimal version for testing
+    # Get percentiles:
+    # Try using normalisation
+    griddata_norm = (griddata-griddata.min())/(griddata.max() - griddata.min())
+    levels = [0.05, 0.25, 0.5, 0.75]
+    origin = 'lower'
+    csp = plt.contour(xx, yy, griddata_norm,levels = levels,
+              colors=('k',),
+              linewidths=(1,),
+              origin=origin)
+    
     cs = ax.contourf(xx, yy, griddata, clevs, cmap=cmap, vmax=max_val, vmin=0.0, transform=proj)#latlon=True)
-#    for c in cs.collections: # Fix white space on contour levels for pdf images
-#        c.set_edgecolor("face")
+    lines = []
+    # Get contours to LineStrings
+    for l,c in enumerate(csp.collections):
+        c_path = c.get_paths()[0]
+        verts = c_path.vertices
+        line = LineString([(j[0], j[1]) for j in zip(verts[:,0], verts[:,1])])
+        print(line)
+        lines.append(line)
+    # Write to shapefile
+    shapefile_name = '%s_location_contours.shp' % fig_comment
+    schema = {'geometry': 'LineString','properties': {'id': 'int'}}  # sets up parameter for shapefile
+    with fiona.open(shapefile_name, 'w', 'ESRI Shapefile', schema) as c:  # creates new file to be written to
+        for j in range(len(lines)):
+            l = (lines[j])   # creates variable
+            print(l)
+            print(type(l))
+            c.write({'geometry': mapping(l),'properties': {'id': j},})
+            
     print('Contours plotted')
     # Mask areas outside of source model                                                                                
     if limits_filename is not None:

@@ -10,7 +10,7 @@ import os, sys
 import numpy as np
 from time import localtime, strftime, gmtime
 import string
-import pypar
+from mpi4py import MPI
 from get_site_model import get_site_collection
 from openquake.hazardlib.geo.point import Point
 #from estimate_magnitude import build_site_col
@@ -33,14 +33,13 @@ def build_site_col(sites_data, site_model_file, filename=None):
 
 
 # Set up paralell
-proc = pypar.size()                # Number of processors as specified by mpirun                     
-myid = pypar.rank()                # Id of of this process (myid in [0, proc-1])                     
-node = pypar.get_processor_name()  # Host name on which current process is running                   
-print('I am proc %d of %d on node %s' % (myid, proc, node))
-#nruns = 320 # currently hard coded - need to improve this                                            
-t0 = pypar.time()
-
-
+comm = MPI.COMM_WORLD
+proc = comm.Get_size()               # Number of processors as specified by mpirun
+myid = comm.Get_rank()            # Id of of this process (myid in [0, proc-1])                                       
+if myid ==0:
+    t0 = MPI.Wtime()
+    print("Start time" + str(t0))
+    
 locations_file = 'data/jawa_bali_nt_sulawesi_sites_clean.csv'#jawa_sites.csv'
 sites_file = 'data/jawa_bali_nt_sulawesi_site_model.xml'#jawa_site_model.xml'
 outfile = 'data/jawa_bali_nt_sulawesi_site_model_full.xml'
@@ -66,7 +65,7 @@ for i in range(0, len(pt_list), 1):
         print('Building site model for run %s' % run)
         tmp_outfile = outfile[:-4] + '_' + str(run) + '.xml'
         build_site_col(pt_list[i], sites_file, filename=tmp_outfile)
-pypar.barrier()
+comm.Barrier()
 if myid == 0:
     outlines = []
     tmp_pt_source_filename_list = []
@@ -92,14 +91,13 @@ if myid == 0:
     f_out.writelines(outlines)
     f_out.write('  </siteModel>\n')
     f_out.write('</nrml>')
-    ss = int(pypar.time() - t0)
-    h = ss / 3600
-    m = (ss % 3600) / 60
+    ss = int(MPI.Wtime() - t0)
+    h = ss // 3600
+    m = (ss % 3600) // 60
     s = (ss % 3600) % 60
     print("--------------------------------------------------------")
     print('P0: Total time (%i seconds): %s:%s:%s (hh:mm:ss)' % (ss,
-                                                                string.zfill(h, 2),
-                                                                string.zfill(m, 2),
-                                                                string.zfill(s,2)))
+                                                                str(h).zfill(2),
+                                                                str(m).zfill(2),
+                                                                str(s).zfill(2)))
     print("--------------------------------------------------------")
-pypar.finalize()
