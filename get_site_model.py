@@ -13,6 +13,7 @@ from openquake.hazardlib import geo, site, imt
 from openquake.hazardlib.site import SiteCollection, Site
 #from openquake.risklib import valid
 from openquake.hazardlib import valid
+import numpy as np
 
 MAX_SITE_MODEL_DISTANCE = 5  # km, given by Graeme Weatherill
 
@@ -53,14 +54,19 @@ def get_site_model(site_model_file):
         an :class:`openquake.commonlib.oqvalidation.OqParam` instance
     """
 #    print(site_model_file)
-    for node in nrml.read(site_model_file).siteModel:
+    try:
+        for node in nrml.read(site_model_file).siteModel:
 #        print(node, type(node))
 #        print(node.attrib)
 #        yield valid.site_param(**node.attrib) # Orginal
 #        new = valid.site_param(node.attrib)
 #        print(new)
 #        print(valid.site_param(node.attrib))
-        yield valid.site_param(node.attrib)
+            yield valid.site_param(node.attrib)
+    except AttributeError:
+        for node in nrml.read(site_model_file):
+            yield valid.site_param(node.attrib)
+            
 
 def read_site_col(site_model_file):
     """Directly read a site colection from nrml
@@ -80,6 +86,19 @@ def read_site_col(site_model_file):
             vs30measured = param['vs30measured']))#, param['backarc']))
     return site.SiteCollection(sitecol)
 
+def read_site_col_csv(site_model_file):
+    """Read site collection from a csv file"""
+    sitecol = []
+    data = np.genfromtxt(site_model_file, delimiter=',', skip_header=1)
+    for i in range(len(data)):
+        pt = geo.Point(float(data[i,0]), float(data[i,1]))
+        sitecol.append(site.Site(pt, float(data[i,2]),
+                                 float(data[i,3]), float(data[i,4]),
+                                 vs30measured = float(data[i,5]),
+                                 backarc = float(data[i,6])))
+    return site.SiteCollection(sitecol)                                 
+                                           
+        
 def yield_site_mod(site_mod):
     yield from site_mod
 
@@ -102,8 +121,19 @@ def get_site_collection(site_model_file, sites, site_model_params=None,
     
     if site_model_params is None:
         # read the parameters directly from their file
-        site_mod_read = read_site_col(site_model_file)
-        print(site_mod_read) # Type is <siteCollection>
+        if site_model_file.endswith('.csv'):
+            site_mod_read = read_site_col_csv(site_model_file)
+            print('filename', filename)
+#            if filename is not None:
+#                name = filename.split('/')[-1][:-4]
+#                site_nodes = list(map(obj_to_node, site_mod_read))#sorted(sitecol)))   
+#                site_model = Node("siteModel", nodes=site_nodes)
+##                print(site_model)
+#               with open(filename, 'wb') as f:
+#                    nrml.write(site_model, f, '%s', xmlns = NAMESPACE)
+#            return site_mod_read
+        else:
+            site_mod_read = read_site_col(site_model_file)
         #### Try associate function
 ##        target_sites = SiteCollection(sites)
 ##        print('target_sites', target_sites)
@@ -119,7 +149,7 @@ def get_site_collection(site_model_file, sites, site_model_params=None,
 #        print(site_mod)
         site_model_params = geo.utils._GeographicObjects(
             site_mod_read)
-        print(site_model_params)
+#        print(site_model_params)
 #        site_model_params = geo.utils._GeographicObjects(
 #            site_mod)
 #    site_model_params = site_mod_read #Test!
@@ -131,6 +161,7 @@ def get_site_collection(site_model_file, sites, site_model_params=None,
         # we should change the geodetic speedups instead
         param, dist = site_model_params.\
                       get_closest(float(pt.longitude), float(pt.latitude))
+        print('param',param)
         if dist >= MAX_SITE_MODEL_DISTANCE:
             #logging.warn('The site parameter associated to %s came from a '
             #             'distance of %d km!' % (pt, dist))
@@ -140,9 +171,12 @@ def get_site_collection(site_model_file, sites, site_model_params=None,
 #            site.Site(pt, param.vs30, param.measured,
 #                      param.z1pt0, param.z2pt5, param.backarc))
 #        print(param)
-        sitecol.append(                                                                                                                                              
-            site.Site(pt, param[4],                                                                                                                        
-                      param[6], param[7], backarc = 0)) ## FIXME -currentl backarc is hardcoded 
+        sitecol.append(                                                                                                                 
+            site.Site(pt, param[4],                                                                                                       
+                      param[6], param[7], vs30measured=1, backarc = 0)) ## FIXME -currentl backarc is hardcoded
+#        sitecol.append(
+#            site.Site(pt, param[5],
+#                      param[7], param[8], vs30measured=1, backarc=0))
     if filename is not None:
         name = filename.split('/')[-1][:-4]
         site_nodes = list(map(obj_to_node, sitecol))#sorted(sitecol)))

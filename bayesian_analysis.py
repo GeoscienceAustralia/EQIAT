@@ -543,6 +543,10 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
             c.write({'geometry': mapping(l),'properties': {'id': j},})
             
     print('Contours plotted')
+
+    #Dump data to file
+#    loc_data = np.array(xx,yy,griddata)
+#    np.savetxt(loc_data, 
     # Mask areas outside of source model                                                                                
     if limits_filename is not None:
         limits_data = np.genfromtxt(limits_filename, delimiter=',')
