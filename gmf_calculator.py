@@ -155,7 +155,7 @@ class RuptureGmf(object):
         # Need to add this in somehow
         self.cmaker = ContextMaker(trt, [gsim],
                           dict(truncation_level=0,
-                               maximum_distance={'Active Shallow Crust': ((1,10000.0), (10, 10000.0)),
+                               maximum_distance={'Active': ((1,10000.0), (10, 10000.0)),
                                                  'Subduction Interface': ((1,10000.0), (10, 10000.0)),
                                                  'Subduction Intraslab': ((1,10000.0), (10, 10000.0)),
                                                  'Non_cratonic': ((1,10000.0), (10, 10000.0))},
