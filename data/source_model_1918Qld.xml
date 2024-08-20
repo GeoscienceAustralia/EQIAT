@@ -19,7 +19,7 @@
                     </gml:exterior>
                 </gml:Polygon>
                 <upperSeismoDepth>0.0</upperSeismoDepth>
-                <lowerSeismoDepth>10.0</lowerSeismoDepth>
+                <lowerSeismoDepth>15.0</lowerSeismoDepth>
             </areaGeometry>
             <magScaleRel>Leonard2014_SCR</magScaleRel>
             <ruptAspectRatio>1.0</ruptAspectRatio>
@@ -99,10 +99,9 @@
 		<nodalPlane probability="0.29" strike="345.0" dip="60.0" rake="-90.0" />
             </nodalPlaneDist>
             <hypoDepthDist>
-		<hypoDepth probability="0.25" depth="2.5" />
-		<hypoDepth probability="0.25" depth="5.0" />
-		<hypoDepth probability="0.25" depth="7.5" />
-		<hypoDepth probability="0.25" depth="10.0" />
+		<hypoDepth probability="0.33" depth="5.0" />
+		<hypoDepth probability="0.34" depth="10.0" />
+		<hypoDepth probability="0.33" depth="15.0" />
             </hypoDepthDist>
         </areaSource>       
     </sourceModel>

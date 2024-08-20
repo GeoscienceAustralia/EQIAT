@@ -1,0 +1,7 @@
+event_name,1918Qld
+area_source_file,data/source_model_1918Qld.xml
+trt,Non_cratonic
+site_model_file,data/1918_site_classes_asscm_sitefile.csv
+site_file,data/1918Qld.txt
+site_file_pts,data/QLD_site_model.xml
+limits_filename,data/source_model_1918Qld.xml.limits.txt
