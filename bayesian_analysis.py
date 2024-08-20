@@ -38,7 +38,8 @@ event_name = ''
 data_files = ['outputs/1918Qld_Allen2012_SS14_parameter_llh.csv']
 gmpe_weights = [1.0]
 mmi_obs_file = 'data/1918Qld.txt'
-num_params=7
+num_params=6
+special_bvalue = 1.237
 
 #data_files = ['outputs/1699megathrust_AtkinsonBoore2003SInter_parameter_llh.csv']#,
 #              'outputs/1699megathrust_ZhaoEtAl2006SInter_parameter_llh.csv',
@@ -514,14 +515,29 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     griddata = interpolate.griddata((all_lons, all_lats), pdf_sums, (xx,yy), method='nearest') # nearest # linear
     # now plot filled contours of pdf
     # Get percentiles:
-    # Try using normalisation
-    griddata_norm = (griddata-griddata.min())/(griddata.max() - griddata.min())
-    levels = [0.05, 0.25, 0.5, 0.75]
+    n = 1000
+    griddata_norm = griddata/griddata.sum()
+    t = np.linspace(0, griddata_norm.max(), n)
+    integral = ((griddata_norm >= t[:, None, None]) * griddata_norm).sum(axis=(1,2))
+    f = interpolate.interp1d(integral, t)
+    t_contours = f(np.array([0.95, 0.75, 0.5, 0.25]))
+    print(t_contours)
     origin = 'lower'
-    csp = plt.contour(xx, yy, griddata_norm,levels = levels,
-              colors=('k',),
-              linewidths=(1,),
-              origin=origin)
+    csp = plt.contour(xx,yy,griddata_norm, levels=t_contours,
+                      colors=('k',),
+                      linewidths=(1,),
+                      origin=origin)
+    # Try using normalisation
+#    griddata_norm = (griddata-griddata.min())/(griddata.max() - griddata.min())
+#    griddata_flat = griddata.flatten()
+#    percentiles = [5., 25., 50., 75.]
+#    levels = np.percentile(griddata_flat, percentiles)
+#    print('levels', levels)
+#    origin = 'lower'
+#    csp = plt.contour(xx, yy, griddata,levels = levels,
+#              colors=('k',),
+#              linewidths=(1,),
+#              origin=origin)
     
     cs = ax.contourf(xx, yy, griddata, clevs, cmap=cmap, vmax=max_val, vmin=0.0, transform=proj)#latlon=True)
     lines = []
@@ -760,7 +776,7 @@ if __name__ == "__main__":
     for i, filename in enumerate(data_files):
         gmpe_inds.append(i)
         if i == 0:
-            parameter_space = np.genfromtxt(filename, delimiter=',', skip_header=1)
+            parameter_space = np.genfromtxt(filename, delimiter=',', skip_header=1, invalid_raise=False)
             parameter_space = parameter_space.T
             gmm_ids = np.array([np.ones(len(parameter_space[7]))*i])
 #            print parameter_space
@@ -768,7 +784,7 @@ if __name__ == "__main__":
             parameter_space = np.concatenate([parameter_space, gmm_ids])
             parameter_space = parameter_space.T
         else:
-            tmp_ps = np.genfromtxt(filename, delimiter=',', skip_header=1)
+            tmp_ps = np.genfromtxt(filename, delimiter=',', skip_header=1, invalid_raise=False)
             tmp_ps = tmp_ps.T
             gmm_ids = np.array([np.ones(len(tmp_ps[7]))*i])
             tmp_ps = np.concatenate([tmp_ps, gmm_ids])
@@ -785,7 +801,11 @@ if __name__ == "__main__":
     mags = np.array(mags)
     mmax = max(mags)
     mmin = min(mags)
-    b=1.0
+    if special_bvalue in globals():
+        b = special_bvalue
+        print('Using b-value of %.3f' % b)
+    else:
+        b=1.0
     a = np.log10(1./(np.power(10,-1*b*mmin) - np.power(10, -1*b*mmax)))
     # Now we need to generate an incremental pdf                                                                                    
     reversed_mag_priors = []
