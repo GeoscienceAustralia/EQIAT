@@ -147,9 +147,10 @@ def prep_sites(
     if z2pt5:
         req_site_params.add('z2pt5')
     fields.append('z2pt5')
-    if vs30measured:
-        req_site_params.add('vs30measured')
+#    if vs30measured:
+    req_site_params.add('vs30measured')
     fields.append('vs30measured')
+    req_site_params.add('backarc')
     fields.append('backarc')    
     with performance.Monitor(measuremem=True) as mon:
         if exposure_xml:
@@ -250,7 +251,7 @@ if __name__ == "__main__":
     prep_sites(['data/asscm_wii_vs30.400.csv'], sites_csv=[target_sites_csv],
                z1pt0=True, z2pt5=True, backarc=False,
                output = output_filename)
-  #  os.remove(target_sites_csv)
+    os.remove(target_sites_csv)
 #main.vs30_csv = dict(help='files with lon,lat,vs30 and no header', nargs='+')
 #main.z1pt0 = dict(help='build the z1pt0', abbrev='-1')
 #main.z2pt5 = dict(help='build the z2pt5', abbrev='-2')
