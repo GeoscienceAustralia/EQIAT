@@ -171,12 +171,12 @@ def get_site_collection(site_model_file, sites, site_model_params=None,
 #            site.Site(pt, param.vs30, param.measured,
 #                      param.z1pt0, param.z2pt5, param.backarc))
 #        print(param)
-        sitecol.append(                                                                                                                 
-            site.Site(pt, param[4],                                                                                                       
-                      param[6], param[7], vs30measured=1, backarc = 0)) ## FIXME -currentl backarc is hardcoded
-#        sitecol.append(
-#            site.Site(pt, param[5],
-#                      param[7], param[8], vs30measured=1, backarc=0))
+#        sitecol.append(                                                                                                                 
+#            site.Site(pt, param[4],                                                                                                       
+#                      param[6], param[7], vs30measured=1, backarc = 0)) ## FIXME -currentl backarc is hardcoded
+        sitecol.append(
+            site.Site(pt, param[5],
+                      param[7], param[8], vs30measured=1, backarc=0))
     if filename is not None:
         name = filename.split('/')[-1][:-4]
         site_nodes = list(map(obj_to_node, sitecol))#sorted(sitecol)))
