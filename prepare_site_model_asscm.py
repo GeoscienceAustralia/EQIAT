@@ -1,28 +1,16 @@
 # -*- coding: utf-8 -*-
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
-#
-# Copyright (C) 2018-2022 GEM Foundation
-#
-# OpenQuake is free software: you can redistribute it and/or modify it
-# under the terms of the GNU Affero General Public License as published
-# by the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# OpenQuake is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with OpenQuake.  If not, see <http://www.gnu.org/licenses/>.
+
+# Modifed from openquake prepare_site_model.py
+#Jonathan Griffin, Geoscience Australia
+
 import os
-#import gzip
 import logging
 import numpy
 from openquake.baselib import performance, writers, hdf5
 from openquake.hazardlib import site, valid
 from openquake.hazardlib.geo.utils import assoc
-#from openquake.risklib.asset import Exposure
+
 from openquake.commonlib import datastore
 
 SQRT2 = 1.414
@@ -246,18 +234,10 @@ if __name__ == "__main__":
     # First need to prep the target sites
     target_sites_filename = '/home/547/jdg547/modelling/Australia-Magnitudes-Historical/events/1869_gippsland.txt'
     target_sites_csv = prep_target_sites(target_sites_filename)
-    output_filename = target_sites_csv.rstrip('.csv') + '_prepared.csv'
+    output_filename = target_sites_csv.rstrip('.csv').replace('events', 'site_files') + '_prepared.csv'
     print(target_sites_csv)
     prep_sites(['data/asscm_wii_vs30.400.csv'], sites_csv=[target_sites_csv],
                z1pt0=True, z2pt5=True, backarc=False,
                output = output_filename)
     os.remove(target_sites_csv)
-#main.vs30_csv = dict(help='files with lon,lat,vs30 and no header', nargs='+')
-#main.z1pt0 = dict(help='build the z1pt0', abbrev='-1')
-#main.z2pt5 = dict(help='build the z2pt5', abbrev='-2')
-#main.vs30measured = dict(help='build the vs30measured', abbrev='-3')
-#main.exposure_xml = dict(help='exposure(s) in XML format', nargs='*')
-#main.sites_csv = dict(help='sites in CSV format (filenames)', nargs='*')
-#main.grid_spacing = 'grid spacing in km (the default 0 means no grid)'
-#main.assoc_distance = 'sites over this distance are discarded'
-#main.output = 'output file'
+
