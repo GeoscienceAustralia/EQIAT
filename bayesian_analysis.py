@@ -31,13 +31,18 @@ slab=False
 plot_additions = None # Variable for storing additional info to be added to plots
 event_name = ''
 
-#data_files = ['outputs/1896slab_ZhaoEtAl2006SSlab_parameter_llh.csv',
-#              'outputs/1896slab_AtkinsonBoore2003SSlab_parameter_llh.csv']
+
 #gmpe_weights = [0.5, 0.5]
 #data_files = ['outputs/1918Qld_SomervilleEtAl2009NonCratonic_parameter_llh.csv']
-data_files = ['outputs/1918Qld_Allen2012_SS14_parameter_llh.csv']
+output_filepath = '/g/data/n74/magpie/2015_eidsvold'
+input_filepath = '../Australia-Magnitudes-Historical/events/2015_eidsvold/'
+filenames = ['2015_eidsvold_Allen2012_SS14_parameter_llh.csv']
+data_files = []
+for filename in filenames:
+    data_files.append(os.path.join(output_filepath, filename))
 gmpe_weights = [1.0]
-mmi_obs_file = 'data/1918Qld.txt'
+#mmi_obs_file = 'data/1918Qld.txt'
+mmi_obs_file = '../Australia-Magnitudes-Historical/events/2015_eidsvold/2015_eidsvold.txt'                    
 num_params=6
 special_bvalue = 1.237
 
@@ -73,20 +78,20 @@ special_bvalue = 1.237
 mag_prior_type = 'GR' #'GR' #'uniform'
 set_sigma=True
 
-bbox_dict = {1699: '104/110/-10.5/-5',
-             1780: '104/113/-9/-5',
-             1834: '105/110/-8/-5',
-             1840: '108.0/114/-9/-5',
-             1847: '105/110/-9/-5',
-             1867: '105.7/116/-12/-3',
-             1815: '112/120/-10/-5',
-             1818: '112/121/-10/-5',
-             1820: '113/124/-10/-4',
-             2006: '108.0/114/-9/-5',
-             2017: '104/114/-10.5/-5',
-             2018: '112/118/-10/-5',
-             1852: '126/134/-8.5/0',
-             1896: '96/109/-7.5/0',
+bbox_dict = {#1699: '104/110/-10.5/-5',
+             #1780: '104/113/-9/-5',
+             #1834: '105/110/-8/-5',
+             #1840: '108.0/114/-9/-5',
+             #1847: '105/110/-9/-5',
+             #1867: '105.7/116/-12/-3',
+             #1815: '112/120/-10/-5',
+             #1818: '112/121/-10/-5',
+             #1820: '113/124/-10/-4',
+             #2006: '108.0/114/-9/-5',
+             #2017: '104/114/-10.5/-5',
+             #2018: '112/118/-10/-5',
+             #1852: '126/134/-8.5/0',
+             #1896: '96/109/-7.5/0',
              1918: '146/154/-30/-21'}
 
 print('sum(gmpe_weights)', sum(gmpe_weights))
@@ -742,7 +747,7 @@ if __name__ == "__main__":
         os.makedirs('figures')
 
     # Combine for different GMPEs
-    year = data_files[0].split('/')[1][:4]
+    year = data_files[0].split('/')[-1][:4]
     year = int(year)
     print('year', year)
     if event_name == '1852Banda_area' or event_name == '1852BandaDetachment' \
@@ -752,10 +757,10 @@ if __name__ == "__main__":
             or event_name =='1852Banda_exclude_15min_FH_mmi':
         pass
     else:
-        event_name = data_files[0].split('/')[1].split('_')[0]
+        event_name = data_files[0].split('/')[-1].split('_')[0] + '_' + data_files[0].split('/')[-1].split('_')[1]
     fig_comment = 'figures/' + event_name + '_all_gmpes_mag_pr_' + mag_prior_type
     # Get limits_filename from params.txt
-    param_filename = 'data/' + event_name + '_params.txt'
+    param_filename = os.path.join(input_filepath, (event_name + '_params.txt'))
     f_in = open(param_filename)
     limits_filename = None
     for line in f_in.readlines():
@@ -764,7 +769,7 @@ if __name__ == "__main__":
             limits_filename = row[1]
     gmpe_inds = []
     # Count number of data points
-    event = data_files[0].split('/')[1][:4]    
+#    event = data_files[0].split('/')[1][:4]    
     #hmmi_file  = 'data/' + event + 'HMMI.txt'
     with open(mmi_obs_file) as f:                                                                                       
         for obs_count, l in enumerate(f):                                                      
@@ -913,7 +918,10 @@ if __name__ == "__main__":
     # Dump some results for spatial location
     out_array =np.vstack((parameter_space[1],parameter_space[2],parameter_space[7]))
     np.savetxt('test_latlon_posterior_probs.csv', out_array.T, delimiter=',', header='lon,lat,posterior_prob')
-    bbox = bbox_dict[year]
+    try:
+        bbox = bbox_dict[year]
+    except KeyError:
+        bbox = None
     localities_file = 'data/localities%s.txt' % year 
     parameter_pdf(parameter_space, fig_comment = fig_comment, mmi_obs = mmi_obs,
                   limits_filename = limits_filename, bbox=bbox, localities_file = localities_file,
