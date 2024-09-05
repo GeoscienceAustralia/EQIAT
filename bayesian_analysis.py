@@ -37,10 +37,11 @@ event_name = ''
 output_filepath = '/g/data/n74/magpie/2015_eidsvold'
 input_filepath = '../Australia-Magnitudes-Historical/events/2015_eidsvold/'
 filenames = ['2015_eidsvold_Allen2012_SS14_parameter_llh.csv']
+gmpe_weights = [1.0]
 data_files = []
 for filename in filenames:
     data_files.append(os.path.join(output_filepath, filename))
-gmpe_weights = [1.0]
+
 #mmi_obs_file = 'data/1918Qld.txt'
 mmi_obs_file = '../Australia-Magnitudes-Historical/events/2015_eidsvold/2015_eidsvold.txt'                    
 num_params=6
@@ -142,7 +143,6 @@ def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
     print(max(llhs), min(llhs))
     parameter_space = parameter_space.T
     for combo in parameter_space:
-#        print combo                                                                                             
         i0 = np.where(prior_pdfs[0][0]==combo[0])
         i1 = np.where(prior_pdfs[0][1]==combo[1])
         i2 = np.where(prior_pdfs[0][2]==combo[2])
@@ -150,12 +150,9 @@ def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
         i4 = np.where(prior_pdfs[0][4]==combo[4])
         i5 = np.where(prior_pdfs[0][5]==combo[5])
         i6 = np.where(prior_pdfs[0][6]==combo[8])
-#        print 'i0', i0
- #       print 'i6', i6
         if lonlat_prior_array:
             print('lonlat_prior_array is true')
             intersection = np.intersect1d(i1,i2)
-            #print 'intersection', intersection
             i1 = intersection[0]
             i2 = i1
         try:
@@ -181,14 +178,10 @@ def update_weights_gmpe(parameter_space, prior_pdfs, lonlat_prior_array=False):
             print('Error in indexing of priors, check priors are defined for full parameter space')
             sys.exit()
         prior_weights.append(prior_weight)
-#    print prior_weights                                                                                         
     prior_weights = np.array(prior_weights).flatten()
-#    print 'priors', prior_weights, sum(prior_weights)
     print(max(prior_weights), min(prior_weights))
     print(max(llhs), min(llhs))
     posterior_probs = llhs*prior_weights/sum(llhs*prior_weights)
-#    print 'updates', posterior_probs, max(posterior_probs), min(posterior_probs)
-#    print 'sum', sum(posterior_probs)
     return posterior_probs
 
 def update_weights(parameter_space, prior_pdfs):
@@ -196,11 +189,8 @@ def update_weights(parameter_space, prior_pdfs):
     """
     prior_weights = []
     llhs = parameter_space[7]
-#    print llhs, sum(llhs)
-#    print max(llhs), min(llhs)
     parameter_space = parameter_space.T
     for combo in parameter_space:
-#        print combo
         i0 = np.where(prior_pdfs[0][0]==combo[0])
         i1 = np.where(prior_pdfs[0][1]==combo[1])
         i2 = np.where(prior_pdfs[0][2]==combo[2])
@@ -212,13 +202,8 @@ def update_weights(parameter_space, prior_pdfs):
             prior_pdfs[1][4][i4] * prior_pdfs[1][5][i5]
 
         prior_weights.append(prior_weight)
-#    print prior_weights
     prior_weights = np.array(prior_weights).flatten()
-#    print 'priors', prior_weights, sum(prior_weights)
-#    print max(prior_weights), min(prior_weights)
     posterior_probs = llhs*prior_weights/sum(llhs*prior_weights)#prior_weights)#denominator
-#    print 'updates', posterior_probs, max(posterior_probs), min(posterior_probs)
-#    print 'sum', sum(posterior_probs)
     return posterior_probs
 
 def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename=None,
@@ -298,8 +283,6 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
                     #pdf_sum = np.sum(self.uncert_fun.pdf(self.rmse[ind]))                                                                             
                 pdf_sums.append(pdf_sum)
         pdf_sums = np.array(pdf_sums)
-#        print 'pdf_sums', pdf_sums
-#        print 'sum', sum(pdf_sums)
         parameter_pdf_sums[key] = pdf_sums
         parameter_pdf_values[key] = unique_vals
 
@@ -383,7 +366,6 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
                 r_int = 0.02
             else:
                 r_int = 0.2
-#            print r_int, max(pdf_sums)
             ax.set_rgrids(np.arange(r_int, max(pdf_sums)+0.01, r_int), angle= np.deg2rad(7.5))#, weight= 'black')
             ax.set_xlabel(xlabel_dict[key])
             ax.text(-0.07, 1.02, 'c)', transform=ax.transAxes, fontsize=14)
@@ -484,10 +466,10 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         minlat = float(bbox[2])
         maxlat = float(bbox[3])
     else:
-        minlon = min(parameter_pdf_values['longitude'])
-        maxlon = max(parameter_pdf_values['longitude'])
-        minlat = min(parameter_pdf_values['latitude'])
-        maxlat = max(parameter_pdf_values['latitude'])
+        minlon = min(parameter_space[parameter_dict['longitude']])#parameter_pdf_values['longitude'])
+        maxlon = max(parameter_space[parameter_dict['longitude']])#parameter_pdf_values['longitude'])
+        minlat = min(parameter_space[parameter_dict['latitude']])#parameter_pdf_values['latitude'])
+        maxlat = max(parameter_space[parameter_dict['latitude']])#parameter_pdf_values['latitude'])
     lat_0 = minlat + (maxlat-minlat)/2.
     lon_0 = minlon + (maxlon-minlon)/2.
 
@@ -526,24 +508,11 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     integral = ((griddata_norm >= t[:, None, None]) * griddata_norm).sum(axis=(1,2))
     f = interpolate.interp1d(integral, t)
     t_contours = f(np.array([0.95, 0.75, 0.5, 0.25]))
-    print(t_contours)
     origin = 'lower'
     csp = plt.contour(xx,yy,griddata_norm, levels=t_contours,
                       colors=('k',),
                       linewidths=(1,),
                       origin=origin)
-    # Try using normalisation
-#    griddata_norm = (griddata-griddata.min())/(griddata.max() - griddata.min())
-#    griddata_flat = griddata.flatten()
-#    percentiles = [5., 25., 50., 75.]
-#    levels = np.percentile(griddata_flat, percentiles)
-#    print('levels', levels)
-#    origin = 'lower'
-#    csp = plt.contour(xx, yy, griddata,levels = levels,
-#              colors=('k',),
-#              linewidths=(1,),
-#              origin=origin)
-    
     cs = ax.contourf(xx, yy, griddata, clevs, cmap=cmap, vmax=max_val, vmin=0.0, transform=proj)#latlon=True)
     lines = []
     # Get contours to LineStrings
@@ -551,7 +520,6 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
         c_path = c.get_paths()[0]
         verts = c_path.vertices
         line = LineString([(j[0], j[1]) for j in zip(verts[:,0], verts[:,1])])
-        print(line)
         lines.append(line)
     # Write to shapefile
     shapefile_name = '%s_location_contours.shp' % fig_comment
@@ -559,10 +527,7 @@ def parameter_pdf(parameter_space, fig_comment='', mmi_obs=None, limits_filename
     with fiona.open(shapefile_name, 'w', 'ESRI Shapefile', schema) as c:  # creates new file to be written to
         for j in range(len(lines)):
             l = (lines[j])   # creates variable
-            print(l)
-            print(type(l))
-            c.write({'geometry': mapping(l),'properties': {'id': j},})
-            
+            c.write({'geometry': mapping(l),'properties': {'id': j},})   
     print('Contours plotted')
 
     #Dump data to file
@@ -758,7 +723,10 @@ if __name__ == "__main__":
         pass
     else:
         event_name = data_files[0].split('/')[-1].split('_')[0] + '_' + data_files[0].split('/')[-1].split('_')[1]
-    fig_comment = 'figures/' + event_name + '_all_gmpes_mag_pr_' + mag_prior_type
+    fig_folder = output_filepath + '/figures/'
+    if not os.path.exists(fig_folder):
+        os.makedirs(fig_folder)           
+    fig_comment = fig_folder + event_name + '_all_gmpes_mag_pr_' + mag_prior_type
     # Get limits_filename from params.txt
     param_filename = os.path.join(input_filepath, (event_name + '_params.txt'))
     f_in = open(param_filename)
